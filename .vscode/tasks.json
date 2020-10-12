@@ -6,7 +6,7 @@
 		{
 			"label": "start",
 			"type": "shell",
-			"command": "cd study_book_client & npm run electron:serve",
+			"command": "cd ./my_app/ ; npm run electron:serve",
 			"group": {
 				"kind": "build",
 				"isDefault": true
