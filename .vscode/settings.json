@@ -1,8 +1,14 @@
 {
-	"[json]": {
-		"editor.formatOnSave": true,
-	},
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
-	}
+    "[json]": {
+        "editor.formatOnSave": true,
+    },
+    "[javascript]": {
+        "editor.formatOnSave": true,
+    },
+    "[vue]": {
+        "editor.formatOnSave": true,
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }
