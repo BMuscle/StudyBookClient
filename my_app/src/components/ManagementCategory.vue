@@ -1,24 +1,19 @@
 <template>
   <div>
-    <imput @change = "setCategory" v-bind:text="category"/>
+    <input @input = "set_category($event.target.value)" :value="category"/>
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations} from "vuex";
+
 export default {
-  name:{
-    ""
-  },
-  computed: {
-    category() {
-      return this.$store.state.category;
-    }
-  },
-  methods: {
-    setCategory(value) {
-      this.$store.commit("set_category", value);
-    }
-  }
+  computed:mapState([
+    "category"
+  ]),
+  methods:mapMutations([
+    "set_category"
+  ])
 };
 </script>
 

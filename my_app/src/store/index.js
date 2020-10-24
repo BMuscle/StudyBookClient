@@ -12,14 +12,14 @@ export default createStore({
     }
   },
   mutations: {
-    set_title(value) {
-      this.$state.title = value
+    set_title(state, value) {
+      state.title = value
     },
-    set_category(value) {
-      this.$state.category = value
+    set_category(state, value) {
+      state.category = value
     },
-    set_tags(value) {
-      this.$state.tags = value
+    set_tags(state, value) {
+      state.tags = value
     }
   }
 });
