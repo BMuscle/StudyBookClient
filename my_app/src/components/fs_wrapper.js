@@ -2,83 +2,76 @@ import fs from "fs"
 import path from "path"
 
 const DANGEROUS_PATH_ERROR_MESSAGE = "アプリケーションのあるフォルダの外を操作する可能性があります"
+const ALREADY_PATH_IS_EXISTS_ERROR_MESSAGE = "同じ名前のファイル又はフォルダが既に存在する為、操作を完了できませんでした"
+const NO_SUCH_PATH_ERROR = "ファイル又はフォルダが存在しない為、操作を完了できませんでした"
 
 function isDangerousPath(path) {
   return path.indexOf(":") !== -1 || path.indexOf("..") !== -1
 }
-export function createFile(parentDirectoryPath, fileName) {
-  const createFilePath = path.join(parentDirectoryPath, fileName)
-  if (isDangerousPath(createFilePath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (!fs.existsSync(createFilePath)) {
-    fs.writeFile(createFilePath, '', function (err) { console.log(err) })
+function ThrowAnErrorIfAnyPathIsDangerous(...paths) {
+  for (const path of paths) {
+    if (isDangerousPath(path)) { throw new Error(DANGEROUS_PATH_ERROR_MESSAGE); }
   }
 }
-export function moveFile(parentDirectoryPath, fileName, destinationDirectoryPath) {
+function ThrowAnErrorIfThePathAlreadyExists(path) {
+  if (fs.existsSync(path)) { throw new Error(ALREADY_PATH_IS_EXISTS_ERROR_MESSAGE); }
+}
+function ThrowAnErrorIfThePathDoesNotExist(path) {
+  if (!fs.existsSync(path)) { throw new Error(NO_SUCH_PATH_ERROR); }
+}
+async export function createFile(parentDirectoryPath, fileName) {
+  const createFilePath = path.join(parentDirectoryPath, fileName)
+  ThrowAnErrorIfAnyPathIsDangerous(createFilePath)
+  ThrowAnErrorIfThePathAlreadyExists(createFilePath)
+  fs.writeFileSync(createFilePath, '')
+}
+async export function moveFile(parentDirectoryPath, fileName, destinationDirectoryPath) {
   const oldPath = path.join(parentDirectoryPath, fileName)
   const newPath = path.join(destinationDirectoryPath, fileName)
-  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (!fs.existsSync(newPath)) {
-    fs.rename(oldPath, newPath, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
+  ThrowAnErrorIfThePathDoesNotExist(oldPath)
+  ThrowAnErrorIfThePathAlreadyExists(newPath)
+  fs.renameSync(oldPath, newPath)
 }
-export function renameFile(parentDirectoryPath, fileName, newFileName) {
+async export function renameFile(parentDirectoryPath, fileName, newFileName) {
   const oldPath = path.join(parentDirectoryPath, fileName)
   const newPath = path.join(parentDirectoryPath, newFileName)
-  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (!fs.existsSync(newPath)) {
-    fs.rename(oldPath, newPath, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
+  ThrowAnErrorIfThePathDoesNotExist(oldPath)
+  ThrowAnErrorIfThePathAlreadyExists(newPath)
+  fs.renameSync(oldPath, newPath)
 }
-export function deleteFile(parentDirectoryPath, fileName) {
+async export function deleteFile(parentDirectoryPath, fileName) {
   const deleteFilePath = path.join(parentDirectoryPath, fileName)
-  if (isDangerousPath(deleteFilePath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (fs.existsSync(deleteFilePath)) {
-    fs.unlink(deleteFilePath, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(deleteFilePath)
+  ThrowAnErrorIfThePathDoesNotExist(deleteFilePath)
+  fs.unlinkSync(deleteFilePath)
 }
-export function createDirectory(parentDirectoryPath, directoryName) {
+async export function createDirectory(parentDirectoryPath, directoryName) {
   const createDirectoryPath = path.join(parentDirectoryPath, directoryName)
-  if (isDangerousPath(createDirectoryPath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (!fs.existsSync(createDirectoryPath)) {
-    fs.mkdir(createDirectoryPath, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(createDirectoryPath)
+  ThrowAnErrorIfThePathAlreadyExists(createDirectoryPath)
+  fs.mkdirSync(createDirectoryPath)
 }
-export function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
+async export function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
   const oldPath = path.join(parentDirectoryPath, directoryName)
   const newPath = path.join(destinationDirectoryPath, directoryName)
-  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (!fs.existsSync(newPath)) {
-    fs.rename(oldPath, newPath, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
+  ThrowAnErrorIfThePathDoesNotExist(oldPath)
+  ThrowAnErrorIfThePathAlreadyExists(newPath)
+  fs.renameSync(oldPath, newPath)
 }
-export function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
+async export function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
   const oldPath = path.join(parentDirectoryPath, directoryName)
   const newPath = path.join(parentDirectoryPath, newDirectoryName)
-  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (!fs.existsSync(newPath)) {
-    fs.rename(oldPath, newPath, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
+  ThrowAnErrorIfThePathDoesNotExist(oldPath)
+  ThrowAnErrorIfThePathAlreadyExists(newPath)
+  fs.renameSync(oldPath, newPath)
 }
-export function deleteDirectory(parentDirectoryPath, directoryName) {
+async export function deleteDirectory(parentDirectoryPath, directoryName) {
   const deleteDirectoryPath = path.join(parentDirectoryPath, directoryName)
-  if (isDangerousPath(deleteDirectoryPath)) {
-    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
-  }
-  if (fs.existsSync(deleteDirectoryPath)) {
-    fs.rmdir(deleteDirectoryPath, { recursive: true }, function (err) { console.log(err) })
-  }
+  ThrowAnErrorIfAnyPathIsDangerous(deleteDirectoryPath)
+  ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
+  fs.rmdirSync(deleteDirectoryPath)
 }
