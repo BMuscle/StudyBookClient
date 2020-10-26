@@ -1,84 +1,84 @@
 import fs from "fs"
 import path from "path"
 
-const dangerousPathErrorMessage = "アプリケーションのあるフォルダの外を操作する可能性があります"
+const DANGEROUS_PATH_ERROR_MESSAGE = "アプリケーションのあるフォルダの外を操作する可能性があります"
 
 function isDangerousPath(path) {
   return path.indexOf(":") !== -1 || path.indexOf("..") !== -1
 }
-export function createFile(parent_directory_path, file_name) {
-  const create_file_path = path.join(parent_directory_path, file_name)
-  if (isDangerousPath(create_file_path)) {
-    throw new Error(dangerousPathErrorMessage);
+export function createFile(parentDirectoryPath, fileName) {
+  const createFilePath = path.join(parentDirectoryPath, fileName)
+  if (isDangerousPath(createFilePath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
   }
-  if (!fs.existsSync(create_file_path)) {
-    fs.writeFile(create_file_path, '', function (err) { console.log(err) })
-  }
-}
-export function moveFile(parent_directory_path, file_name, destination_directory_path) {
-  const old_path = path.join(parent_directory_path, file_name)
-  const new_path = path.join(destination_directory_path, file_name)
-  if (isDangerousPath(old_path) || isDangerousPath(new_path)) {
-    throw new Error(dangerousPathErrorMessage);
-  }
-  if (!fs.existsSync(new_path)) {
-    fs.rename(old_path, new_path, function (err) { console.log(err) })
+  if (!fs.existsSync(createFilePath)) {
+    fs.writeFile(createFilePath, '', function (err) { console.log(err) })
   }
 }
-export function renameFile(parent_directory_path, file_name, new_file_name) {
-  const old_path = path.join(parent_directory_path, file_name)
-  const new_path = path.join(parent_directory_path, new_file_name)
-  if (isDangerousPath(old_path) || isDangerousPath(new_path)) {
-    throw new Error(dangerousPathErrorMessage);
+export function moveFile(parentDirectoryPath, fileName, destinationDirectoryPath) {
+  const oldPath = path.join(parentDirectoryPath, fileName)
+  const newPath = path.join(destinationDirectoryPath, fileName)
+  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
   }
-  if (!fs.existsSync(new_path)) {
-    fs.rename(old_path, new_path, function (err) { console.log(err) })
-  }
-}
-export function deleteFile(parent_directory_path, file_name) {
-  const delete_file_path = path.join(parent_directory_path, file_name)
-  if (isDangerousPath(delete_file_path)) {
-    throw new Error(dangerousPathErrorMessage);
-  }
-  if (fs.existsSync(delete_file_path)) {
-    fs.unlink(delete_file_path, function (err) { console.log(err) })
+  if (!fs.existsSync(newPath)) {
+    fs.rename(oldPath, newPath, function (err) { console.log(err) })
   }
 }
-export function createDirectory(parent_directory_path, directory_name) {
-  const create_directory_path = path.join(parent_directory_path, directory_name)
-  if (isDangerousPath(create_directory_path)) {
-    throw new Error(dangerousPathErrorMessage);
+export function renameFile(parentDirectoryPath, fileName, newFileName) {
+  const oldPath = path.join(parentDirectoryPath, fileName)
+  const newPath = path.join(parentDirectoryPath, newFileName)
+  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
   }
-  if (!fs.existsSync(create_directory_path)) {
-    fs.mkdir(create_directory_path, function (err) { console.log(err) })
-  }
-}
-export function moveDirectory(parent_directory_path, directory_name, destination_directory_path) {
-  const old_path = path.join(parent_directory_path, directory_name)
-  const new_path = path.join(destination_directory_path, directory_name)
-  if (isDangerousPath(old_path) || isDangerousPath(new_path)) {
-    throw new Error(dangerousPathErrorMessage);
-  }
-  if (!fs.existsSync(new_path)) {
-    fs.rename(old_path, new_path, function (err) { console.log(err) })
+  if (!fs.existsSync(newPath)) {
+    fs.rename(oldPath, newPath, function (err) { console.log(err) })
   }
 }
-export function renameDirectory(parent_directory_path, directory_name, new_directory_name) {
-  const old_path = path.join(parent_directory_path, directory_name)
-  const new_path = path.join(parent_directory_path, new_directory_name)
-  if (isDangerousPath(old_path) || isDangerousPath(new_path)) {
-    throw new Error(dangerousPathErrorMessage);
+export function deleteFile(parentDirectoryPath, fileName) {
+  const deleteFilePath = path.join(parentDirectoryPath, fileName)
+  if (isDangerousPath(deleteFilePath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
   }
-  if (!fs.existsSync(new_path)) {
-    fs.rename(old_path, new_path, function (err) { console.log(err) })
+  if (fs.existsSync(deleteFilePath)) {
+    fs.unlink(deleteFilePath, function (err) { console.log(err) })
   }
 }
-export function deleteDirectory(parent_directory_path, directory_name) {
-  const delete_directory_path = path.join(parent_directory_path, directory_name)
-  if (isDangerousPath(delete_directory_path)) {
-    throw new Error(dangerousPathErrorMessage);
+export function createDirectory(parentDirectoryPath, directoryName) {
+  const createDirectoryPath = path.join(parentDirectoryPath, directoryName)
+  if (isDangerousPath(createDirectoryPath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
   }
-  if (fs.existsSync(delete_directory_path)) {
-    fs.rmdir(delete_directory_path, { recursive: true }, function (err) { console.log(err) })
+  if (!fs.existsSync(createDirectoryPath)) {
+    fs.mkdir(createDirectoryPath, function (err) { console.log(err) })
+  }
+}
+export function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
+  const oldPath = path.join(parentDirectoryPath, directoryName)
+  const newPath = path.join(destinationDirectoryPath, directoryName)
+  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
+  }
+  if (!fs.existsSync(newPath)) {
+    fs.rename(oldPath, newPath, function (err) { console.log(err) })
+  }
+}
+export function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
+  const oldPath = path.join(parentDirectoryPath, directoryName)
+  const newPath = path.join(parentDirectoryPath, newDirectoryName)
+  if (isDangerousPath(oldPath) || isDangerousPath(newPath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
+  }
+  if (!fs.existsSync(newPath)) {
+    fs.rename(oldPath, newPath, function (err) { console.log(err) })
+  }
+}
+export function deleteDirectory(parentDirectoryPath, directoryName) {
+  const deleteDirectoryPath = path.join(parentDirectoryPath, directoryName)
+  if (isDangerousPath(deleteDirectoryPath)) {
+    throw new Error(DANGEROUS_PATH_ERROR_MESSAGE);
+  }
+  if (fs.existsSync(deleteDirectoryPath)) {
+    fs.rmdir(deleteDirectoryPath, { recursive: true }, function (err) { console.log(err) })
   }
 }
