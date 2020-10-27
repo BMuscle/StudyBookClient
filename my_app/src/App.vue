@@ -3,7 +3,7 @@
     <router-link to="/">Home</router-link>
     <router-link to="/about">About</router-link>
     <router-view />
-    <button @click="fs_wrapper.createFile('..', 'aaa.txt')">
+    <button @click="NotesManagement.createNote('.', 'aaa.txt')">
       Oファイル新規作成
     </button>
     <button @click="fs_wrapper.moveFile('.', 'aaa.txt', 'testtest')">
@@ -30,12 +30,14 @@
 
 <script>
 import * as fs_wrapper from "./components/fs_wrapper.js";
+import * as NotesManagement from "./components/NotesManagement";
 
 export default {
   data: function() {
     return {
       number: 10,
-      fs_wrapper: fs_wrapper
+      fs_wrapper: fs_wrapper,
+      NotesManagement: NotesManagement
     };
   },
   methods: {}
