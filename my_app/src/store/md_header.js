@@ -18,22 +18,22 @@ export default {
   },
   actions: {
     update({ commit }, md_text) {
-      var arr = md_text.split(/\r\n|\n/);
+      var rows = md_text.split(/\r\n|\n/);
 
-      for (const line of arr) {
-        if (line === "") {
+      for (const row of rows) {
+        if (row === "") {
           break
         }
-        const row = line.split(/:/)
-        switch (row[0]) {
+        const columns = row.split(/:/)
+        switch (columns[0]) {
           case "title":
-            commit('set_title', row[1])
+            commit('set_title', columns[1])
             break
           case "category":
-            commit('set_category', row[1])
+            commit('set_category', columns[1])
             break
           case "tags":
-            commit('set_tags', row[1].split(/,/))
+            commit('set_tags', columns[1].split(/,/))
             break
         }
       }
