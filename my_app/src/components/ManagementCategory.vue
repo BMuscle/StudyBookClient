@@ -1,6 +1,10 @@
 <template>
   <div>
-    <input @input = "set_category($event.target.value)" :value="category"/>
+    <input @input = "set_category($event.target.value)" :value="category" autocomplete="on" list="categories"/>
+    <datalist id="categories">
+      <option v-for="n in categories" :key="n">{{n}}</option>
+    </datalist>
+
   </div>
 </template>
 
@@ -8,6 +12,11 @@
 import { mapState, mapMutations} from "vuex";
 
 export default {
+  data(){
+    return{
+      categories : ['ハンバーガー','てりやきバーガー','ポテト']
+    }
+  },
   computed:mapState([
     "category"
   ]),
