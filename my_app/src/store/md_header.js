@@ -20,11 +20,11 @@ export default {
     update({ commit }, md_text) {
       var arr = md_text.split(/\r\n|\n/);
 
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i] === "") {
+      for (const line of arr) {
+        if (line === "") {
           break
         }
-        const row = arr[i].split(/:/)
+        const row = line.split(/:/)
         switch (row[0]) {
           case "title":
             commit('set_title', row[1])
