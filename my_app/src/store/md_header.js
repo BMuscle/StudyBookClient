@@ -19,6 +19,9 @@ export default {
   actions: {
     update({ commit }, md_text) {
       var rows = md_text.split(/\r\n|\n/);
+      var title = ""
+      var category = ""
+      var tags = []
 
       for (const row of rows) {
         if (row === "") {
@@ -30,18 +33,19 @@ export default {
 
         switch (dataCategory) {
           case "title":
-            commit('set_title', data)
+            title = data
             break
           case "category":
-            commit('set_category', data)
+            category = data
             break
           case "tags":
-            commit('set_tags', data.split(/,/).map(
-              (tag) => tag.trim()
-            ))
+            tags = data.split(/,/).map((tag) => tag.trim())
             break
         }
       }
+      commit('set_title', title)
+      commit('set_category', category)
+      commit('set_tags', tags)
     }
   }
 }
