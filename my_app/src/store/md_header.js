@@ -25,8 +25,8 @@ export default {
           break
         }
         const columns = row.split(/:/)
-        const dataCategory = columns[0]
-        const data = columns[1]
+        const dataCategory = columns[0].trim()
+        const data = columns[1].trim()
 
         switch (dataCategory) {
           case "title":
@@ -36,7 +36,9 @@ export default {
             commit('set_category', data)
             break
           case "tags":
-            commit('set_tags', data.split(/,/))
+            commit('set_tags', data.split(/,/).map(
+              (tag) => tag.trim()
+            ))
             break
         }
       }
