@@ -25,15 +25,18 @@ export default {
           break
         }
         const columns = row.split(/:/)
-        switch (columns[0]) {
+        const dataCategory = columns[0]
+        const data = columns[1]
+
+        switch (dataCategory) {
           case "title":
-            commit('set_title', columns[1])
+            commit('set_title', data)
             break
           case "category":
-            commit('set_category', columns[1])
+            commit('set_category', data)
             break
           case "tags":
-            commit('set_tags', columns[1].split(/,/))
+            commit('set_tags', data.split(/,/))
             break
         }
       }
