@@ -9,6 +9,10 @@ export async function createNote(parentDirectoryPath, fileName) {
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
 }
+export async function overwriteNote(parentDirectoryPath, fileName, content) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  await fs_wrapper.overwriteFile(notesJoinedParentPath, fileName, content)
+}
 export async function moveNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)

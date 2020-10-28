@@ -37,6 +37,12 @@ export async function createFile(parentDirectoryPath, fileName) {
   ThrowAnErrorIfThePathAlreadyExists(createFilePath)
   fs.writeFileSync(createFilePath, '')
 }
+export async function overwriteFile(parentDirectoryPath, fileName, content) {
+  const overwrittenFilePath = path.join(parentDirectoryPath, fileName)
+  ThrowAnErrorIfAnyPathIsDangerous(overwrittenFilePath)
+  ThrowAnErrorIfThePathDoesNotExist(overwrittenFilePath)
+  fs.writeFileSync(overwrittenFilePath, content)
+}
 export async function moveFile(parentDirectoryPath, fileName, destinationDirectoryPath, newFileName) {
   const oldPath = path.join(parentDirectoryPath, fileName)
   const newPath = path.join(destinationDirectoryPath, newFileName)
