@@ -11,13 +11,17 @@ export async function createNote(parentDirectoryPath, fileName) {
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
 }
 export async function moveNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
-  const notesJoinedPath = notesJoin(parentDirectoryPath)
-  const nameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedPath, fileName)
-  await fs_wrapper.moveFile(notesJoinedPath, nameWithoutDuplicate)
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
+  const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedDestinationPath, fileName)
+  await fs_wrapper.moveFile(notesJoinedParentPath, fileName, notesJoinedDestinationPath, fileNameWithoutDuplicate)
 }
 export async function renameNote(parentDirectoryPath, fileName, newFileName) {
-  throw new Error("未実装");
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  const newFileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, newFileName)
+  await fs_wrapper.moveFile(notesJoinedParentPath, fileName, newFileNameWithoutDuplicate)
 }
 export async function deleteNote(parentDirectoryPath, fileName) {
-  throw new Error("未実装");
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  await fs_wrapper.createFile(notesJoinedParentPath, fileName)
 }
