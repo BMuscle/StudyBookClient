@@ -19,6 +19,18 @@ function ThrowAnErrorIfThePathAlreadyExists(path) {
 function ThrowAnErrorIfThePathDoesNotExist(path) {
   if (!fs.existsSync(path)) { throw new Error(NO_SUCH_PATH_ERROR); }
 }
+export function nameWithoutDuplicate(parentDirectoryPath, fileName) {
+  const name = path.parse(fileName).name
+  var serial = ""
+  const ext = path.extname(fileName)
+  if (fs.existsSync(path.join(parentDirectoryPath, name + ext))) {
+    var number = 0
+    do {
+      serial = "(" + ++number + ")"
+    } while (fs.existsSync(path.join(parentDirectoryPath, name + serial + ext)))
+  }
+  return name + serial + ext
+}
 export async function createFile(parentDirectoryPath, fileName) {
   const createFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(createFilePath)
