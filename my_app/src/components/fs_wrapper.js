@@ -19,13 +19,13 @@ function ThrowAnErrorIfThePathAlreadyExists(path) {
 function ThrowAnErrorIfThePathDoesNotExist(path) {
   if (!fs.existsSync(path)) { throw new Error(NO_SUCH_PATH_ERROR); }
 }
-async export function createFile(parentDirectoryPath, fileName) {
+export async function createFile(parentDirectoryPath, fileName) {
   const createFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(createFilePath)
   ThrowAnErrorIfThePathAlreadyExists(createFilePath)
   fs.writeFileSync(createFilePath, '')
 }
-async export function moveFile(parentDirectoryPath, fileName, destinationDirectoryPath) {
+export async function moveFile(parentDirectoryPath, fileName, destinationDirectoryPath) {
   const oldPath = path.join(parentDirectoryPath, fileName)
   const newPath = path.join(destinationDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
@@ -33,7 +33,7 @@ async export function moveFile(parentDirectoryPath, fileName, destinationDirecto
   ThrowAnErrorIfThePathAlreadyExists(newPath)
   fs.renameSync(oldPath, newPath)
 }
-async export function renameFile(parentDirectoryPath, fileName, newFileName) {
+export async function renameFile(parentDirectoryPath, fileName, newFileName) {
   const oldPath = path.join(parentDirectoryPath, fileName)
   const newPath = path.join(parentDirectoryPath, newFileName)
   ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
@@ -41,19 +41,19 @@ async export function renameFile(parentDirectoryPath, fileName, newFileName) {
   ThrowAnErrorIfThePathAlreadyExists(newPath)
   fs.renameSync(oldPath, newPath)
 }
-async export function deleteFile(parentDirectoryPath, fileName) {
+export async function deleteFile(parentDirectoryPath, fileName) {
   const deleteFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(deleteFilePath)
   ThrowAnErrorIfThePathDoesNotExist(deleteFilePath)
   fs.unlinkSync(deleteFilePath)
 }
-async export function createDirectory(parentDirectoryPath, directoryName) {
+export async function createDirectory(parentDirectoryPath, directoryName) {
   const createDirectoryPath = path.join(parentDirectoryPath, directoryName)
   ThrowAnErrorIfAnyPathIsDangerous(createDirectoryPath)
   ThrowAnErrorIfThePathAlreadyExists(createDirectoryPath)
   fs.mkdirSync(createDirectoryPath)
 }
-async export function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
+export async function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
   const oldPath = path.join(parentDirectoryPath, directoryName)
   const newPath = path.join(destinationDirectoryPath, directoryName)
   ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
@@ -61,7 +61,7 @@ async export function moveDirectory(parentDirectoryPath, directoryName, destinat
   ThrowAnErrorIfThePathAlreadyExists(newPath)
   fs.renameSync(oldPath, newPath)
 }
-async export function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
+export async function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
   const oldPath = path.join(parentDirectoryPath, directoryName)
   const newPath = path.join(parentDirectoryPath, newDirectoryName)
   ThrowAnErrorIfAnyPathIsDangerous(oldPath, newPath)
@@ -69,7 +69,7 @@ async export function renameDirectory(parentDirectoryPath, directoryName, newDir
   ThrowAnErrorIfThePathAlreadyExists(newPath)
   fs.renameSync(oldPath, newPath)
 }
-async export function deleteDirectory(parentDirectoryPath, directoryName) {
+export async function deleteDirectory(parentDirectoryPath, directoryName) {
   const deleteDirectoryPath = path.join(parentDirectoryPath, directoryName)
   ThrowAnErrorIfAnyPathIsDangerous(deleteDirectoryPath)
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
