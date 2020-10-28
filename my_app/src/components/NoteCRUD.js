@@ -1,6 +1,5 @@
 import * as fs_wrapper from "./fs_wrapper"
-//const fs_wrapper = require("./fs_wrapper")
-const path = require("path")
+import path from "path"
 
 function notesJoin(parentDirectoryPath) {
   return path.join("notes", parentDirectoryPath)
