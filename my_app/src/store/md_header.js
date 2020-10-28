@@ -43,9 +43,9 @@ export default {
             break
         }
       }
-      commit('set_title', title)
-      commit('set_category', category)
-      commit('set_tags', tags)
+      commit("set_title", title)
+      commit("set_category", category)
+      commit("set_tags", tags)
     }
   }
 }
