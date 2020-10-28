@@ -18,25 +18,34 @@ export default {
   },
   actions: {
     update({ commit }, md_text) {
-      var arr = md_text.split(/\r\n|\n/);
+      var rows = md_text.split(/\r\n|\n/);
+      var title = ""
+      var category = ""
+      var tags = []
 
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i] === "") {
+      for (const row of rows) {
+        if (row === "") {
           break
         }
-        const row = arr[i].split(/:/)
-        switch (row[0]) {
+        const columns = row.split(/:/)
+        const dataCategory = columns[0].trim()
+        const data = columns[1].trim()
+
+        switch (dataCategory) {
           case "title":
-            commit('set_title', row[1])
+            title = data
             break
           case "category":
-            commit('set_category', row[1])
+            category = data
             break
           case "tags":
-            commit('set_tags', row[1].split(/,/))
+            tags = data.split(/,/).map(tag => tag.trim())
             break
         }
       }
+      commit("set_title", title)
+      commit("set_category", category)
+      commit("set_tags", tags)
     }
   }
 }
