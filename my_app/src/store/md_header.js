@@ -39,7 +39,7 @@ export default {
             category = data
             break
           case "tags":
-            tags = data.split(/,/).map((tag) => tag.trim())
+            tags = data.split(/,/).map(tag => tag.trim())
             break
         }
       }
