@@ -23,6 +23,7 @@ export function nameWithoutDuplicate(parentDirectoryPath, fileName) {
   const name = path.parse(fileName).name
   var serial = ""
   const ext = path.extname(fileName)
+  if (name === "") { throw new Error("ファイル名が指定されていません") }
   if (fs.existsSync(path.join(parentDirectoryPath, name + ext))) {
     var number = 0
     do {
