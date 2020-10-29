@@ -12,6 +12,10 @@
     <input type="text" v-model="fileName" />
     <br />
 
+    <label>DirectoryName</label>
+    <input type="text" v-model="directoryName" />
+    <br />
+
     <label>Content</label>
     <input type="text" v-model="content" />
     <br />
@@ -22,6 +26,10 @@
 
     <label>NewFileName</label>
     <input type="text" v-model="newFileName" />
+    <br />
+
+    <label>NewDirectoryName</label>
+    <input type="text" v-model="newDirectoryName" />
     <br />
 
     <button @click="this.createNote">ノート新規作成</button>
@@ -47,61 +55,64 @@ export default {
       NoteCRUD: NoteCRUD,
       parentDirectoryPath: "",
       fileName: "",
+      directoryName: "",
       content: "",
       destinationDirectoryPath: "",
-      newFileName: ""
+      newFileName: "",
+      newDirectoryName: ""
     };
   },
   methods: {
-    createNote: () => {
+    createNote() {
       NoteCRUD.createNote(this.parentDirectoryPath, this.fileName);
     },
-    overwriteNote: () => {
+    overwriteNote() {
       NoteCRUD.overwriteNote(
         this.parentDirectoryPath,
         this.fileName,
         this.content
       );
     },
-    moveNote: () => {
+    moveNote() {
       NoteCRUD.moveNote(
         this.parentDirectoryPath,
         this.fileName,
-        this.destinationDirectory
+        this.destinationDirectoryPath
       );
     },
-    renameNote: () => {
+    renameNote() {
       NoteCRUD.renameNote(
         this.parentDirectoryPath,
         this.fileName,
         this.newFileName
       );
     },
-    deleteNote: () => {
+    deleteNote() {
       NoteCRUD.deleteNote(this.parentDirectoryPath, this.fileName);
     },
-    createDirectory: () => {
-      fs_wrapper.createDirectory(this.parentDirectoryPath, this.directoryName);
+    createDirectory() {
+      NoteCRUD.createDirectory(this.parentDirectoryPath, this.directoryName);
     },
-    moveDirectory: () => {
-      fs_wrapper.moveDirectory(
+    moveDirectory() {
+      NoteCRUD.moveDirectory(
         this.parentDirectoryPath,
         this.directoryName,
         this.destinationDirectoryPath
       );
     },
-    renameDirectory: () => {
-      fs_wrapper.renameDirectory(
+    renameDirectory() {
+      NoteCRUD.renameDirectory(
         this.parentDirectoryPath,
         this.directoryName,
         this.newDirectoryName
       );
     },
-    deleteDirectory: () => {
-      fs_wrapper.deleteDirectory(this.parentDirectoryPath, this.directoryName);
+    deleteDirectory() {
+      NoteCRUD.deleteDirectory(this.parentDirectoryPath, this.directoryName);
     }
   }
 };
 </script>
 
-<style></style>
+<style>
+</style>
