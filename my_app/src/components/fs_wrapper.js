@@ -10,14 +10,14 @@ function isDangerousPath(path) {
 }
 function ThrowAnErrorIfAnyPathIsDangerous(...paths) {
   for (const path of paths) {
-    if (isDangerousPath(path)) { throw new Error(DANGEROUS_PATH_ERROR_MESSAGE); }
+    if (isDangerousPath(path)) { throw new Error(DANGEROUS_PATH_ERROR_MESSAGE + "(" + path + ")"); }
   }
 }
 function ThrowAnErrorIfThePathAlreadyExists(path) {
-  if (fs.existsSync(path)) { throw new Error(ALREADY_PATH_IS_EXISTS_ERROR_MESSAGE); }
+  if (fs.existsSync(path)) { throw new Error(ALREADY_PATH_IS_EXISTS_ERROR_MESSAGE + "(" + path + ")"); }
 }
 function ThrowAnErrorIfThePathDoesNotExist(path) {
-  if (!fs.existsSync(path)) { throw new Error(NO_SUCH_PATH_ERROR); }
+  if (!fs.existsSync(path)) { throw new Error(NO_SUCH_PATH_ERROR + "(" + path + ")"); }
 }
 export function nameWithoutDuplicate(parentDirectoryPath, fileName) {
   const name = path.parse(fileName).name
