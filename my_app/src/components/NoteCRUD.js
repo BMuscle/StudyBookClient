@@ -22,11 +22,11 @@ export async function moveNote(parentDirectoryPath, fileName, destinationDirecto
 export async function renameNote(parentDirectoryPath, fileName, newFileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const newFileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, newFileName)
-  await fs_wrapper.moveFile(notesJoinedParentPath, fileName, newFileNameWithoutDuplicate)
+  await fs_wrapper.renameFile(notesJoinedParentPath, fileName, newFileNameWithoutDuplicate)
 }
 export async function deleteNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  await fs_wrapper.createFile(notesJoinedParentPath, fileName)
+  await fs_wrapper.deleteFile(notesJoinedParentPath, fileName)
 }
 export async function createDirectory(parentDirectoryPath, directoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
