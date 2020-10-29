@@ -28,3 +28,23 @@ export async function deleteNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.createFile(notesJoinedParentPath, fileName)
 }
+export async function createDirectory(parentDirectoryPath, directoryName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, directoryName)
+  await fs_wrapper.createDirectory(notesJoinedParentPath, directoryNameWithoutDuplicate)
+}
+export async function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
+  const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedDestinationPath, directoryName)
+  await fs_wrapper.moveDirectory(notesJoinedParentPath, directoryName, notesJoinedDestinationPath, directoryNameWithoutDuplicate)
+}
+export async function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  const newDirectoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, newDirectoryName)
+  await fs_wrapper.renameDirectory(notesJoinedParentPath, directoryName, newDirectoryNameWithoutDuplicate)
+}
+export async function deleteDirectory(parentDirectoryPath, directoryName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  await fs_wrapper.deleteDirectory(notesJoinedParentPath, directoryName)
+}
