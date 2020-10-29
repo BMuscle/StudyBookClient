@@ -92,5 +92,5 @@ export async function deleteDirectory(parentDirectoryPath, directoryName) {
   const deleteDirectoryPath = path.join(parentDirectoryPath, directoryName)
   ThrowAnErrorIfAnyPathIsDangerous(deleteDirectoryPath)
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
-  fs.rmdirSync(deleteDirectoryPath)
+  fs.rmdirSync(deleteDirectoryPath, { recursive: true })
 }
