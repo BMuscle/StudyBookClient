@@ -7,7 +7,11 @@ import marked from 'marked'
 
 export default {
   props: {
-    md_data: String
+    mdData: {
+      type: String,
+      require: true,
+      default: ''
+    }
   },
   computed: {
     md_html: function(){
