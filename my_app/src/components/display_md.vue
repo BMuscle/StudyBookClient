@@ -3,13 +3,14 @@
 </template>
 
 <script>
+import marked from 'marked'
+
 export default {
   props: {
     md_data: String
   },
   computed: {
     md_html: function(){
-      const marked = require('marked')
       return marked(this.md_data)
     }
   },
