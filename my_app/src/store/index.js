@@ -1,5 +1,5 @@
-import { createStore } from "vuex";
-import md_header from "./md_header";
+import { createStore } from 'vuex'
+import md_header from './md_header'
 export default createStore({
   state: {},
   mutations: {},
@@ -7,4 +7,4 @@ export default createStore({
   modules: {
     md_header,
   }
-});
+})
