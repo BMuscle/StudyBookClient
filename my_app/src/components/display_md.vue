@@ -1,5 +1,5 @@
 <template>
-  <span v-html="md_html"></span>
+  <span v-html="mdHtml"></span>
 </template>
 
 <script>
@@ -14,13 +14,12 @@ export default {
     }
   },
   computed: {
-    md_html: function(){
-      return marked(this.md_data)
+    mdHtml: function() {
+      return marked(this.mdData)
     }
-  },
-};
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>
