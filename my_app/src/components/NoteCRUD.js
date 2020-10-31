@@ -12,6 +12,10 @@ export async function createNote(parentDirectoryPath, fileName) {
   )
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
 }
+export async function readNote(parentDirectoryPath, fileName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  return await fs_wrapper.readFile(notesJoinedParentPath, fileName)
+}
 export async function overwriteNote(parentDirectoryPath, fileName, content) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.overwriteFile(notesJoinedParentPath, fileName, content)
@@ -60,6 +64,10 @@ export async function createDirectory(parentDirectoryPath, directoryName) {
     notesJoinedParentPath,
     directoryNameWithoutDuplicate
   )
+}
+export async function readDirectory(parentDirectoryPath, directoryName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  return await fs_wrapper.readDirectory(notesJoinedParentPath, directoryName)
 }
 export async function moveDirectory(
   parentDirectoryPath,

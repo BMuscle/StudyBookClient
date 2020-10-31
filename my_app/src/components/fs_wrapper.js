@@ -49,6 +49,12 @@ export async function createFile(parentDirectoryPath, fileName) {
   ThrowAnErrorIfThePathAlreadyExists(createFilePath)
   fs.writeFileSync(createFilePath, '')
 }
+export async function readFile(parentDirectoryPath, fileName) {
+  const readFilePath = path.join(parentDirectoryPath, fileName)
+  ThrowAnErrorIfAnyPathIsDangerous(readFilePath)
+  ThrowAnErrorIfThePathDoesNotExist(readFilePath)
+  return fs.readFileSync(readFilePath)
+}
 export async function overwriteFile(parentDirectoryPath, fileName, content) {
   const overwrittenFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(overwrittenFilePath)
@@ -87,6 +93,12 @@ export async function createDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfAnyPathIsDangerous(createDirectoryPath)
   ThrowAnErrorIfThePathAlreadyExists(createDirectoryPath)
   fs.mkdirSync(createDirectoryPath)
+}
+export async function readDirectory(parentDirectoryPath, directoryName) {
+  const readDirectoryPath = path.join(parentDirectoryPath, directoryName)
+  ThrowAnErrorIfAnyPathIsDangerous(readDirectoryPath)
+  ThrowAnErrorIfThePathDoesNotExist(readDirectoryPath)
+  return fs.readdirSync(readDirectoryPath)
 }
 export async function moveDirectory(
   parentDirectoryPath,
