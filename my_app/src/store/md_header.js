@@ -46,6 +46,10 @@ export default {
       commit("set_title", title)
       commit("set_category", category)
       commit("set_tags", tags)
+    },
+    createTag({ commit, state }, name) {
+      const new_tags = state.tags.concat(name);
+      commit("set_tags", new_tags)
     }
   }
 }
