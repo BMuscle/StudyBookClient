@@ -42,10 +42,10 @@
       "node": true
     },
     "extends": [
-      "prettier",
       "eslint:recommended",
       "plugin:vue/vue3-essential",
-      "plugin:vue/recommended"
+      "plugin:vue/recommended",
+      "@vue/eslint-config-prettier"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
@@ -53,20 +53,12 @@
     "rules": {
       "no-unused-vars": "warn",
       "vue/no-unused-components": "warn",
-      "no-unused-labels": "warn",
-      "quotes": [
-        "warn",
-        "single",
-        {
-          "avoidEscape": true
-        }
-      ],
-      "semi": [
-        "warn",
-        "never"
-      ],
-      "comma-spacing": "warn"
+      "no-unused-labels": "warn"
     }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false
   },
   "browserslist": [
     "> 1%",
