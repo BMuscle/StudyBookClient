@@ -1,7 +1,11 @@
 <template>
   <div id="app">
-    <router-link to="/">Home</router-link>
-    <router-link to="/about">About</router-link>
+    <router-link to="/">
+      Home
+    </router-link>
+    <router-link to="/about">
+      About
+    </router-link>
     <router-view />
     <display_md :md_data="text"/>
   </div>

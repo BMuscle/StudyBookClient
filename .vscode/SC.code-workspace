@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "..",
+			"name": "Root"
+		},
+		{
+			"path": "..\\my_app",
+			"name": "StudyBookClient"
+		}
+	],
+	"settings": {
+		"editor.formatOnSave": true,
+		"eslint.format.enable": true,
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	}
+}

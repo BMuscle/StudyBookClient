@@ -44,14 +44,23 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/vue3-essential",
       "eslint:recommended",
-      "@vue/prettier"
+      "plugin:vue/vue3-essential",
+      "plugin:vue/recommended",
+      "@vue/eslint-config-prettier"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": "warn",
+      "vue/no-unused-components": "warn",
+      "no-unused-labels": "warn"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false
   },
   "browserslist": [
     "> 1%",
