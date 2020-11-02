@@ -15,4 +15,4 @@ export default createStore({
   modules: {
     md_header
   }
-});
+})
