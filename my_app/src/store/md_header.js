@@ -50,6 +50,9 @@ export default {
     createTag({ commit, state }, name) {
       const new_tags = state.tags.concat(name);
       commit("set_tags", new_tags)
-    }
+    },
+    //editTag(){
+
+    //}
   }
 }
