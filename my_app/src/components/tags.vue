@@ -2,12 +2,11 @@
   <div class="tags">
     <div v-for="(tag, index) in tags" :key="tag">
       <Tag :name="tag" @tag-change="editTag({tag:$event, index:index})" />
-      {{tag}}
     </div>
     <div>
-      <div class="button" v-if="flag" @click="flag = false">タグ追加ボタン（仮）</div>
-      <div v-else>
-        <input type="text"  v-model="new_tag" @keydown.enter="createTag(new_tag),flagReset()" >
+      <button v-show="!isEditing" @click="initCreatingTag">タグ追加ボタン（仮）</button>
+      <div v-show="isEditing">
+        <input type="text" ref="createInput" v-model="new_tag" @keydown.enter="createTag(new_tag),endCreatingTag()" @blur="endCreatingTag">
       </div>
     </div>
   </div>
@@ -31,18 +30,19 @@ export default {
       'createTag',
       'editTag'
     ]),
-    flagReset: function(){
-      this.flag = true
+    async initCreatingTag() {
+      await(this.isEditing = true)
+      this.$refs.createInput.focus()
+    },
+    endCreatingTag() {
+      this.isEditing = false
       this.new_tag = ''
     }
-  },
-  created: function(){
-    this.update('tags: タグ名')
   },
   data: function(){
     return{
       new_tag: '',
-      flag: true
+      isEditing: false
     }
   }
 }
