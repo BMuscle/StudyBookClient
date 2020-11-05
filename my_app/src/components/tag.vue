@@ -24,7 +24,7 @@ export default {
     return {
       onFocus: false,
       tag: this.$store.state.tag,
-      printingName: name
+      printingName: this.name
     };
   },
   methods: {
@@ -32,17 +32,15 @@ export default {
       this.onFocus = true;
     },
     confirmTagEditing: function() {
-      this.$emit("input", this.printingName);
+      this.$emit("tag-change", this.printingName);
     },
     cancelTagEditing: function() {
-      this.printingName = name;
+      this.printingName = this.name;
       this.onFocus = false;
     },
-    enableFocus() {
-      this.onFocus = true;
-      this.$nextTick(function() {
-        this.$refs.textInput.focus();
-      });
+    async enableFocus() {
+      await(this.onFocus = true)
+      this.$refs.textInput.focus();
     }
   },
   watch: {

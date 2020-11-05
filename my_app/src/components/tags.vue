@@ -1,7 +1,8 @@
 <template>
   <div class="tags">
     <div v-for="(tag, index) in tags" :key="tag">
-      <Tag v-bind:name="tag" v-on:input="editTag({tag:$event, index:index})" />
+      <Tag :name="tag" @tag-change="editTag({tag:$event, index:index})" />
+      {{tag}}
     </div>
     <div>
       <div class="button" v-if="flag" @click="flag = false">タグ追加ボタン（仮）</div>
