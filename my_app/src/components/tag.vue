@@ -1,46 +1,58 @@
 <template>
   <div>
-    <div v-if="flag">
-      <input v-model="tag" @keydown="flag = false" @blur="flag = false" state="tag"> 
+    <div v-show="onFocus">
+      <input
+        v-model="printingName"
+        @focus="focus"
+        @keydown.enter="confirmTagEditing"
+        @blur="cancelTagEditing"
+        ref="textInput"
+      />
     </div>
-    <div class="tag" v-else @click="editflag()">
-     {{name}}
+    <div class="tag" v-show="!onFocus" @click="enableFocus">
+      {{ name }}
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
 export default {
-  computed: {
-    ...mapState('md_header',{
-      tags: state => state.tags 
-    })
-  },
-  props:{
+  props: {
     name: String
   },
+  data: function() {
+    return {
+      onFocus: false,
+      tag: this.$store.state.tag,
+      printingName: name
+    };
+  },
   methods: {
-    changeTag: function() {
-      this.$emit('input', "変更後タグ名")
+    focus: function() {
+      this.onFocus = true;
     },
-    ...mapActions('md_header',[
-      'update',
-      'createTag'
-    ]),
-    editflag: function() {
-      this.flag = true
+    confirmTagEditing: function() {
+      this.$emit("input", this.printingName);
+    },
+    cancelTagEditing: function() {
+      this.printingName = name;
+      this.onFocus = false;
+    },
+    enableFocus() {
+      this.onFocus = true;
       this.$nextTick(function() {
-        this.state.tag.focus() 
-      })
-    },
+        this.$refs.textInput.focus();
+      });
+    }
   },
-  data: function(){
-    return{
-      flag: false, 
-    }  
-  },
-}
+  watch: {
+    name(newName) {
+      if (this.onFocus === false) {
+        this.printingName = newName;
+      }
+    }
+  }
+};
 </script>
 
 <style>
