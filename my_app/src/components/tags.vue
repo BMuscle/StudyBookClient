@@ -1,12 +1,12 @@
 <template>
   <div class="tags">
-    <div v-for="tag in tags" :key="tag">
-      <Tag v-bind:name="tag" v-on:input="tag = $event" />
+    <div v-for="(tag, index) in tags" :key="tag">
+      <Tag :name="tag" @tag-change="editTag({tag:$event, index:index})" />
     </div>
     <div>
-      <div class="button" v-if="flag" @click="flag = false">タグ追加ボタン（仮）</div>
-      <div v-else>
-        <input type="text"  v-model="new_tag" @keydown.enter="createTag(new_tag),flagReset()" >
+      <button v-show="!isEditing" @click="initCreatingTag">タグ追加ボタン（仮）</button>
+      <div v-show="isEditing">
+        <input type="text" ref="createInput" v-model="new_tag" @keydown.enter="createTag(new_tag),endCreatingTag()" @blur="endCreatingTag">
       </div>
     </div>
   </div>
@@ -27,20 +27,22 @@ export default {
   methods: {
     ...mapActions('md_header',[
       'update',
-      'createTag'
+      'createTag',
+      'editTag'
     ]),
-    flagReset: function(){
-      this.flag = true
-      this.new_tag = ''
+    async initCreatingTag() {
+      await(this.isEditing = true)
+      this.$refs.createInput.focus()
     },
-  },
-  created: function(){
-    this.update('tags: タグ名')
+    endCreatingTag() {
+      this.isEditing = false
+      this.new_tag = ''
+    }
   },
   data: function(){
     return{
       new_tag: '',
-      flag: true
+      isEditing: false
     }
   }
 }

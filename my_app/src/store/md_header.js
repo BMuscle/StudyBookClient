@@ -14,6 +14,9 @@ export default {
     },
     set_tags(state, tags) {
       state.tags = tags
+    },
+    set_tag(state, { tag, index }) {
+      state.tags.splice(index, 1, tag)
     }
   },
   actions: {
@@ -50,6 +53,9 @@ export default {
     createTag({ commit, state }, name) {
       const new_tags = state.tags.concat(name);
       commit("set_tags", new_tags)
+    },
+    editTag({ commit }, { tag, index }) {
+      commit("set_tag", { tag: tag, index: index })
     }
   }
 }
