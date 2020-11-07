@@ -1,7 +1,7 @@
 <template>
   <div class="tags">
-    <div v-for="(tag, index) in tags" :key="tag">
-      <Tag :name="tag" @tag-change="editTag({tag:$event, index:index})" />
+    <div v-for="(tag, index) in tags" :key="tag.id">
+      <Tag :name="tag.name" @tag-change="editTag({tag:$event, index:index})" @pass-delete-tag="deleteTag({tag:$event, index:index})"/>
     </div>
     <div>
       <button v-show="!isEditing" @click="initCreatingTag">タグ追加ボタン（仮）</button>
@@ -28,7 +28,8 @@ export default {
     ...mapActions('md_header',[
       'update',
       'createTag',
-      'editTag'
+      'editTag',
+      'deleteTag'
     ]),
     async initCreatingTag() {
       await(this.isEditing = true)

@@ -11,6 +11,7 @@
     </div>
     <div class="tag" v-show="!onFocus" @click="enableFocus">
       {{ name }}
+      <button type="button" @click="noticeDelete">削除</button>
     </div>
   </div>
 </template>
@@ -23,7 +24,6 @@ export default {
   data: function() {
     return {
       onFocus: false,
-      tag: this.$store.state.tag,
       printingName: this.name
     };
   },
@@ -31,8 +31,9 @@ export default {
     focus: function() {
       this.onFocus = true;
     },
-    confirmTagEditing: function() {
+    confirmTagEditing() {
       this.$emit("tag-change", this.printingName);
+      this.$refs.textInput.blur();
     },
     cancelTagEditing: function() {
       this.printingName = this.name;
@@ -41,6 +42,9 @@ export default {
     async enableFocus() {
       await(this.onFocus = true)
       this.$refs.textInput.focus();
+    },
+    noticeDelete: function() {
+      this.$emit("pass-delete-tag", this.name);
     }
   },
   watch: {
