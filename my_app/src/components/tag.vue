@@ -9,8 +9,8 @@
         ref="textInput"
       />
     </div>
-    <div class="tag" v-show="!onFocus" @click="enableFocus">
-      {{ name }}
+    <div class="tag" v-show="!onFocus">
+      <div @click="enableFocus">{{ name }}</div>
       <button type="button" @click="noticeDelete">削除</button>
     </div>
   </div>
@@ -40,7 +40,7 @@ export default {
       this.onFocus = false;
     },
     async enableFocus() {
-      await(this.onFocus = true)
+      await (this.onFocus = true);
       this.$refs.textInput.focus();
     },
     noticeDelete: function() {
