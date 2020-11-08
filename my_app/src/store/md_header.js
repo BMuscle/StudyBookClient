@@ -1,8 +1,8 @@
 export default {
   namespaced: true,
   state: {
-    title: "",
-    category: "",
+    title: '',
+    category: '',
     tags: []
   },
   mutations: {
@@ -25,13 +25,13 @@ export default {
   },
   actions: {
     update({ commit }, md_text) {
-      var rows = md_text.split(/\r\n|\n/);
-      var title = ""
-      var category = ""
+      var rows = md_text.split(/\r\n|\n/)
+      var title = ''
+      var category = ''
       var tags = []
 
       for (const row of rows) {
-        if (row === "") {
+        if (row === '') {
           break
         }
         const columns = row.split(/:/)
@@ -39,13 +39,13 @@ export default {
         const data = columns[1].trim()
 
         switch (dataCategory) {
-          case "title":
+          case 'title':
             title = data
             break
-          case "category":
+          case 'category':
             category = data
             break
-          case "tags":
+          case 'tags':
             tags = data.split(/,/).map(tag => tag.trim())
             break
         }
