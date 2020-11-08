@@ -13,10 +13,14 @@ export default {
       state.category = category
     },
     set_tags(state, tags) {
+      state.currentTagId = 0
       state.tags = tags
     },
     set_tag(state, { tag, index }) {
       state.tags.splice(index, 1, tag)
+    },
+    delete_tag(state, { index }) {
+      state.tags.splice(index, 1)
     }
   },
   actions: {
@@ -56,6 +60,9 @@ export default {
     },
     editTag({ commit }, { tag, index }) {
       commit("set_tag", { tag: tag, index: index })
+    },
+    deleteTag({ commit }, { tag, index }) {
+      commit("delete_tag", { tag: tag, index: index })
     }
   }
 }
