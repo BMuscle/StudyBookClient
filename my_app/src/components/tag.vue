@@ -10,7 +10,7 @@
       />
     </div>
     <div class="tag" v-show="!onFocus">
-      <div @click="enableFocus">{{ name }}</div>
+      <label @click="enableFocus">{{ name }}</label>
       <button type="button" @click="noticeDelete">削除</button>
     </div>
   </div>
