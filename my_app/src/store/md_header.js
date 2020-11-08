@@ -3,8 +3,7 @@ export default {
   state: {
     title: "",
     category: "",
-    tags: [],
-    currentTagId: 0
+    tags: []
   },
   mutations: {
     set_title(state, title) {
@@ -15,10 +14,10 @@ export default {
     },
     set_tags(state, tags) {
       state.currentTagId = 0
-      state.tags = tags.map(function (tag) { return { id: state.currentTagId++, name: tag } })
+      state.tags = tags
     },
     set_tag(state, { tag, index }) {
-      state.tags.splice(index, 1, { id: state.tags[index].id, name: tag })
+      state.tags.splice(index, 1, tag)
     },
     delete_tag(state, { index }) {
       state.tags.splice(index, 1)
@@ -56,7 +55,7 @@ export default {
       commit("set_tags", tags)
     },
     createTag({ commit, state }, name) {
-      const new_tags = state.tags.map(tag => tag.name).concat(name);
+      const new_tags = state.tags.concat(name);
       commit("set_tags", new_tags)
     },
     editTag({ commit }, { tag, index }) {
