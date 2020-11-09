@@ -5,10 +5,13 @@
       <p>{{ user.name }}</p>
       <button @click="destroy(user)">削除</button>
     </div>
+    {{ tags }}
+    <button @click="set_tags(['aaa'])">tags変更</button>
   </section>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import data from '@/data'
 import store from '@/store'
 import User from '@/models/User'
@@ -20,7 +23,8 @@ export default {
       return User.query()
         .orderBy('id', 'desc')
         .get()
-    }
+    },
+    ...mapState('md_header', ['tags'])
   },
   created() {
     const initialData = data
@@ -34,7 +38,8 @@ export default {
     },
     destroy(user) {
       user.$delete()
-    }
+    },
+    ...mapMutations('md_header', ['set_tags'])
   }
 }
 </script>
