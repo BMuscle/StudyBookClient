@@ -11,10 +11,12 @@
 </template>
 
 <script>
+import store from '@/store'
+
 // 全体で共通のコンポーネント
 export default {
+  store
 }
 </script>
 
-<style>
-</style>
+<style></style>
