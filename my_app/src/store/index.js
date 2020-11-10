@@ -1,14 +1,16 @@
-import { createStore } from "vuex";
-import VuexORM from 'vuex-orm';
-import md_header from "./md_header";
-import { User, Post } from "./database";
-
-const database = new VuexORM.Database()
-database.register(User, {}) // Userモデルとusersモジュールを登録
-database.register(Post, {}) // Postモデルとpostsモジュールを登録
+import { createStore } from 'vuex'
+import VuexORM from '@vuex-orm/core'
+import createPersistedState from 'vuex-persistedstate'
+import md_header from './md_header'
+import database from '@/database'
 
 export default createStore({
-  plugins: [VuexORM.install(database)],
+  plugins: [
+    VuexORM.install(database),
+    createPersistedState({
+      paths: ['entities.notes', 'entities.categories', 'entities.mylists']
+    })
+  ],
   state: {},
   mutations: {},
   actions: {},
