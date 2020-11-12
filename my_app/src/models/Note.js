@@ -6,7 +6,8 @@ export default class Note extends Model {
 
   static fields() {
     return {
-      id: this.uid()
+      id: this.uid(),
+      title: this.string()
     }
   }
 }
