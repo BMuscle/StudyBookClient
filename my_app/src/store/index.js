@@ -6,10 +6,10 @@ import database from '@/database'
 
 export default createStore({
   plugins: [
-    VuexORM.install(database)
-    //createPersistedState({
-    //  paths: ['entities.notes', 'entities.categories', 'entities.mylists']
-    //})
+    VuexORM.install(database),
+    createPersistedState({
+      paths: ['entities.notes', 'entities.categories', 'entities.mylists']
+    })
   ],
   state: {},
   mutations: {},
