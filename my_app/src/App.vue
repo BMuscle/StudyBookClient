@@ -1,21 +1,28 @@
 <template>
   <div id="app">
-    <router-link to="/">
-      Home
-    </router-link>
-    <router-link to="/about">
-      About
-    </router-link>
-    <router-view />
+    <MylistsSection />
   </div>
 </template>
 
 <script>
+import data from '@/data'
 import store from '@/store'
+import Mylist from '@/models/Mylist'
+import MylistsSection from '@/components/MylistsSection'
 
 // 全体で共通のコンポーネント
 export default {
-  store
+  store,
+  components: {
+    MylistsSection
+  },
+  data() {
+    return {}
+  },
+  created() {
+    const initialData = data
+    Mylist.insert({ data: initialData })
+  }
 }
 </script>
 
