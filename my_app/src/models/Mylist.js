@@ -1,6 +1,6 @@
 import { Model } from '@vuex-orm/core'
 import Note from './Note'
-import Mylistable from './Mylistable'
+import NoteMylist from './NoteMylist'
 
 export default class Mylist extends Model {
   static entity = 'mylists'
@@ -11,13 +11,7 @@ export default class Mylist extends Model {
       id: this.uid(),
       title: this.string(),
       description: this.string(),
-      notes: this.morphedByMany(
-        Note,
-        Mylistable,
-        'mylist_id',
-        'mylistable_id',
-        'mylistable_type'
-      )
+      notes: this.belongsToMany(Note, NoteMylist, 'mylist_id', 'note_id')
     }
   }
 }
