@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="mylist in mylists" :key="mylist.id">
-      <div @click="this.$emit('mylistsClick', mylist.id)">
+      <div @click="this.$emit('mylistClick', mylist.id)">
         {{ mylist.title }}
       </div>
     </div>
