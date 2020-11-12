@@ -8,7 +8,12 @@ export default createStore({
   plugins: [
     VuexORM.install(database),
     createPersistedState({
-      paths: ['entities.notes', 'entities.categories', 'entities.mylists']
+      paths: [
+        'entities.notes',
+        'entities.categories',
+        'entities.mylists',
+        'entities.note_mylist'
+      ]
     })
   ],
   state: {},
