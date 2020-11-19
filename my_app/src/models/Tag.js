@@ -6,8 +6,8 @@ export default class Tag extends Model {
 
   static fields() {
     return {
-      id: this.number(),
-      online_id: this.number(),
+      id: this.uid(),
+      online_id: this.number().nullable(),
       name: this.string()
     }
   }

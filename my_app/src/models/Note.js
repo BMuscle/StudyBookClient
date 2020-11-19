@@ -5,12 +5,14 @@ import NoteTag from '@/models/NoteTag'
 
 export default class Note extends Model {
   static entity = 'notes'
-  static primaryKey = ['id']
+  static primaryKey = ['inode']
 
   static fields() {
     return {
-      id: this.uid(),
-      online_id: this.string().nullable(),
+      inode: this.number(),
+      parent_path: this.string(),
+      file_name: this.string(),
+      guid: this.string().nullable(),
       title: this.string(),
       category_id: this.attr(),
       category: this.belongsTo(Category, 'category_id'),
