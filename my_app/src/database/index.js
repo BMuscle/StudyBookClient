@@ -5,6 +5,7 @@ import NoteMylist from '@/models/NoteMylist'
 import Category from '@/models/Category'
 import Tag from '@/models/Tag'
 import NoteTag from '@/models/NoteTag'
+import DeletedLocalNote from '@/models/DeletedLocalNote'
 
 const database = new Database()
 
@@ -14,5 +15,6 @@ database.register(NoteMylist)
 database.register(Category)
 database.register(Tag)
 database.register(NoteTag)
+database.register(DeletedLocalNote)
 
 export default database
