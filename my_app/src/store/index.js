@@ -10,9 +10,12 @@ export default createStore({
     createPersistedState({
       paths: [
         'entities.notes',
-        'entities.categories',
         'entities.mylists',
-        'entities.note_mylist'
+        'entities.note_mylist',
+        'entities.categories',
+        'entities.tags',
+        'entities.note_tag',
+        'entities.deleted_local_notes'
       ]
     })
   ],
