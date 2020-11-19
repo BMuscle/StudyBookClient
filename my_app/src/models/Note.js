@@ -1,4 +1,5 @@
 import { Model } from '@vuex-orm/core'
+import Directory from '@/models/Directory'
 import Category from '@/models/Category'
 import Tag from '@/models/Tag'
 import NoteTag from '@/models/NoteTag'
@@ -10,7 +11,8 @@ export default class Note extends Model {
   static fields() {
     return {
       inode: this.number(),
-      parent_path: this.string(),
+      parent_inode: this.number(),
+      parent_directory: this.belongsTo(Directory, 'parent_inode'),
       file_name: this.string(),
       guid: this.string().nullable(),
       title: this.string(),
