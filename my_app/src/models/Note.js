@@ -16,7 +16,7 @@ export default class Note extends Model {
       title: this.string(),
       category_id: this.attr(),
       category: this.belongsTo(Category, 'category_id'),
-      tags: this.belongsToMany(Tag, NoteTag, 'note_id', 'tag_id')
+      tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id')
     }
   }
 }

@@ -14,7 +14,7 @@ export default class Mylist extends Model {
       category_id: this.attr(),
       category: this.belongsTo(Category, 'category_id'),
       description: this.string(),
-      notes: this.belongsToMany(Note, NoteMylist, 'mylist_id', 'note_id')
+      notes: this.belongsToMany(Note, NoteMylist, 'mylist_id', 'note_inode')
     }
   }
 }
