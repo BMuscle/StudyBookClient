@@ -1,5 +1,6 @@
 import { Database } from '@vuex-orm/core'
 import Note from '@/models/Note'
+import Directory from '@/models/Directory'
 import Mylist from '@/models/Mylist'
 import NoteMylist from '@/models/NoteMylist'
 import Category from '@/models/Category'
@@ -10,6 +11,7 @@ import DeletedLocalNote from '@/models/DeletedLocalNote'
 const database = new Database()
 
 database.register(Note)
+database.register(Directory)
 database.register(Mylist)
 database.register(NoteMylist)
 database.register(Category)

@@ -6,9 +6,8 @@ export default class NoteMylist extends Model {
 
   static fields() {
     return {
-      id: this.uid(),
       mylist_id: this.attr(),
-      note_inode: this.attr(),
+      note_inode: this.number(),
       index: this.number()
     }
   }

@@ -6,7 +6,6 @@ export default class NoteTag extends Model {
 
   static fields() {
     return {
-      id: this.uid(),
       tag_id: this.attr(),
       note_inode: this.attr()
     }
