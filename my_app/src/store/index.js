@@ -15,7 +15,8 @@ export default createStore({
         'entities.categories',
         'entities.tags',
         'entities.note_tag',
-        'entities.deleted_local_notes'
+        'entities.deleted_local_notes',
+        'entities.user',
       ]
     })
   ],
