@@ -1,7 +1,7 @@
 <template>
   <div :style="{ display: 'flex' }">
     <Data :name="'Note'" :data="notes" />
-    <Data :name="'DeletedLocalNote'" :data="deleted_local_notes" />
+    <Data :name="'DeletedLocalNote'" :data="deletedLocalNotes" />
     <Data :name="'NoteMylist'" :data="noteMylists" />
     <Data :name="'Mylist'" :data="mylists" />
     <Data :name="'Category'" :data="categories" />
@@ -28,7 +28,7 @@ export default {
     notes() {
       return this.getAllRecursive(Note)
     },
-    deleted_local_notes() {
+    deletedLocalNotes() {
       return this.getAllRecursive(DeletedLocalNote)
     },
     noteMylists() {
