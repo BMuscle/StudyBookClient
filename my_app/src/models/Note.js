@@ -1,8 +1,8 @@
 import { Model } from '@vuex-orm/core'
-import Directory from '@/models/Directory'
-import Category from '@/models/Category'
-import Tag from '@/models/Tag'
-import NoteTag from '@/models/NoteTag'
+import Directory from './Directory'
+import Category from './Category'
+import Tag from './Tag'
+import NoteTag from './NoteTag'
 
 export default class Note extends Model {
   static entity = 'notes'
@@ -16,7 +16,7 @@ export default class Note extends Model {
       file_name: this.string(),
       guid: this.string().nullable(),
       title: this.string(),
-      category_id: this.attr(),
+      category_id: this.number(),
       category: this.belongsTo(Category, 'category_id'),
       tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id')
     }
