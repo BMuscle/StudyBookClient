@@ -6,7 +6,7 @@ import NoteTag from './NoteTag'
 
 export default class Note extends Model {
   static entity = 'notes'
-  static primaryKey = ['inode']
+  static primaryKey = 'inode'
 
   static fields() {
     return {
@@ -18,7 +18,8 @@ export default class Note extends Model {
       title: this.string(),
       category_id: this.number(),
       category: this.belongsTo(Category, 'category_id'),
-      tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id')
+      tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id'),
+      updated_at: this.attr(new Date().getTime()),
     }
   }
 }

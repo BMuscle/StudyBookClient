@@ -5,7 +5,7 @@ import NoteMylist from './NoteMylist'
 
 export default class Mylist extends Model {
   static entity = 'mylists'
-  static primaryKey = ['id']
+  static primaryKey = 'id'
 
   static fields() {
     return {
