@@ -7,15 +7,20 @@
       About
     </router-link>
     <router-view />
+    <DirectoryTreeView />
   </div>
 </template>
 
 <script>
 import store from '@/store'
+import DirectoryTreeView from './components/DirectoryTreeView.vue'
 
 // 全体で共通のコンポーネント
 export default {
-  store
+  store,
+  components: {
+    DirectoryTreeView
+  }
 }
 </script>
 
