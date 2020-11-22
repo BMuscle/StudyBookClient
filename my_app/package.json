@@ -14,8 +14,11 @@
   "main": "background.js",
   "dependencies": {
     "@vuex-orm/core": "^0.36.3",
+    "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "marked": "^1.2.0",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^10.1.0",
     "vue": "^3.0.0",
     "vue-i18n": "^8.22.0",
     "vue-router": "^4.0.0-0",

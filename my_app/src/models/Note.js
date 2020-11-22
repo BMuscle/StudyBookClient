@@ -19,7 +19,7 @@ export default class Note extends Model {
       category_id: this.number(),
       category: this.belongsTo(Category, 'category_id'),
       tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id'),
-      updated_at: this.attr(new Date().getTime()),
+      updated_at: this.attr(new Date().getTime())
     }
   }
 }
