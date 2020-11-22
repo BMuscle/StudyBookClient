@@ -17,6 +17,7 @@ export default createStore({
         'entities.note_tag',
         'entities.deleted_local_notes',
         'entities.user',
+        'entities.updated_at'
       ]
     })
   ],
