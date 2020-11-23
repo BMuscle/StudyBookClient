@@ -25,9 +25,9 @@ export default {
     widthChange(event) {
       console.log(event.offsetX)
       if (this.isWidthChange) {
-        console.log('move')
-        console.log(event)
-        console.log(event.srcElement.parentNode)
+        //console.log('move')
+        //console.log(event)
+        //console.log(event.srcElement.parentNode)
         if (event.clientX > 400) {
           event.srcElement.parentNode.style.width = '400px'
           event.srcElement.style.left = '400px'
@@ -41,12 +41,12 @@ export default {
       }
     },
     widthChangeOn() {
-      console.log('on')
+      //console.log('on')
       this.isWidthChange = true
       event.srcElement.classList.add('move-bar-active')
     },
     widthChangeOff() {
-      console.log('off')
+      //console.log('off')
       this.isWidthChange = false
       event.srcElement.classList.remove('move-bar-active')
     }
