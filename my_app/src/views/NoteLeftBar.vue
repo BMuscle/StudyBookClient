@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     widthChange(event) {
-      console.log(event.offsetX)
+      //console.log(event.offsetX)
       if (this.isWidthChange) {
         //console.log('move')
         //console.log(event)
