@@ -1,29 +1,20 @@
 <template>
   <div id="app">
-    <Login />
-    <WebSync />
-    <router-link to="/">
-      Home
-    </router-link>
-    <router-link to="/about">
-      About
-    </router-link>
+    <Header />
     <router-view />
   </div>
 </template>
 
 <script>
 import store from '@/store'
-import WebSync from './components/WebSync.vue'
-import Login from './components/Login.vue'
+import Header from './views/Header'
 import UpdatedAt from '@/models/UpdatedAt'
 
 // 全体で共通のコンポーネント
 export default {
   store,
   components: {
-    WebSync,
-    Login
+    Header
   },
   created: function() {
     if (
@@ -65,4 +56,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+#app {
+  width: 100%;
+  height: 100vh;
+}
+</style>
