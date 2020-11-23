@@ -17,14 +17,14 @@
 <script>
 import api from './api'
 import axios from 'axios'
-import User from '@/models/User'
-import Note from '@/models/Note'
-import Tag from '@/models/Tag'
-import NoteTag from '@/models/NoteTag'
-import Category from '@/models/Category'
-import Directory from '@/models/Directory'
-import UpdatedAt from '@/models/UpdatedAt'
-import DeletedLocalNote from '@/models/DeletedLocalNote'
+import User from '../models/User'
+import Note from '../models/Note'
+import Tag from '../models/Tag'
+import NoteTag from '../models/NoteTag'
+import Category from '../models/Category'
+import Directory from '../models/Directory'
+import UpdatedAt from '../models/UpdatedAt'
+import DeletedLocalNote from '../models/DeletedLocalNote'
 import {
   createDownloadNote,
   notesJoin,

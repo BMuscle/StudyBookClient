@@ -12,15 +12,15 @@
 </template>
 
 <script>
-import Data from '@/components/Data'
-import Note from '@/models/Note'
-import Directory from '@/models/Directory'
-import DeletedLocalNote from '@/models/DeletedLocalNote'
-import NoteMylist from '@/models/NoteMylist'
-import Mylist from '@/models/Mylist'
-import Category from '@/models/Category'
-import NoteTag from '@/models/NoteTag'
-import Tag from '@/models/Tag'
+import Data from './Data'
+import Note from '../models/Note'
+import Directory from '../models/Directory'
+import DeletedLocalNote from '../models/DeletedLocalNote'
+import NoteMylist from '../models/NoteMylist'
+import Mylist from '../models/Mylist'
+import Category from '../models/Category'
+import NoteTag from '../models/NoteTag'
+import Tag from '../models/Tag'
 
 export default {
   components: {

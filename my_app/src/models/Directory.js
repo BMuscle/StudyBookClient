@@ -9,11 +9,11 @@ export default class Directory extends Model {
     return {
       inode: this.number(),
       parent_inode: this.number().nullable(),
-      parent_directory: this.belongsTo(Directory, 'parent_inode'),
-      child_directories: this.hasMany(Directory, 'parent_inode'),
+      parent_directory: this.belongsTo(Directory, 'parent_inode', 'inode'),
+      child_directories: this.hasMany(Directory, 'parent_inode', 'inode'),
       directory_name: this.string(),
       path_from_root: this.string(),
-      notes: this.hasMany(Note, 'parent_inode')
+      notes: this.hasMany(Note, 'parent_inode', 'inode')
     }
   }
 }

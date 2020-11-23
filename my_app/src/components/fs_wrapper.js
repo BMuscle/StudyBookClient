@@ -53,7 +53,7 @@ export async function readFile(parentDirectoryPath, fileName) {
   const readFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(readFilePath)
   ThrowAnErrorIfThePathDoesNotExist(readFilePath)
-  return fs.readFileSync(readFilePath)
+  return fs.readFileSync(readFilePath, 'utf8')
 }
 export async function overwriteFile(parentDirectoryPath, fileName, content) {
   const overwrittenFilePath = path.join(parentDirectoryPath, fileName)

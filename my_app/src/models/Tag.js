@@ -1,4 +1,6 @@
 import { Model } from '@vuex-orm/core'
+import Note from './Note'
+import NoteTag from './NoteTag'
 
 export default class Tag extends Model {
   static entity = 'tags'
@@ -8,7 +10,15 @@ export default class Tag extends Model {
     return {
       id: this.uid(),
       online_id: this.number().nullable(),
-      name: this.string()
+      name: this.string(),
+      notes: this.belongsToMany(
+        Note,
+        NoteTag,
+        'tag_id',
+        'note_inode',
+        'id',
+        'inode'
+      )
     }
   }
 }

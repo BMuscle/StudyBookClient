@@ -32,7 +32,7 @@
 <script>
 import api from '../components/api'
 import axios from 'axios'
-import User from '@/models/User'
+import User from '../models/User'
 
 export default {
   name: 'Modal',
