@@ -13,9 +13,9 @@
       </button>
       <div v-show="isEditing">
         <input
-          type="text"
           ref="createInput"
           v-model="new_tag"
+          type="text"
           @keydown.enter="createTag(new_tag), endCreatingTag()"
           @blur="endCreatingTag"
         />
@@ -26,35 +26,34 @@
 
 <script>
 import Tag from './tag.vue'
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from 'vuex'
 export default {
   components: {
     Tag
   },
   computed: {
-    ...mapState("md_header", {
+    ...mapState('md_header', {
       tags: state => state.tags
     })
   },
   methods: {
-    ...mapActions("md_header", ["update", "createTag", "editTag", "deleteTag"]),
+    ...mapActions('md_header', ['update', 'createTag', 'editTag', 'deleteTag']),
     async initCreatingTag() {
-      await (this.isEditing = true);
-      this.$refs.createInput.focus();
+      await (this.isEditing = true)
+      this.$refs.createInput.focus()
     },
     endCreatingTag() {
-      this.isEditing = false;
-      this.new_tag = "";
+      this.isEditing = false
+      this.new_tag = ''
     }
   },
   data: function() {
     return {
-      new_tag: "",
+      new_tag: '',
       isEditing: false
-    };
+    }
   }
-};
+}
 </script>
 
-<style>
-</style>
+<style></style>
