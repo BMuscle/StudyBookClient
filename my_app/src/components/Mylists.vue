@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     mylists() {
-      return Mylist.query().get()
+      return Mylist.all()
     }
   },
   methods: {}
