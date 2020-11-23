@@ -9,7 +9,7 @@
           >
             開閉ボタン
           </div>
-          <div @click="out(directory.path_from_root)">
+          <div @click="clickDirectory(directory.path_from_root)">
             {{ directory.directory_name }}
           </div>
           <DirectoryTreeList
@@ -24,8 +24,10 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
 import Directory from '@/models/Directory'
+
 export default {
   name: 'DirectoryTreeList',
   components: {
@@ -40,8 +42,19 @@ export default {
     }
   },
   methods: {
-    out: function(name) {
-      console.log(name)
+    ...mapMutations('notes', ['setDescendantNotes']),
+    clickDirectory: function(path_from_root) {
+      let inodes = []
+      let directories = Directory.query()
+        .with('notes')
+        .where('path_from_root', path => path.indexOf(path_from_root) == 0)
+        .get()
+      for (let directory of directories) {
+        for (let note of directory.notes) {
+          inodes.push(note.inode)
+        }
+      }
+      this.setDescendantNotes(inodes)
     },
     childDirectories(inode) {
       return Directory.query()
