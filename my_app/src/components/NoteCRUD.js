@@ -148,7 +148,6 @@ async function writeDownloadNote(
     notesJoinedParentPath,
     `${title}.md`
   )
-  console.log(fileNameWithoutDuplicate)
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
   await fs_wrapper.overwriteFile(
     notesJoinedParentPath,
