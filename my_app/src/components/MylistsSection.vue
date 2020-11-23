@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import Mylist from '@/components/Mylist'
-import Mylists from '@/components/Mylists'
+import Mylist from './Mylist'
+import Mylists from './Mylists'
 
 export default {
   components: {

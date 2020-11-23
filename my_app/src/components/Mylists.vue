@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Mylist from '@/models/Mylist'
+import Mylist from '../models/Mylist'
 
 export default {
   components: {},

@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import Tag from "@/components/tag.vue";
+import Tag from './tag.vue'
 import { mapState, mapActions } from "vuex";
 export default {
   components: {

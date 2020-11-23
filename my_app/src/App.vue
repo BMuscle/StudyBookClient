@@ -6,9 +6,9 @@
 </template>
 
 <script>
-import store from '@/store'
+import store from './store'
 import Header from './views/Header'
-import UpdatedAt from '@/models/UpdatedAt'
+import UpdatedAt from './models/UpdatedAt'
 
 // 全体で共通のコンポーネント
 export default {
