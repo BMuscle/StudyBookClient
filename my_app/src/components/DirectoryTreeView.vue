@@ -2,19 +2,34 @@
 <template>
   <div class="demo">
     <ul>
-      <DirectoryTreeList :directories="directories" />
+      <li>
+        <div v-if="directories.length != 0" @click="isOpen = !isOpen">
+          開閉ボタン
+        </div>
+        <div @click="initialize()">
+          Notes
+        </div>
+        <DirectoryTreeList
+          v-if="directories.length != 0 && isOpen"
+          :directories="directories"
+        />
+      </li>
     </ul>
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
 import Directory from '@/models/Directory'
+import Note from '@/models/Note'
 export default {
   components: {
     DirectoryTreeList
   },
   data: function() {
-    return {}
+    return {
+      isOpen: true
+    }
   },
   computed: {
     directories() {
@@ -24,7 +39,22 @@ export default {
         .get()
     }
   },
-  created: function() {
+  methods: {
+    ...mapMutations('notes', ['setDescendantNotes']),
+    initialize() {
+      let inodes = []
+      let directories = Directory.query()
+        .with('notes')
+        .get()
+      for (let directory of directories) {
+        for (let note of directory.notes) {
+          inodes.push(note.inode)
+        }
+      }
+      this.setDescendantNotes(inodes)
+    }
+  },
+  mounted: function() {
     Directory.insert({
       data: {
         inode: 1,
@@ -73,6 +103,7 @@ export default {
           path_from_root: 'app/test/test2/test3'
         }
       })
+    this.initialize()
   }
 }
 </script>
