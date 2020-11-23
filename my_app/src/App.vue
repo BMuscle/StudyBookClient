@@ -2,7 +2,7 @@
   <div id="app">
     <Header />
     <router-view />
-    </div>
+  </div>
 </template>
 
 <script>
@@ -14,7 +14,7 @@ import UpdatedAt from '@/models/UpdatedAt'
 export default {
   store,
   components: {
-    Header,
+    Header
   },
   created: function() {
     if (

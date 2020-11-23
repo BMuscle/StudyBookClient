@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="container body">
-      <div class="alert alert-danger" v-if="isMessage">
+      <div v-if="isMessage" class="alert alert-danger">
         ログインに失敗しました
       </div>
       <h3 class="mt-2 mb-3">
@@ -14,9 +14,16 @@
         </div>
         <div class="form-group">
           <label for="password"> パスワード </label>
-          <input id="email" v-model="password" type="password" class="form-control" />
+          <input
+            id="email"
+            v-model="password"
+            type="password"
+            class="form-control"
+          />
         </div>
-        <button type="button" @click="createToken()" class="btn btn-primary">ログイン</button>
+        <button type="button" class="btn btn-primary" @click="createToken()">
+          ログイン
+        </button>
       </form>
     </div>
   </div>
@@ -33,7 +40,7 @@ export default {
     return {
       isMessage: false,
       email: null,
-      password: null,
+      password: null
     }
   },
   computed: {
@@ -55,10 +62,11 @@ export default {
             data: { user_id: response.data.user_id, token: response.data.token }
           })
           this.$router.push('/')
-        }).catch(response => {
+        })
+        .catch(response => {
           this.isMessage = true
         })
-    },
+    }
   }
 }
 </script>
@@ -67,7 +75,7 @@ export default {
 .main {
   position: absolute;
   top: 32px;
-  background-color: #E8DED2;
+  background-color: #e8ded2;
   height: 100%;
   width: 100%;
 }

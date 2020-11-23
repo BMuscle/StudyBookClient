@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <MyListLeftBar/>
+    <MyListLeftBar />
     <div>
       内部要素はここへ
     </div>
@@ -11,7 +11,7 @@
 import MyListLeftBar from './MyListLeftBar'
 export default {
   components: {
-    MyListLeftBar,
+    MyListLeftBar
   }
 }
 </script>

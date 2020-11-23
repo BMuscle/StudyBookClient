@@ -2,21 +2,33 @@
   <nav class="navbar navbar-expand navbar-dark">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <router-link :to="{ name: 'Note' }" class="nav-link" exact-active-class="active" >
+        <router-link
+          :to="{ name: 'Note' }"
+          class="nav-link"
+          exact-active-class="active"
+        >
           ノート
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link :to="{ name: 'MyList' }" class="nav-link" exact-active-class="active" >
+        <router-link
+          :to="{ name: 'MyList' }"
+          class="nav-link"
+          exact-active-class="active"
+        >
           マイリスト
         </router-link>
       </li>
       <li v-if="user" class="nav-item">
-        <a @click="logOut()" class="nav-link">ログアウト</a>
+        <a class="nav-link" @click="logOut()">ログアウト</a>
       </li>
       <li v-else class="nav-item">
-        <router-link :to="{ name: 'Login' }" class="nav-link" exact-active-class="active" >
-         ログイン
+        <router-link
+          :to="{ name: 'Login' }"
+          class="nav-link"
+          exact-active-class="active"
+        >
+          ログイン
         </router-link>
       </li>
     </ul>

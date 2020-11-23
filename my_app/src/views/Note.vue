@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <NoteLeftBar/>
+    <NoteLeftBar />
     <div>
       内部要素はここへ
     </div>
@@ -11,7 +11,7 @@
 import NoteLeftBar from './NoteLeftBar'
 export default {
   components: {
-    NoteLeftBar,
+    NoteLeftBar
   }
 }
 </script>
