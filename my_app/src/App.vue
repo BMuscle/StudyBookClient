@@ -2,6 +2,7 @@
   <div id="app">
     <Header />
     <router-view />
+    <AllData />
   </div>
 </template>
 
@@ -9,6 +10,7 @@
 import store from './store'
 import Header from './views/Header'
 import UpdatedAt from './models/UpdatedAt'
+import AllData from './components/AllData'
 
 import Category from './models/Category'
 import DeletedLocalNote from './models/DeletedLocalNote'
@@ -32,9 +34,10 @@ import TagData from './initialData/TagData'
 export default {
   store,
   components: {
-    Header
+    Header,
+    AllData
   },
-  created: function() {
+  created() {
     if (
       !UpdatedAt.query()
         .where('label', 'my_lists')
