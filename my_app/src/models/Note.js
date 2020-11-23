@@ -3,6 +3,8 @@ import Directory from './Directory'
 import Category from './Category'
 import Tag from './Tag'
 import NoteTag from './NoteTag'
+import Mylist from './Mylist'
+import NoteMylist from './NoteMylist'
 
 export default class Note extends Model {
   static entity = 'notes'
@@ -18,6 +20,14 @@ export default class Note extends Model {
       title: this.string(),
       category_id: this.number(),
       category: this.belongsTo(Category, 'category_id', 'online_id'),
+      mylists: this.belongsToMany(
+        Mylist,
+        NoteMylist,
+        'note_inode',
+        'mylist_id',
+        'inode',
+        'id'
+      ),
       tags: this.belongsToMany(
         Tag,
         NoteTag,
