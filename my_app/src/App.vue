@@ -2,14 +2,12 @@
   <div id="app">
     <Header />
     <router-view />
-    <WebSync />
     </div>
 </template>
 
 <script>
 import store from '@/store'
 import Header from './views/Header'
-import WebSync from './components/WebSync.vue'
 import UpdatedAt from '@/models/UpdatedAt'
 
 // 全体で共通のコンポーネント
@@ -17,7 +15,6 @@ export default {
   store,
   components: {
     Header,
-    WebSync,
   },
   created: function() {
     if (
@@ -62,6 +59,6 @@ export default {
 <style scoped lang="scss">
 #app {
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 </style>
