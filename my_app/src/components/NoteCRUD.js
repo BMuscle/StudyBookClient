@@ -74,6 +74,9 @@ export async function readDirectory(parentDirectoryPath, directoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readDirectory(notesJoinedParentPath, directoryName)
 }
+export async function readNotesFolderRecursively() {
+  return await fs_wrapper.readdirRecursively('notes')
+}
 export async function moveDirectory(
   parentDirectoryPath,
   directoryName,

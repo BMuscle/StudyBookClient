@@ -105,6 +105,31 @@ export async function readDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfThePathDoesNotExist(readDirectoryPath)
   return fs.readdirSync(readDirectoryPath)
 }
+export async function readdirRecursively(directoryPath, inode = null) {
+  ThrowAnErrorIfAnyPathIsDangerous(directoryPath)
+  const children = fs
+    .readdirSync(directoryPath, { withFileTypes: true })
+    .map(dirent => {
+      const status = fs.statSync(path.join(directoryPath, dirent.name))
+      return {
+        isDirectory: dirent.isDirectory(),
+        inode: status.ino,
+        parent_inode: inode,
+        name: dirent.name,
+        updated_at: status.mtimeMs
+      }
+    })
+  var add_children = []
+  for (const child of children)
+    if (child.isDirectory)
+      add_children = add_children.concat(
+        await readdirRecursively(
+          path.join(directoryPath, child.name),
+          child.inode
+        )
+      )
+  return children.concat(add_children)
+}
 export async function moveDirectory(
   parentDirectoryPath,
   directoryName,
