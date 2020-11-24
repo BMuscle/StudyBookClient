@@ -3,10 +3,12 @@ import path from 'path'
 import { spawn } from 'child_process'
 import sd from 'string_decoder'
 import * as NoteCRUD from './NoteCRUD'
-import Note, { updateHead, getNote, updateAllNotes } from '../models/Note'
-import NoteTag from '../models/NoteTag'
-import NoteMylist from '../models/NoteMylist'
-import DeletedLocalNote from '../models/DeletedLocalNote'
+import Note, {
+  updateHead,
+  getNote,
+  updateAllNotes,
+  deleteNotefromDataBase
+} from '../models/Note'
 import Directory from '../models/Directory'
 
 export async function onAppReady() {
@@ -37,13 +39,4 @@ async function onDeleteNote(path) {
   if (note !== null) {
     deleteNotefromDataBase(note)
   }
-}
-
-function deleteNotefromDataBase(note) {
-  NoteTag.delete(record => record.note_inode === note.inode)
-  NoteMylist.delete(record => record.note_inode === note.inode)
-  if (note.guid !== null) {
-    DeletedLocalNote.insert({ data: { guid: note.guid } })
-  }
-  Note.delete(note.inode)
 }

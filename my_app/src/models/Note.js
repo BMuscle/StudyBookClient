@@ -8,6 +8,7 @@ import Tag, { insertTag } from './Tag'
 import NoteTag from './NoteTag'
 import Mylist from './Mylist'
 import NoteMylist from './NoteMylist'
+import DeletedLocalNote from './DeletedLocalNote'
 
 export default class Note extends Model {
   static entity = 'notes'
@@ -95,4 +96,13 @@ export async function updateAllNotes(data) {
     where: note => true,
     data: data
   })
+}
+
+export function deleteNotefromDataBase(note) {
+  NoteTag.delete(record => record.note_inode === note.inode)
+  NoteMylist.delete(record => record.note_inode === note.inode)
+  if (note.guid !== null) {
+    DeletedLocalNote.insert({ data: { guid: note.guid } })
+  }
+  Note.delete(note.inode)
 }
