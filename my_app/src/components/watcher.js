@@ -39,16 +39,19 @@ export async function onAppReady() {
       }
     })
   }
+  deleteDoNotExistNotesFromDataBase()
   for (const note of Note.query()
     .where('is_exists', true)
     .get()) {
     updateHead(note)
   }
-  for (const note of Note.query()
+}
+
+function deleteDoNotExistNotesFromDataBase() {
+  Note.query()
     .where('is_exists', false)
-    .get()) {
-    deleteNotefromDataBase(note)
-  }
+    .get()
+    .forEach(note => deleteNotefromDataBase(note))
 }
 
 async function onDeleteNote(path) {
