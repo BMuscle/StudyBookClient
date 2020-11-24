@@ -12,7 +12,6 @@ import Directory from '../models/Directory'
 export async function onAppReady() {
   const children = await NoteCRUD.readNotesFolderRecursively()
   const directories = children.filter(child => child.isDirectory)
-  const notes = children.filter(child => !child.isDirectory)
   for (const directory of directories) {
     Directory.insert({
       data: {
@@ -22,18 +21,12 @@ export async function onAppReady() {
       }
     })
   }
+
   updateAllNotes({ is_exists: false })
-  for (const note of notes) {
-    Note.insertOrUpdate({
-      data: {
-        inode: note.inode,
-        parent_inode: note.parent_inode,
-        file_name: note.name,
-        is_exists: true,
-        updated_at: note.updated_at
-      }
-    })
-  }
+  children
+    .filter(child => !child.isDirectory)
+    .map(note => (note.is_exists = true))
+    .forEach(note => Note.insertOrUpdate({ data: note }))
   deleteDoNotExistNotesFromDataBase()
   Note.all().forEach(note => updateHead(note))
 }
