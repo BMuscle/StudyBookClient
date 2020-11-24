@@ -11,16 +11,10 @@ import Directory from '../models/Directory'
 
 export async function onAppReady() {
   const children = await NoteCRUD.readNotesFolderRecursively()
-  const directories = children.filter(child => child.isDirectory)
-  for (const directory of directories) {
-    Directory.insert({
-      data: {
-        inode: directory.inode,
-        parent_inode: directory.parent_inode,
-        directory_name: directory.name
-      }
-    })
-  }
+
+  children
+    .filter(child => child.isDirectory)
+    .forEach(directory => Directory.insert({ data: directory }))
 
   updateAllNotes({ is_exists: false })
   children
