@@ -21,8 +21,10 @@ export async function onAppReady() {
   await updateAllNotes({ is_exists: false })
   children
     .filter(child => !child.isDirectory)
-    .map(note => (note.is_exists = true))
-    .forEach(note => Note.insertOrUpdate({ data: note }))
+    .forEach(note => {
+      note.is_exists = true
+      Note.insertOrUpdate({ data: note })
+    })
   deleteDoNotExistNotesFromDataBase()
   Note.all().forEach(note => updateHead(note))
 }
