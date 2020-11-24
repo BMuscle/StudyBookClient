@@ -22,12 +22,7 @@ export async function onAppReady() {
       }
     })
   }
-  Note.update({
-    where: note => true,
-    data: {
-      is_exists: false
-    }
-  })
+  updateAllNotes({ is_exists: false })
   for (const note of notes) {
     Note.insertOrUpdate({
       data: {
@@ -41,6 +36,13 @@ export async function onAppReady() {
   }
   deleteDoNotExistNotesFromDataBase()
   Note.all().forEach(note => updateHead(note))
+}
+
+function updateAllNotes(data) {
+  Note.update({
+    where: note => true,
+    data: data
+  })
 }
 
 function deleteDoNotExistNotesFromDataBase() {
