@@ -3,7 +3,7 @@ import path from 'path'
 import { spawn } from 'child_process'
 import sd from 'string_decoder'
 import * as NoteCRUD from './NoteCRUD'
-import Note, { updateHead, getNote } from '../models/Note'
+import Note, { updateHead, getNote, updateAllNotes } from '../models/Note'
 import NoteTag from '../models/NoteTag'
 import NoteMylist from '../models/NoteMylist'
 import DeletedLocalNote from '../models/DeletedLocalNote'
@@ -16,20 +16,13 @@ export async function onAppReady() {
     .filter(child => child.isDirectory)
     .forEach(directory => Directory.insert({ data: directory }))
 
-  updateAllNotes({ is_exists: false })
+  await updateAllNotes({ is_exists: false })
   children
     .filter(child => !child.isDirectory)
     .map(note => (note.is_exists = true))
     .forEach(note => Note.insertOrUpdate({ data: note }))
   deleteDoNotExistNotesFromDataBase()
   Note.all().forEach(note => updateHead(note))
-}
-
-function updateAllNotes(data) {
-  Note.update({
-    where: note => true,
-    data: data
-  })
 }
 
 function deleteDoNotExistNotesFromDataBase() {

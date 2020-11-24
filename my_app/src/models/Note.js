@@ -89,3 +89,10 @@ export async function getNote(filePath) {
     .where('parent_inode', parentInode)
     .first()
 }
+
+export async function updateAllNotes(data) {
+  Note.update({
+    where: note => true,
+    data: data
+  })
+}
