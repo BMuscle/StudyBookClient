@@ -1,4 +1,6 @@
 import { Model } from '@vuex-orm/core'
+import path from 'path'
+import * as NoteCRUD from '../components/NoteCRUD'
 import Directory from './Directory'
 import Category from './Category'
 import Tag from './Tag'
@@ -48,4 +50,15 @@ export default class Note extends Model {
       : ''
     return pathFromRoot
   }
+}
+
+//削除されたノートのレコードをパスから検索する。
+export async function getNote(filePath) {
+  const fileName = path.basename(filePath)
+  const parentDirectoryPath = path.dirname(filePath)
+  const parentInode = NoteCRUD.getInode(parentDirectoryPath)
+  return Note.query()
+    .where('file_name', fileName)
+    .where('parent_inode', parentInode)
+    .first()
 }
