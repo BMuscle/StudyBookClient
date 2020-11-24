@@ -13,7 +13,7 @@ export default class Note extends Model {
   static fields() {
     return {
       inode: this.number(),
-      parent_inode: this.number(),
+      parent_inode: this.number().nullable(),
       parent_directory: this.belongsTo(Directory, 'parent_inode', 'inode'),
       file_name: this.string(),
       guid: this.string().nullable(),
@@ -38,5 +38,14 @@ export default class Note extends Model {
       ),
       updated_at: this.attr(new Date().getTime())
     }
+  }
+  get parent_directory_path_from_root() {
+    const note = Note.query()
+      .with('parent_directory')
+      .find(this.inode)
+    const pathFromRoot = note.parent_directory
+      ? note.parent_directory.path_from_root
+      : ''
+    return pathFromRoot
   }
 }
