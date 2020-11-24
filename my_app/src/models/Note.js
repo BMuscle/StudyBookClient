@@ -1,9 +1,10 @@
 import { Model } from '@vuex-orm/core'
 import path from 'path'
 import * as NoteCRUD from '../components/NoteCRUD'
+import { readNoteHeader } from '../components/NoteCRUD'
 import Directory from './Directory'
-import Category from './Category'
-import Tag from './Tag'
+import Category, { getCategory } from './Category'
+import Tag, { insertTag } from './Tag'
 import NoteTag from './NoteTag'
 import Mylist from './Mylist'
 import NoteMylist from './NoteMylist'
@@ -49,6 +50,31 @@ export default class Note extends Model {
       ? note.parent_directory.path_from_root
       : ''
     return pathFromRoot
+  }
+}
+
+//指定されたノートのヘッダー情報を更新する。
+export async function updateHead(note) {
+  const header = await readNoteHeader(
+    note.parent_directory_path_from_root,
+    note.file_name
+  )
+  Note.update({
+    where: note.inode,
+    data: {
+      title: header.title,
+      category_id: getCategory(header.category).online_id
+    }
+  })
+  NoteTag.delete(record => record.note_inode === note.inode)
+  const tags = await Promise.all(header.tags.map(tagName => insertTag(tagName)))
+  for (const tag of tags) {
+    NoteTag.insert({
+      data: {
+        tag_id: tag,
+        note_inode: note.inode
+      }
+    })
   }
 }
 
