@@ -19,6 +19,7 @@ export default class Note extends Model {
       parent_inode: this.number().nullable(),
       parent_directory: this.belongsTo(Directory, 'parent_inode', 'inode'),
       file_name: this.string(),
+      is_exists: this.boolean(),
       guid: this.string().nullable(),
       title: this.string(),
       category_id: this.number(),

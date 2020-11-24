@@ -8,6 +8,7 @@
 
 <script>
 import store from './store'
+import * as watcher from './components/watcher'
 import Header from './views/Header'
 import UpdatedAt from './models/UpdatedAt'
 import AllData from './components/AllData'
@@ -78,8 +79,8 @@ export default {
     Category.insert({ data: categoryData })
     const deletedLocalNoteData = DeletedLocalNoteData
     DeletedLocalNote.insert({ data: deletedLocalNoteData })
-    const directoryData = DirectoryData
-    Directory.insert({ data: directoryData })
+    //const directoryData = DirectoryData
+    //Directory.insert({ data: directoryData })
     const mylistData = MylistData
     Mylist.insert({ data: mylistData })
     const noteData = NoteData
@@ -90,6 +91,8 @@ export default {
     NoteTag.insert({ data: noteTagData })
     const tagData = TagData
     Tag.insert({ data: tagData })
+
+    watcher.onAppReady()
   }
 }
 </script>
