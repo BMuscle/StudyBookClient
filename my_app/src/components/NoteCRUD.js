@@ -5,6 +5,10 @@ import mkdirp from 'mkdirp'
 export function notesJoin(parentDirectoryPath) {
   return path.join('notes', parentDirectoryPath)
 }
+export function getInode(path) {
+  const notesJoinedPath = notesJoin(path)
+  return fs_wrapper.getInode(notesJoinedPath)
+}
 export async function createNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(

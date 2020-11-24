@@ -43,6 +43,11 @@ export function nameWithoutDuplicate(parentDirectoryPath, fileName) {
   }
   return name + serial + ext
 }
+export function getInode(path) {
+  ThrowAnErrorIfAnyPathIsDangerous(path)
+  ThrowAnErrorIfThePathDoesNotExist(path)
+  return fs.statSync(path).ino
+}
 export async function createFile(parentDirectoryPath, fileName) {
   const createFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(createFilePath)
