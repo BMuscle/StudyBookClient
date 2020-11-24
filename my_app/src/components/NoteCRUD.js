@@ -21,6 +21,43 @@ export async function readNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readFile(notesJoinedParentPath, fileName)
 }
+export async function readNoteHeader(parentDirectoryPath, fileName) {
+  const note = await readNote(parentDirectoryPath, fileName)
+  var rows = note.split(/\r\n|\n/)
+  var title = ''
+  var category = ''
+  var tags = []
+
+  try {
+    for (const row of rows) {
+      if (row === '') {
+        break
+      }
+      const columns = row.split(/:/)
+      const dataCategory = columns[0].trim()
+      const data = columns[1].trim()
+
+      switch (dataCategory) {
+        case 'title':
+          title = data
+          break
+        case 'category':
+          category = data
+          break
+        case 'tags':
+          tags = data.split(/,/).map(tag => tag.trim())
+          break
+      }
+    }
+  } catch (error) {
+    console.log('ヘッダーを読み取れませんでした', parentDirectoryPath, fileName)
+  }
+  return {
+    title: title,
+    category: category,
+    tags: tags
+  }
+}
 export async function overwriteNote(parentDirectoryPath, fileName, content) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.overwriteFile(notesJoinedParentPath, fileName, content)
