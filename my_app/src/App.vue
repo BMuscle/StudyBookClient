@@ -7,19 +7,19 @@
       About
     </router-link>
     <router-view />
-    <DirectoryTreeView />
+    <filterdNotes />
   </div>
 </template>
 
 <script>
 import store from '@/store'
-import DirectoryTreeView from './components/DirectoryTreeView.vue'
+import filterdNotes from './components/filterdNotes.vue'
 
 // 全体で共通のコンポーネント
 export default {
   store,
   components: {
-    DirectoryTreeView
+    filterdNotes
   }
 }
 </script>
