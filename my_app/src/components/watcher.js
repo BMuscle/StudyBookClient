@@ -16,13 +16,17 @@ export async function onAppReady() {
 
   children
     .filter(child => child.isDirectory)
-    .forEach(directory => Directory.insert({ data: directory }))
+    .forEach(directory => {
+      directory.directory_name = directory.name
+      Directory.insert({ data: directory })
+    })
 
   await updateAllNotes({ is_exists: false })
   children
     .filter(child => !child.isDirectory)
     .forEach(note => {
       note.is_exists = true
+      note.file_name = note.name
       Note.insertOrUpdate({ data: note })
     })
   deleteDoNotExistNotesFromDataBase()
