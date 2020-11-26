@@ -56,7 +56,7 @@ export default {
     getAllRecursive(table) {
       return table
         .query()
-        .withAllRecursive()
+        .withAll()
         .get()
     }
   }

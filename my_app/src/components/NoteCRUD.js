@@ -5,6 +5,10 @@ import mkdirp from 'mkdirp'
 export function notesJoin(parentDirectoryPath) {
   return path.join('notes', parentDirectoryPath)
 }
+export function getInode(path) {
+  const notesJoinedPath = notesJoin(path)
+  return fs_wrapper.getInode(notesJoinedPath)
+}
 export async function createNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
@@ -16,6 +20,43 @@ export async function createNote(parentDirectoryPath, fileName) {
 export async function readNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readFile(notesJoinedParentPath, fileName)
+}
+export async function readNoteHeader(parentDirectoryPath, fileName) {
+  const note = await readNote(parentDirectoryPath, fileName)
+  var rows = note.split(/\r\n|\n/)
+  var title = ''
+  var category = ''
+  var tags = []
+
+  try {
+    for (const row of rows) {
+      if (row === '') {
+        break
+      }
+      const columns = row.split(/:/)
+      const dataCategory = columns[0].trim()
+      const data = columns[1].trim()
+
+      switch (dataCategory) {
+        case 'title':
+          title = data
+          break
+        case 'category':
+          category = data
+          break
+        case 'tags':
+          tags = data.split(/,/).map(tag => tag.trim())
+          break
+      }
+    }
+  } catch (error) {
+    console.log('ヘッダーを読み取れませんでした', parentDirectoryPath, fileName)
+  }
+  return {
+    title: title,
+    category: category,
+    tags: tags
+  }
 }
 export async function overwriteNote(parentDirectoryPath, fileName, content) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
@@ -69,6 +110,9 @@ export async function createDirectory(parentDirectoryPath, directoryName) {
 export async function readDirectory(parentDirectoryPath, directoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readDirectory(notesJoinedParentPath, directoryName)
+}
+export async function readNotesFolderRecursively() {
+  return await fs_wrapper.readdirRecursively('notes')
 }
 export async function moveDirectory(
   parentDirectoryPath,

@@ -22,3 +22,18 @@ export default class Tag extends Model {
     }
   }
 }
+
+export async function insertTag(name) {
+  const tag = Tag.query()
+    .where('name', name)
+    .first()
+  if (tag !== null) {
+    return tag.id
+  }
+  const entities = await Tag.insert({
+    data: {
+      name: name
+    }
+  })
+  return entities[0].id
+}

@@ -1,5 +1,9 @@
 export default [
   {
+    online_id: 0,
+    name: '未分類'
+  },
+  {
     online_id: 1,
     name: 'Category1'
   },
