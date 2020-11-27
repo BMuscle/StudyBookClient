@@ -12,9 +12,16 @@ export default class Mylist extends Model {
       id: this.uid(),
       title: this.string(),
       category_id: this.number(),
-      category: this.belongsTo(Category, 'category_id'),
+      category: this.belongsTo(Category, 'category_id', 'online_id'),
       description: this.string(),
-      notes: this.belongsToMany(Note, NoteMylist, 'mylist_id', 'note_inode')
+      notes: this.belongsToMany(
+        Note,
+        NoteMylist,
+        'mylist_id',
+        'note_inode',
+        'id',
+        'inode'
+      )
     }
   }
 }

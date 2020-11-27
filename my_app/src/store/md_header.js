@@ -50,19 +50,19 @@ export default {
             break
         }
       }
-      commit("set_title", title)
-      commit("set_category", category)
-      commit("set_tags", tags)
+      commit('set_title', title)
+      commit('set_category', category)
+      commit('set_tags', tags)
     },
     createTag({ commit, state }, name) {
-      const new_tags = state.tags.concat(name);
-      commit("set_tags", new_tags)
+      const new_tags = state.tags.concat(name)
+      commit('set_tags', new_tags)
     },
     editTag({ commit }, { tag, index }) {
-      commit("set_tag", { tag: tag, index: index })
+      commit('set_tag', { tag: tag, index: index })
     },
     deleteTag({ commit }, { tag, index }) {
-      commit("delete_tag", { tag: tag, index: index })
+      commit('delete_tag', { tag: tag, index: index })
     }
   }
 }

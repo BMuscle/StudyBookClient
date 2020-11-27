@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="note in notes" :key="note.id">
-      <div @click="this.$emit('noteClick', note.id)">
+    <div v-for="note in notes" :key="note.inode">
+      <div @click="this.$emit('noteClick', note.inode)">
         {{ note.title }}
       </div>
     </div>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Mylist from '@/models/Mylist'
+import Mylist from '../models/Mylist'
 
 export default {
   components: {},
@@ -23,9 +23,8 @@ export default {
     notes() {
       const mylist = Mylist.query()
         .with('notes')
-        .where('id', this.mylistId)
-        .get()[0]
-      const notes = mylist['notes']
+        .find(this.mylistId)
+      const notes = mylist.notes
       return notes
     }
   },

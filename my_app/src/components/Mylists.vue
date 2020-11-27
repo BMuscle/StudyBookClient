@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Mylist from '@/models/Mylist'
+import Mylist from '../models/Mylist'
 
 export default {
   components: {},
@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     mylists() {
-      return Mylist.query().get()
+      return Mylist.all()
     }
   },
   methods: {}

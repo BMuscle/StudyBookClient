@@ -11,3 +11,11 @@ export default class Category extends Model {
     }
   }
 }
+
+export function getCategory(name) {
+  return name
+    ? Category.query()
+        .where('name', name)
+        .first()
+    : Category.query().find(0) //カテゴリー=未分類の online_id が決まってないので、暫定で 0
+}
