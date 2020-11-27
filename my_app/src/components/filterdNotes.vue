@@ -9,7 +9,9 @@
           <div v-for="tag in note.tags" :key="tag.id">
             {{ tag.name }}
           </div>
-          {{ note.category.name }}
+          <div v-if="note.category">
+            {{ note.category.name }}
+          </div>
         </li>
       </div>
     </ul>
