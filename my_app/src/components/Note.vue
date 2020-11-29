@@ -3,8 +3,10 @@
     ここに置く
     <DisplayMd :md-data="textData" />
     <Tags :name="testTag" />
-
     <filterdNotes />
+    <div v-for="note in notes" :key="note.inode">
+      {{ note.parent_directory_path_from_root }}
+    </div>
   </div>
 </template>
 
@@ -36,10 +38,17 @@ export default {
   computed: {
     ...mapState('notes', {
       filteredNotes: state => state.filteredNotes
-    })
+    }),
+    notes() {
+      return Note.query()
+        .whereIdIn(this.filteredNotes)
+        .with('category')
+        .with('tags')
+        .get()
+    }
   },
   created: function() {
-    console.log(notes.parent_directory_path_from_root)
+    console.log(notes.inode)
   },
   methods: {}
 }
