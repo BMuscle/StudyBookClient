@@ -2,16 +2,18 @@
   <div class="main">
     <NoteLeftBar />
     <div>
-      内部要素はここへ
+      <Note />
     </div>
   </div>
 </template>
 
 <script>
 import NoteLeftBar from './NoteLeftBar'
+import Note from '../components/Note.vue'
 export default {
   components: {
-    NoteLeftBar
+    NoteLeftBar,
+    Note
   }
 }
 </script>

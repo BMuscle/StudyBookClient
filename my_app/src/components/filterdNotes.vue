@@ -6,6 +6,7 @@
       <div v-for="note in notes" :key="note.inode">
         <li>
           {{ note.title }}
+          ここから {{ note.parent_directory_path_from_root }} ここまで
           <div v-for="tag in note.tags" :key="tag.id">
             {{ tag.name }}
           </div>
@@ -19,10 +20,11 @@
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'
-import Note from '@/models/Note'
+
 import Tag from '@/models/Tag'
 import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
+import Note from '@/models/Note'
 //import
 export default {
   computed: {
