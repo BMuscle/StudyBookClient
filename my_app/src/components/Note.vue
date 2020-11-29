@@ -46,9 +46,7 @@ export default {
         .get()
     }
   },
-  created: function() {
-    console.log(this.notes)
-  },
+  created: function() {},
   methods: {}
 }
 </script>
