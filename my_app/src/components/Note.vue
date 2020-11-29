@@ -17,7 +17,6 @@ import Note from '@/models/Note'
 import filterdNotes from './filterdNotes.vue'
 
 import Tags from './Tags.vue'
-import notes from '../store/notes'
 export default {
   components: {
     DisplayMd,
@@ -48,7 +47,7 @@ export default {
     }
   },
   created: function() {
-    console.log(notes.inode)
+    console.log(this.notes)
   },
   methods: {}
 }
