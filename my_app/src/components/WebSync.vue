@@ -153,7 +153,7 @@ export default {
           local_id: note.inode,
           guid: note.guid,
           title: note.title,
-          text: readNoteBody(
+          body: readNoteBody(
             note.parent_directory.path_from_root,
             note.file_name
           ),
@@ -245,7 +245,7 @@ export default {
           note.title,
           note.category_id,
           note.tags,
-          note.text
+          note.body
         ).then(noteFileName => {
           // ディレクトリ、ノートは監視で追加されるので、guidと、inodeをセットする
           let note_inode = fs.statSync(
