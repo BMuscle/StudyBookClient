@@ -9,6 +9,7 @@
 
 <script>
 import NoteLeftBar from './NoteLeftBar'
+import api from '../components/api'
 export default {
   components: {
     NoteLeftBar

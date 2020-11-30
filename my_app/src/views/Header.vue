@@ -1,5 +1,6 @@
 <template>
   <nav class="navbar navbar-expand navbar-dark">
+    <web-sync v-if="user"></web-sync>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <router-link
@@ -37,7 +38,11 @@
 
 <script>
 import User from '../models/User'
+import WebSync from '../components/WebSync.vue'
 export default {
+  components: {
+    WebSync
+  },
   computed: {
     user() {
       return User.all()[0]
