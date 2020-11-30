@@ -1,10 +1,10 @@
 import { Model } from '@vuex-orm/core'
 import Category from './Category'
-import Note from './Note'
-import NoteMylist from './NoteMylist'
+import MyListNote from './MyListNote'
+import MyListNoteIndex from './MyListNoteIndex'
 
-export default class Mylist extends Model {
-  static entity = 'mylists'
+export default class MyList extends Model {
+  static entity = 'my_lists'
   static primaryKey = 'id'
 
   static fields() {
@@ -15,12 +15,12 @@ export default class Mylist extends Model {
       category: this.belongsTo(Category, 'category_id', 'online_id'),
       description: this.string(),
       notes: this.belongsToMany(
-        Note,
-        NoteMylist,
-        'mylist_id',
-        'note_inode',
+        MyListNote,
+        MyListNoteIndex,
+        'my_list_id',
+        'my_list_note_id',
         'id',
-        'inode'
+        'id'
       )
     }
   }
