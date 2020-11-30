@@ -24,6 +24,7 @@ cd StudyBookClient
 以下bashコマンド
 ```bash
 cd my_app
+yarn install
 yarn electron:serve
 ```
 
