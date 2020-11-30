@@ -6,7 +6,6 @@
       <div v-for="note in notes" :key="note.inode">
         <li>
           {{ note.title }}
-          ここから {{ note.parent_directory_path_from_root }} ここまで
           <div v-for="tag in note.tags" :key="tag.id">
             {{ tag.name }}
           </div>

@@ -2,7 +2,8 @@ export default {
   namespaced: true,
   state: {
     descendantNotes: [],
-    filteredNotes: []
+    filteredNotes: [],
+    focusNote: 1
   },
   mutations: {
     setDescendantNotes(state, inodes) {
