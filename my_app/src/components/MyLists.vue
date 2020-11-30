@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-for="my_list in my_lists" :key="my_list.id">
-      <div @click="this.$emit('my_listClick', my_list.id)">
-        {{ my_list.title }}
+    <div v-for="myList in myLists" :key="myList.id">
+      <div @click="this.$emit('myListClick', myList.id)">
+        {{ myList.title }}
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@ export default {
     return {}
   },
   computed: {
-    my_lists() {
+    myLists() {
       return MyList.all()
     }
   },

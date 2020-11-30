@@ -1,9 +1,9 @@
 <template>
   <div>
-    <MyLists @my_listClick="onMyListClick" />
+    <MyLists @myListClick="onMyListClick" />
     <MyList
       v-if="choiced"
-      :my_list-id="choicedMyListId"
+      :myListId="choicedMyListId"
       @noteClick="onNoteClick"
     />
   </div>
