@@ -6,8 +6,8 @@ import Directory from './Directory'
 import Category, { getCategory } from './Category'
 import Tag, { insertTag } from './Tag'
 import NoteTag from './NoteTag'
-import Mylist from './Mylist'
-import NoteMylist from './NoteMylist'
+import MyList from './MyList'
+import MyListNoteIndex from './MyListNoteIndex'
 import DeletedLocalNote from './DeletedLocalNote'
 
 export default class Note extends Model {
@@ -25,11 +25,11 @@ export default class Note extends Model {
       title: this.string(),
       category_id: this.number(),
       category: this.belongsTo(Category, 'category_id', 'online_id'),
-      mylists: this.belongsToMany(
-        Mylist,
-        NoteMylist,
+      my_lists: this.belongsToMany(
+        MyList,
+        MyListNoteIndex,
         'note_inode',
-        'mylist_id',
+        'my_list_id',
         'inode',
         'id'
       ),
@@ -100,7 +100,7 @@ export async function updateAllNotes(data) {
 
 export function deleteNotefromDataBase(note) {
   NoteTag.delete(record => record.note_inode === note.inode)
-  NoteMylist.delete(record => record.note_inode === note.inode)
+  MyListNoteIndex.delete(record => record.note_inode === note.inode)
   if (note.guid !== null) {
     DeletedLocalNote.insert({ data: { guid: note.guid } })
   }
