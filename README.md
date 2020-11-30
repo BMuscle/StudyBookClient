@@ -28,3 +28,6 @@ yarn install
 yarn electron:serve
 ```
 
+# ファイル同期について
+本番環境へ行う場合はそのまま。
+開発環境（自分のPC）などで行う場合は、`my_app/src/components/api.js`の、先頭のbaseURLをWebアプリへ変更する。
