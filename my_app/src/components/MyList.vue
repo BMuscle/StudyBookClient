@@ -14,7 +14,7 @@ import MyList from '../models/MyList'
 export default {
   components: {},
   props: {
-    my_listId: String
+    myListId: String
   },
   data: function() {
     return {}
@@ -23,8 +23,8 @@ export default {
     notes() {
       const my_list = MyList.query()
         .with('notes')
-        .find(this.my_listId)
-      const notes = my_list.notes
+        .find(this.myListId)
+      const notes = myList.notes
       return notes
     }
   },
