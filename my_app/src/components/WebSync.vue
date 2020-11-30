@@ -19,6 +19,10 @@ import api from './api'
 import axios from 'axios'
 import User from '../models/User'
 import Note from '../models/Note'
+import MyList from '../models/MyList'
+import MyListNote from '../models/MyListNote'
+import MyListNoteTag from '../models/MyListNoteTag'
+import MyListNoteIndex from '../models/MyListNoteIndex'
 import Tag from '../models/Tag'
 import NoteTag from '../models/NoteTag'
 import Category from '../models/Category'
@@ -94,7 +98,7 @@ export default {
       this.tagsSync()
       this.noteDownloads()
       this.noteDeletes()
-      // マイリストデータの取得
+      this.myListSync()
     },
     categoriesSync() {
       const categoryAt = new Date().getTime()
@@ -274,6 +278,61 @@ export default {
           }
         })
     },
+    myListSync() {
+      const downloadAt = new Date().getTime()
+      let deleteNotes = this.deletedLocalNotes.map(note => {
+        return { guid: note.guid }
+      })
+      // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
+      api
+        .get(
+          `/api/v1/my_lists?user_id=${this.getAuthParams.user_id}&token=${
+            this.getAuthParams.token
+          }`
+        )
+        .then(response => {
+          // 一旦削除後に追加
+          MyListNoteIndex.deleteAll()
+          MyListNoteTag.deleteAll()
+          MyList.deleteAll()
+          MyListNote.deleteAll()
+          for (let my_list of response.data) {
+            MyList.insertOrUpdate({
+              data: {
+                id: my_list.id,
+                title: my_list.title,
+                category_id: my_list.category_id,
+                description: my_list.description,
+              }
+            })
+            for (let note of my_list.notes) {
+              MyListNote.insertOrUpdate({
+                data: {
+                  id: note.id,
+                  title: note.title,
+                  body: note.body,
+                  nickname: note.nickname,
+                  category_id: note.category_id
+                }
+              })
+              MyListNoteIndex.insertOrUpdate({
+                data: {
+                  my_list_id: my_list.id,
+                  my_list_note_id: note.id
+                }
+              })
+              for (let tag of note.tags) {
+                MyListNoteTag.insertOrUpdate({
+                  data: {
+                    tag_id: tag.id,
+                    my_list_note_id: note.id
+                  }
+                })
+              }
+            }
+          }
+        })
+    },
     updateTagsUpdatedAt(updated_at) {
       if (this.noteUploadsUpdatedAt <= updated_at) {
         this.updateUpdatedAt('tags', updated_at)
@@ -303,6 +362,7 @@ export default {
       })
     },
     init() {
+      // テストデータ初期化用
       UpdatedAt.insert({ data: { label: 'my_lists', updated_at: 0 } })
       UpdatedAt.insert({ data: { label: 'tags', updated_at: 0 } })
       UpdatedAt.insert({ data: { label: 'categories', updated_at: 0 } })
