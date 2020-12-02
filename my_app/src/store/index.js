@@ -3,6 +3,7 @@ import VuexORM from '@vuex-orm/core'
 import createPersistedState from 'vuex-persistedstate'
 import md_header from './md_header'
 import notes from './notes'
+import { category_module } from '../models/Category'
 import database from '../database'
 
 export default createStore({
@@ -16,6 +17,7 @@ export default createStore({
     //     'entities.my_list_note_tag',
     //     'entities.my_list_note_index',
     //     'entities.categories',
+    //     'category_module',
     //     'entities.tags',
     //     'entities.note_tag',
     //     'entities.deleted_local_notes',
@@ -29,6 +31,7 @@ export default createStore({
   actions: {},
   modules: {
     md_header,
-    notes
+    notes,
+    category_module
   }
 })
