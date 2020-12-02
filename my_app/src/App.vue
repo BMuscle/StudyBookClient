@@ -78,6 +78,14 @@ export default {
     ) {
       UpdatedAt.insert({ data: { label: 'note_uploads', updated_at: 0 } })
     }
+    if (!Category.find(this.defaultCategoryId)) {
+      Category.insert({
+        data: {
+          online_id: this.defaultCategoryId,
+          name: '未定義'
+        }
+      })
+    }
 
     const categoryData = CategoryData
     Category.insert({ data: categoryData })
