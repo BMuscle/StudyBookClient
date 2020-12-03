@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div v-for="mylist in mylists" :key="mylist.id">
-      <div @click="this.$emit('mylistClick', mylist.id)">
-        {{ mylist.title }}
+    <div v-for="myList in myLists" :key="myList.id">
+      <div @click="this.$emit('myListClick', myList.id)">
+        {{ myList.title }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Mylist from '../models/Mylist'
+import MyList from '../models/MyList'
 
 export default {
   components: {},
@@ -17,8 +17,8 @@ export default {
     return {}
   },
   computed: {
-    mylists() {
-      return Mylist.all()
+    myLists() {
+      return MyList.all()
     }
   },
   methods: {}

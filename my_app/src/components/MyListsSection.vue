@@ -1,33 +1,33 @@
 <template>
   <div>
-    <Mylists @mylistClick="onMylistClick" />
-    <Mylist
+    <MyLists @myListClick="onMyListClick" />
+    <MyList
       v-if="choiced"
-      :mylist-id="choicedMylistId"
+      :myListId="choicedMyListId"
       @noteClick="onNoteClick"
     />
   </div>
 </template>
 
 <script>
-import Mylist from './Mylist'
-import Mylists from './Mylists'
+import MyList from './MyList'
+import MyLists from './MyLists'
 
 export default {
   components: {
-    Mylist,
-    Mylists
+    MyList,
+    MyLists
   },
   data: function() {
     return {
-      choicedMylistId: NaN,
+      choicedMyListId: NaN,
       choiced: false
     }
   },
   computed: {},
   methods: {
-    onMylistClick(event) {
-      this.choicedMylistId = event
+    onMyListClick(event) {
+      this.choicedMyListId = event
       this.choiced = true
     },
     onNoteClick(event) {

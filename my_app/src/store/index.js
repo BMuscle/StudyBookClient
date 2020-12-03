@@ -11,8 +11,10 @@ export default createStore({
     // createPersistedState({
     //   paths: [
     //     'entities.notes',
-    //     'entities.mylists',
-    //     'entities.note_mylist',
+    //     'entities.my_lists',
+    //     'entities.my_list_note',
+    //     'entities.my_list_note_tag',
+    //     'entities.my_list_note_index',
     //     'entities.categories',
     //     'entities.tags',
     //     'entities.note_tag',

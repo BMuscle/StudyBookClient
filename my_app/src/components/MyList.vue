@@ -9,22 +9,22 @@
 </template>
 
 <script>
-import Mylist from '../models/Mylist'
+import MyList from '../models/MyList'
 
 export default {
   components: {},
   props: {
-    mylistId: String
+    myListId: String
   },
   data: function() {
     return {}
   },
   computed: {
     notes() {
-      const mylist = Mylist.query()
+      const my_list = MyList.query()
         .with('notes')
-        .find(this.mylistId)
-      const notes = mylist.notes
+        .find(this.myListId)
+      const notes = myList.notes
       return notes
     }
   },

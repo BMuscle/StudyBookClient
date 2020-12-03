@@ -18,18 +18,22 @@ import NoteView from './components/Note.vue'
 import Category from './models/Category'
 import DeletedLocalNote from './models/DeletedLocalNote'
 import Directory from './models/Directory'
-import Mylist from './models/Mylist'
+import MyList from './models/MyList'
 import Note from './models/Note'
-import NoteMylist from './models/NoteMylist'
+import MyListNote from './models/MyListNote'
+import MyListNoteTag from './models/MyListNoteTag'
+import MyListNoteIndex from './models/MyListNoteIndex'
 import NoteTag from './models/NoteTag'
 import Tag from './models/Tag'
 
 import CategoryData from './initialData/CategoryData'
 import DeletedLocalNoteData from './initialData/DeletedLocalNoteData'
 import DirectoryData from './initialData/DirectoryData'
-import MylistData from './initialData/MylistData'
+import MyListData from './initialData/MyListData'
+import MyListNoteData from './initialData/MyListNoteData'
+import MyListNoteTagData from './initialData/MyListNoteTagData'
+import MyListNoteIndexData from './initialData/MyListNoteIndexData'
 import NoteData from './initialData/NoteData'
-import NoteMylistData from './initialData/NoteMylistData'
 import NoteTagData from './initialData/NoteTagData'
 import TagData from './initialData/TagData'
 
@@ -84,12 +88,13 @@ export default {
     DeletedLocalNote.insert({ data: deletedLocalNoteData })
     //const directoryData = DirectoryData
     //Directory.insert({ data: directoryData })
-    const mylistData = MylistData
-    Mylist.insert({ data: mylistData })
+    const my_listData = MyListData
+    MyList.insert({ data: my_listData })
     const noteData = NoteData
     Note.insert({ data: noteData })
-    const noteMylistData = NoteMylistData
-    NoteMylist.insert({ data: noteMylistData })
+    MyListNoteIndex.insert({ data: MyListNoteIndexData })
+    MyListNoteTag.insert({ data: MyListNoteTagData })
+    MyListNote.insert({ data: MyListNoteData })
     const noteTagData = NoteTagData
     NoteTag.insert({ data: noteTagData })
     const tagData = TagData

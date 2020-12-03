@@ -19,6 +19,10 @@ import api from './api'
 import axios from 'axios'
 import User from '../models/User'
 import Note from '../models/Note'
+import MyList from '../models/MyList'
+import MyListNote from '../models/MyListNote'
+import MyListNoteTag from '../models/MyListNoteTag'
+import MyListNoteIndex from '../models/MyListNoteIndex'
 import Tag from '../models/Tag'
 import NoteTag from '../models/NoteTag'
 import Category from '../models/Category'
@@ -38,7 +42,7 @@ import fs from 'fs'
 export default {
   computed: {
     getAuthParams() {
-      return { id: this.user.user_id, token: this.user.token }
+      return { user_id: this.user.user_id, token: this.user.token }
     },
     user() {
       return User.all()[0]
@@ -94,13 +98,13 @@ export default {
       this.tagsSync()
       this.noteDownloads()
       this.noteDeletes()
-      // マイリストデータの取得
+      this.myListSync()
     },
     categoriesSync() {
       const categoryAt = new Date().getTime()
       api
         .get(
-          `/api/v1/categories?id=${this.getAuthParams.id}&token=${
+          `/api/v1/categories?user_id=${this.getAuthParams.user_id}&token=${
             this.getAuthParams.token
           }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
         )
@@ -120,7 +124,7 @@ export default {
       const tagAt = new Date().getTime()
       api
         .get(
-          `/api/v1/tags?id=${this.getAuthParams.id}&token=${
+          `/api/v1/tags?user_id=${this.getAuthParams.user_id}&token=${
             this.getAuthParams.token
           }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
         )
@@ -149,7 +153,7 @@ export default {
           local_id: note.inode,
           guid: note.guid,
           title: note.title,
-          text: readNoteBody(
+          body: readNoteBody(
             note.parent_directory.path_from_root,
             note.file_name
           ),
@@ -185,9 +189,11 @@ export default {
       const downloadAt = new Date().getTime()
       api
         .get(
-          `/api/v1/notes/downloads?id=${this.getAuthParams.id}&token=${
-            this.getAuthParams.token
-          }&updated_at=${new Date(this.noteDownloadsUpdatedAt).toUTCString()}`
+          `/api/v1/notes/downloads?user_id=${
+            this.getAuthParams.user_id
+          }&token=${this.getAuthParams.token}&updated_at=${new Date(
+            this.noteDownloadsUpdatedAt
+          ).toUTCString()}`
         )
         .then(response => {
           for (let note of response.data.notes) {
@@ -219,12 +225,12 @@ export default {
           note.tags,
           note.body
         )
-        if (local_note.parent_directory.path_from_root != note.file_path) {
+        if (local_note.parent_directory.path_from_root != note.directory_path) {
           // フォルダ移動
           moveDownloadNote(
             local_note.parent_directory.path_from_root,
             note.file_name,
-            note.file_path
+            note.directory_path
           )
         }
         Note.update({
@@ -235,15 +241,15 @@ export default {
         // 存在しない
         // ノートファイル & ディレクトリ の追加
         createDownloadNote(
-          note.file_path,
+          note.directory_path,
           note.title,
           note.category_id,
           note.tags,
-          note.text
+          note.body
         ).then(noteFileName => {
           // ディレクトリ、ノートは監視で追加されるので、guidと、inodeをセットする
           let note_inode = fs.statSync(
-            `${notesJoin(note.file_path)}/${noteFileName}`
+            `${notesJoin(note.directory_path)}/${noteFileName}`
           ).ino
           Note.insertOrUpdate({
             data: {
@@ -269,6 +275,61 @@ export default {
                 guid: note.guid
               }
             })
+          }
+        })
+    },
+    myListSync() {
+      const downloadAt = new Date().getTime()
+      let deleteNotes = this.deletedLocalNotes.map(note => {
+        return { guid: note.guid }
+      })
+      // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
+      api
+        .get(
+          `/api/v1/my_lists?user_id=${this.getAuthParams.user_id}&token=${
+            this.getAuthParams.token
+          }`
+        )
+        .then(response => {
+          // 一旦削除後に追加
+          MyListNoteIndex.deleteAll()
+          MyListNoteTag.deleteAll()
+          MyList.deleteAll()
+          MyListNote.deleteAll()
+          for (let my_list of response.data) {
+            MyList.insertOrUpdate({
+              data: {
+                id: my_list.id,
+                title: my_list.title,
+                category_id: my_list.category_id,
+                description: my_list.description,
+              }
+            })
+            for (let note of my_list.notes) {
+              MyListNote.insertOrUpdate({
+                data: {
+                  id: note.id,
+                  title: note.title,
+                  body: note.body,
+                  nickname: note.nickname,
+                  category_id: note.category_id
+                }
+              })
+              MyListNoteIndex.insertOrUpdate({
+                data: {
+                  my_list_id: my_list.id,
+                  my_list_note_id: note.id
+                }
+              })
+              for (let tag of note.tags) {
+                MyListNoteTag.insertOrUpdate({
+                  data: {
+                    tag_id: tag.id,
+                    my_list_note_id: note.id
+                  }
+                })
+              }
+            }
           }
         })
     },
@@ -301,6 +362,7 @@ export default {
       })
     },
     init() {
+      // テストデータ初期化用
       UpdatedAt.insert({ data: { label: 'my_lists', updated_at: 0 } })
       UpdatedAt.insert({ data: { label: 'tags', updated_at: 0 } })
       UpdatedAt.insert({ data: { label: 'categories', updated_at: 0 } })
