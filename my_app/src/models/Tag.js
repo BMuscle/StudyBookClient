@@ -35,5 +35,5 @@ export async function insertTag(name) {
       name: name
     }
   })
-  return entities[0].id
+  return entities.tags[0].id
 }

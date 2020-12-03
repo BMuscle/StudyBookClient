@@ -2,6 +2,7 @@
   <div class="left-bar">
     <div>
       要素はここへ
+      <SearchNotes />
     </div>
     <div
       id="left_bar_bar"
@@ -15,7 +16,11 @@
 </template>
 
 <script>
+import SearchNotes from '../components/SearchNotes'
 export default {
+  components: {
+    SearchNotes
+  },
   data: function() {
     return {
       isWidthChange: false
