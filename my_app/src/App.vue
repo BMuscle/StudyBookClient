@@ -3,6 +3,7 @@
     <Header />
     <router-view />
     <AllData />
+    <NoteView />
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import * as watcher from './components/watcher'
 import Header from './views/Header'
 import UpdatedAt from './models/UpdatedAt'
 import AllData from './components/AllData'
+import NoteView from './components/Note.vue'
 
 import Category from './models/Category'
 import DeletedLocalNote from './models/DeletedLocalNote'
@@ -40,7 +42,8 @@ export default {
   store,
   components: {
     Header,
-    AllData
+    AllData,
+    NoteView
   },
   created() {
     if (

@@ -19,10 +19,11 @@
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'
-import Note from '@/models/Note'
+
 import Tag from '@/models/Tag'
 import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
+import Note from '@/models/Note'
 //import
 export default {
   computed: {
@@ -83,6 +84,7 @@ export default {
         Note.insert({
           data: {
             inode: 1,
+            parent_inode: 281474978815900,
             title: 'aaa',
             category_id: 1
           }
@@ -90,30 +92,35 @@ export default {
         Note.insert({
           data: {
             inode: 2,
+            parent_inode: 281474978815900,
             title: 'bbb'
           }
         }),
         Note.insert({
           data: {
             inode: 3,
+            parent_inode: 281474978815900,
             title: 'ccc'
           }
         }),
         Note.insert({
           data: {
             inode: 4,
+            parent_inode: 281474978815900,
             title: 'ddd'
           }
         }),
         Note.insert({
           data: {
             inode: 5,
+            parent_inode: 281474978815900,
             title: 'eee'
           }
         }),
         Note.insert({
           data: {
             inode: 6,
+            parent_inode: 281474978815900,
             title: 'fff'
           }
         }),
