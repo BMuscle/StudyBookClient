@@ -286,9 +286,7 @@ export default {
       // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
       api
         .get(
-          `/api/v1/my_lists?user_id=${this.getAuthParams.user_id}&token=${
-            this.getAuthParams.token
-          }`
+          `/api/v1/my_lists?user_id=${this.getAuthParams.user_id}&token=${this.getAuthParams.token}`
         )
         .then(response => {
           // 一旦削除後に追加
@@ -302,7 +300,7 @@ export default {
                 id: my_list.id,
                 title: my_list.title,
                 category_id: my_list.category_id,
-                description: my_list.description,
+                description: my_list.description
               }
             })
             for (let note of my_list.notes) {

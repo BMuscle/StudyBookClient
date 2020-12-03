@@ -3,7 +3,7 @@
     <MyLists @myListClick="onMyListClick" />
     <MyList
       v-if="choiced"
-      :myListId="choicedMyListId"
+      :my-list-id="choicedMyListId"
       @noteClick="onNoteClick"
     />
   </div>
