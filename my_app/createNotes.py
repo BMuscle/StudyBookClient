@@ -1,12 +1,14 @@
 import os
 import shutil
 import codecs
+from time import sleep
 
 if os.path.exists("notes"):
     shutil.rmtree("notes")
 
 os.makedirs(R"notes\1\2")
 os.mkdir(R"notes\3")
+sleep(2)
 
 files = []
 
