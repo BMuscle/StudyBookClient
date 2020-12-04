@@ -1,5 +1,7 @@
 import fs from 'fs'
 import path from 'path'
+import { spawn } from 'child_process'
+import sd from 'string_decoder'
 
 const DANGEROUS_PATH_ERROR_MESSAGE =
   'アプリケーションのあるフォルダの外を操作する可能性があります'
@@ -159,4 +161,23 @@ export async function deleteDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfAnyPathIsDangerous(deleteDirectoryPath)
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
   fs.rmdirSync(deleteDirectoryPath, { recursive: true })
+}
+export async function watchHandler(directoryPath, callback) {
+  const handle = spawn('.\\src\\components\\CodeHelper.exe', [directoryPath])
+  const stringDecoder = new sd.StringDecoder('utf8')
+
+  handle.stdout.on('data', data => {
+    const decodedData = stringDecoder.write(data)
+    const events = decodedData
+      .split(/\r\n|\n/)
+      .slice(0, -1)
+      .map(event => {
+        return {
+          type: event.substr(0, 1),
+          path: event.substr(2)
+        }
+      })
+    callback(events)
+  })
+  return handle
 }
