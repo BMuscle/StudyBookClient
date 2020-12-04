@@ -92,9 +92,8 @@ export default class Note extends Model {
       DeletedLocalNote.insert({ data: { guid: this.guid } })
     }
   }
-  deleteFromDataBase() {
-    this.deleteTags()
-    this.insertDeletedLocalNote()
-    this.$delete()
+  static beforeDelete(record) {
+    record.deleteTags()
+    record.insertDeletedLocalNote()
   }
 }

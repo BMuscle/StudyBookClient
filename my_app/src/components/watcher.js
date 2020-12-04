@@ -32,12 +32,9 @@ function deleteDoNotExistNotesFromDataBase() {
   Note.query()
     .where('is_exists', false)
     .get()
-    .forEach(note => note.deleteFromDataBase())
+    .forEach(note => note.$delete())
 }
 
 async function onDeleteNote(path) {
-  const note = await Note.getNote(path)
-  if (note !== null) {
-    note.deleteFromDataBase()
-  }
+  await Note.getNote(path)?.$delete()
 }
