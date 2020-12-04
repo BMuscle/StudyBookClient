@@ -174,10 +174,60 @@ export async function watchHandler(directoryPath, callback) {
       .map(event => {
         return {
           type: event.substr(0, 1),
-          path: event.substr(2)
+          parentDirectoryPath: path.dirname(event.substr(2)),
+          name: path.basename(event.substr(2))
         }
       })
     callback(events)
   })
   return handle
+}
+export async function watchHandler2(directoryPath, callbackObject) {
+  await watchHandler('notes', events => {
+    const types = events.map(event => event.type)
+    events.forEach(event => {
+      delete event.type
+    })
+    if (types[0] === '0') {
+      callbackObject.onChange(events[0])
+    } else if (types[0] === '1') {
+      callbackObject.onCreate(events[0])
+    } else if (events[1] === undefined || types[1] === '0') {
+      callbackObject.onDelete(events[0])
+    } else if (types[1] === '1') {
+      const parentDirectoryPath = events[0].parentDirectoryPath
+      const name = events[0].name
+      const destinationDirectoryPath = events[1].parentDirectoryPath
+      const newName = events[1].name
+      const flag =
+        (parentDirectoryPath !== destinationDirectoryPath) +
+        (name !== newName) * 2
+      switch (flag) {
+        case 1:
+          callbackObject.onMove({
+            parentDirectoryPath: parentDirectoryPath,
+            name: name,
+            destinationDirectoryPath: destinationDirectoryPath
+          })
+          break
+        case 2:
+          callbackObject.onRename({
+            parentDirectoryPath: parentDirectoryPath,
+            name: name,
+            newName: newName
+          })
+          break
+        case 3:
+          callbackObject.onMoveAndRename({
+            parentDirectoryPath: parentDirectoryPath,
+            name: name,
+            destinationDirectoryPath: destinationDirectoryPath,
+            newName: newName
+          })
+          break
+      }
+    } else {
+      throw new Error('watcher:' + events)
+    }
+  })
 }

@@ -5,6 +5,9 @@ import mkdirp from 'mkdirp'
 export function notesJoin(parentDirectoryPath) {
   return path.join('notes', parentDirectoryPath)
 }
+function notesRemove(path) {
+  return path.slice(6)
+}
 export function getInode(path) {
   const notesJoinedPath = notesJoin(path)
   return fs_wrapper.getInode(notesJoinedPath)
@@ -243,6 +246,41 @@ export async function readNoteBody(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   let content = await fs_wrapper.readFile(notesJoinedParentPath, fileName)
   return extractContentToBody(content)
+}
+export async function notesWatchHandler(callbackObject) {
+  const callbackObject2 = {
+    onCreate(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onCreate(target)
+    },
+    onChange(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onChange(target)
+    },
+    onMove(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      target.destinationDirectoryPath = notesRemove(
+        target.destinationDirectoryPath
+      )
+      callbackObject.onMove(target)
+    },
+    onRename(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onRename(target)
+    },
+    onMoveAndRename(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      target.destinationDirectoryPath = notesRemove(
+        target.destinationDirectoryPath
+      )
+      callbackObject.onMoveAndRename(target)
+    },
+    onDelete(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onDelete(target)
+    }
+  }
+  await fs_wrapper.watchHandler2('notes', callbackObject2)
 }
 
 function extractContentToBody(content) {

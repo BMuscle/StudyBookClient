@@ -26,6 +26,27 @@ export async function onAppReady() {
     })
   deleteDoNotExistNotesFromDataBase()
   Note.all().forEach(note => note.updateHead())
+
+  NoteCRUD.notesWatchHandler({
+    onCreate(target) {
+      console.log('Created:', target)
+    },
+    onChange(target) {
+      console.log('Changed:', target)
+    },
+    onMove(target) {
+      console.log('Moved:', target)
+    },
+    onRename(target) {
+      console.log('Renamed:', target)
+    },
+    onMoveAndRename(target) {
+      console.log('Moved and Renamed:', target)
+    },
+    onDelete(target) {
+      console.log('Deleted:', target)
+    }
+  })
 }
 
 function deleteDoNotExistNotesFromDataBase() {
