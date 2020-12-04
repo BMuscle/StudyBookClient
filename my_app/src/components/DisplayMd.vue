@@ -1,5 +1,5 @@
 <template>
-  <span v-html="mdHtml"></span>
+  <div v-html="mdHtml" class="body"/>
 </template>
 
 <script>
@@ -22,4 +22,12 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style lang="scss">
+.body {
+  h1,
+  h2 {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+}
+</style>

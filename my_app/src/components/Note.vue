@@ -1,5 +1,5 @@
 <template>
-  <div class="demo">
+  <div class="note">
     <div v-if="note != null">
       {{ note.parent_directory_path_from_root }}/{{ note.title }}
       <!-- <Tags :name="testTag" /> -->
@@ -15,8 +15,9 @@ import Note from '@/models/Note'
 import Tag from '@/models/Tag'
 import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
-
 import Tags from './Tag.vue'
+import { readNoteBody } from './NoteCRUD'
+
 export default {
   components: {
     DisplayMd,
@@ -24,7 +25,8 @@ export default {
   },
   data: function() {
     return {
-      testTag: 'aaaa' //仮tag
+      testTag: 'aaaa', //仮tag
+      noteBody: '',
     }
   },
   computed: {
@@ -32,19 +34,28 @@ export default {
       focusNote: state => state.focusNote
     }),
     note() {
-      return Note.query()
-        .whereId(this.focusNote)
+      let note = Note.query()
+        .whereId(50601103)
         .with('category')
         .with('tags')
         .with('parent_directory')
         .first()
+      this.setNote(note)
+      return note
     },
-    noteBody() {
-      //  後々、本文読み込みに変更
-      return this.note.parent_directory_path_from_root
+  },
+  methods: {
+    setNote(note) {
+      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response =>{
+        this.noteBody = response
+      })
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.note {
+  padding: 20px 30px;
+}
+</style>
