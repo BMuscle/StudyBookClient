@@ -3,6 +3,7 @@ import VuexORM from '@vuex-orm/core'
 import createPersistedState from 'vuex-persistedstate'
 import md_header from './md_header'
 import notes from './notes'
+import user from './user'
 import database from '../database'
 
 export default createStore({
@@ -10,6 +11,7 @@ export default createStore({
     VuexORM.install(database)
     // createPersistedState({
     //   paths: [
+    //     'user',
     //     'entities.notes',
     //     'entities.my_lists',
     //     'entities.my_list_note',
@@ -29,6 +31,7 @@ export default createStore({
   actions: {},
   modules: {
     md_header,
-    notes
+    notes,
+    user
   }
 })
