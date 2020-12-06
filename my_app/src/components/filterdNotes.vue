@@ -31,11 +31,15 @@ export default {
       filteredNotes: state => state.filteredNotes
     }),
     notes() {
-      return Note.query()
-        .whereIdIn(this.filteredNotes)
-        .with('category')
-        .with('tags')
-        .get()
+      return (
+        Note.query()
+          .whereIdIn(this.filteredNotes)
+          .with('category')
+          .with('tags')
+          //☆ここ追加した☆
+          .orderBy('inode', 'desc')
+          .get()
+      )
     }
   },
   created: function() {
