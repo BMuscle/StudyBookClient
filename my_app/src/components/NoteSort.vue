@@ -1,27 +1,17 @@
 <template>
-    <div @click="">
-          昇順
-    </div>
-    <div @click="">
-          降順
-    </div>
+  <select id="sortSelect" name="sortSelect">
+    <option value="1" selected>昇順</option>
+    <option value="2">降順</option>
+  </select>
+  <div>
+    aaaa
+  </div>
 </template>
 
 <script>
-import marked from 'marked'
-
 export default {
-  props: {
-    mdData: {
-      type: String,
-      require: true,
-      default: ''
-    }
-  },
-  computed: {
-    mdHtml: function() {
-      return marked(this.mdData)
-    }
+  created: function(){
+    console.log("hoge")
   }
 }
 </script>

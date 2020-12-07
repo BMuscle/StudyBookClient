@@ -4,6 +4,7 @@
       要素はここへ
       <SearchNotes />
       <filterdNotes />
+      <NoteSort />
     </div>
     <div
       id="left_bar_bar"
@@ -19,6 +20,7 @@
 <script>
 import SearchNotes from '../components/SearchNotes'
 import filterdNotes from '../components/filterdNotes.vue'
+import NoteSort from '../components/NoteSort.vue'
 export default {
   components: {
     SearchNotes,
