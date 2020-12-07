@@ -46,7 +46,8 @@ export default {
       this.printingName = this.name
       this.onFocus = false
     },
-    async enableFocus() {
+    async enableFocus(e) {
+      if(e.target.closest('.delete')) return;
       await (this.onFocus = true)
       this.$refs.textInput.focus()
     },
