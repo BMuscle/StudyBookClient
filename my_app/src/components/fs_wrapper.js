@@ -124,8 +124,7 @@ export async function readdirRecursively(directoryPath, inode = null) {
         isDirectory: dirent.isDirectory(),
         inode: status.ino,
         parent_inode: inode,
-        name: dirent.name,
-        updated_at: status.mtimeMs
+        name: dirent.name
       }
     })
   var add_children = []
@@ -169,22 +168,36 @@ export async function deleteDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
   fs.rmdirSync(deleteDirectoryPath, { recursive: true })
 }
-export async function watchHandler(directoryPath, callback) {
+export async function watchHandler(directoryPath, callbackObject) {
   const handle = spawn('.\\src\\components\\CodeHelper.exe', [directoryPath])
   const stringDecoder = new sd.StringDecoder('utf8')
 
   handle.stdout.on('data', data => {
     const decodedData = stringDecoder.write(data)
-    const events = decodedData
-      .split(/\r\n|\n/)
-      .slice(0, -1)
-      .map(event => {
-        return {
-          type: event.substr(0, 1),
-          path: event.substr(2)
-        }
-      })
-    callback(events)
+    const events = decodedData.split(/\r\n|\n/).slice(0, -1)
+    for (const event of events) {
+      const type = event.substr(0, 1)
+      const targetPath = event.substr(2)
+      const target = {
+        parentDirectoryPath: path.dirname(targetPath),
+        name: path.basename(targetPath)
+      }
+      switch (type) {
+        case '0':
+          target.stat = fs.statSync(targetPath)
+          if (target.stat.isFile()) {
+            callbackObject.onChange(target)
+          }
+          break
+        case '1':
+          target.stat = fs.statSync(targetPath)
+          callbackObject.onCreate(target)
+          break
+        case '2':
+          callbackObject.onDelete(target)
+          break
+      }
+    }
   })
   return handle
 }

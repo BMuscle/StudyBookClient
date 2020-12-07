@@ -121,8 +121,8 @@ export async function readDirectory(parentDirectoryPath, directoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readDirectory(notesJoinedParentPath, directoryName)
 }
-export async function readNotesFolderRecursively() {
-  return await fs_wrapper.readdirRecursively('notes')
+export async function readFolderRecursively(directoryPath, inode = null) {
+  return await fs_wrapper.readdirRecursively(notesJoin(directoryPath), inode)
 }
 export async function moveDirectory(
   parentDirectoryPath,
@@ -253,6 +253,23 @@ export async function readNoteBody(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   let content = await fs_wrapper.readFile(notesJoinedParentPath, fileName)
   return extractContentToBody(content)
+}
+export async function notesWatchHandler(callbackObject) {
+  const callbackObject2 = {
+    onChange(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onChange(target)
+    },
+    onCreate(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onCreate(target)
+    },
+    onDelete(target) {
+      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+      callbackObject.onDelete(target)
+    }
+  }
+  await fs_wrapper.watchHandler('notes', callbackObject2)
 }
 
 function extractContentToBody(content) {
