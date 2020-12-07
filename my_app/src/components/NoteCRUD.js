@@ -15,6 +15,10 @@ export function getInode(path) {
   const notesJoinedPath = notesJoin(path)
   return fs_wrapper.getInode(notesJoinedPath)
 }
+export function getMtimeMs(parentDirectoryPath, fileName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  return fs_wrapper.getMtimeMs(notesJoinedParentPath, fileName)
+}
 export async function createNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(

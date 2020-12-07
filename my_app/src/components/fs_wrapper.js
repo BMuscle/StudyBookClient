@@ -50,6 +50,13 @@ export function getInode(path) {
   ThrowAnErrorIfThePathDoesNotExist(path)
   return fs.statSync(path).ino
 }
+export function getMtimeMs(parentDirectoryPath, fileName) {
+  const filePath = path.join(parentDirectoryPath, fileName)
+  ThrowAnErrorIfAnyPathIsDangerous(filePath)
+  ThrowAnErrorIfThePathDoesNotExist(filePath)
+  return fs.statSync(filePath).mtimeMs
+}
+
 export async function createFile(parentDirectoryPath, fileName) {
   const createFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(createFilePath)
