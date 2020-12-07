@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div v-show="onFocus">
+  <div class="tag">
+    <div v-show="onFocus" class="tag-edit">
       <input
         ref="textInput"
         v-model="printingName"
@@ -9,9 +9,9 @@
         @blur="cancelTagEditing"
       />
     </div>
-    <div v-show="!onFocus" class="tag">
-      <label @click="enableFocus">{{ name }}</label>
-      <button type="button" @click="noticeDelete">削除</button>
+    <div @click="enableFocus" v-show="!onFocus" class="tag-view">
+      <label>{{ name }}</label>
+      <div class="delete" @click="noticeDelete">×</div>
     </div>
   </div>
 </template>
@@ -57,4 +57,45 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.tag {
+  padding: 1px 5px;
+  background-color: #ddd;
+  border-radius: 10px;
+  &:hover {
+    background-color: #cFcCcF;
+    cursor: pointer !important;
+  }
+  .tag-edit {
+    input {
+      border-radius: 10px;
+      border: none;
+      outline: 0;
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+  .tag-view {
+    label {
+      margin: 0;
+      &:hover {
+        background-color: #cFcCcF;
+        cursor: pointer !important;
+      }
+    }
+    .delete {
+      display: inline-block;
+      padding-left: 5px;
+      font-weight: 900;
+      &:hover {
+        cursor: pointer;
+        color: #fff;
+      }
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+</style>

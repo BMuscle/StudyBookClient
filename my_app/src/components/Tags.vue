@@ -1,7 +1,7 @@
 <template>
   <div class="tags">
-    <div v-if="tags.length > 0" >
-      <div  v-for="tag in tags" :key="tag">
+    <div v-if="tags.length > 0" class="note-tags">
+      <div  v-for="tag in tags" :key="tag" class= "tag">
         <Tag
           :name="tag.name"
           @tag-change="updateTag($event, tag.name)"
@@ -9,19 +9,16 @@
         />
       </div>
     </div>
-    <div>
-      <button v-show="!isEditing" @click="initCreatingTag">
-        タグ追加ボタン（仮）
-      </button>
-      <div v-show="isEditing">
-        <input
-          ref="createInput"
-          v-model="new_tag"
-          type="text"
-          @keypress.enter="createTag(), endCreatingTag()"
-          @blur="endCreatingTag"
-        />
-      </div>
+    <div v-show="!isEditing" @click="initCreatingTag" class="tag-add-button">
+    </div>
+    <div v-show="isEditing" class="tag-add-input">
+      <input
+        ref="createInput"
+        v-model="new_tag"
+        type="text"
+        @keypress.enter="createTag(), endCreatingTag()"
+        @blur="endCreatingTag"
+      />
     </div>
   </div>
 </template>
@@ -78,4 +75,41 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.tags {
+  .note-tags {
+    display: inline-block;
+    height: 26px;
+    top: 1px;
+    position: relative;
+    .tag {
+      display: inline-block;
+      margin-right: 5px;
+    }
+  }
+  .tag-add-button {
+    background-color: #ddd;
+    display: inline-block;
+    vertical-align: middle;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    padding: 1px;
+    &:hover {
+      cursor: pointer;
+      background-color: #99FFCC;
+    }
+  }
+  .tag-add-input {
+    background-color: #ddd;
+    padding: 0 5px;
+    border-radius: 10px;
+    input {
+      border-radius: 10px;
+      border: none;
+      outline: 0;
+    }
+    display: inline-block;
+  }
+}
+</style>

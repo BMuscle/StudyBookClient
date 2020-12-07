@@ -1,9 +1,15 @@
 <template>
   <div class="note">
     <div v-if="note != null">
-      {{ note.parent_directory_path_from_root }}/{{ note.title }}
-      <Tags :note="note" />
-      <DisplayMd :md-data="noteBody" />
+      <div class="header">
+        <div class="file-path">
+          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} > {{ note.title }}
+        </div>
+        <div class="tags">
+          <Tags :note="note" />
+        </div>
+      </div>
+      <DisplayMd class="body" :md-data="noteBody" />
     </div>
   </div>
 </template>
@@ -56,6 +62,23 @@ export default {
 
 <style scoped lang="scss">
 .note {
-  padding: 20px 30px;
+  .header {
+    background-color: #5EAAA8;
+    height: 32px;
+    font-size: 0.8em;
+    padding: 3px 10px;
+    .file-path {
+      vertical-align: middle;
+      display: inline-block;
+      color: #E5E5E5;
+      margin-right: 10px;
+    }
+    .tags {
+      display: inline-block;
+    }
+  }
+  .body {
+    padding: 10px 30px 20px 30px;
+  }
 }
 </style>
