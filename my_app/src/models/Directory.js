@@ -1,6 +1,7 @@
 import { Model } from '@vuex-orm/core'
 import path from 'path'
 import Note from './Note'
+import * as NoteCRUD from '../components/NoteCRUD'
 
 export default class Directory extends Model {
   static entity = 'directories'
@@ -15,6 +16,13 @@ export default class Directory extends Model {
       directory_name: this.string(),
       notes: this.hasMany(Note, 'parent_inode', 'inode')
     }
+  }
+  static getDirectory(parentDirectoryPath, directoryName) {
+    const parentInode = NoteCRUD.getInode(parentDirectoryPath)
+    return this.query()
+      .where('directory_name', directoryName)
+      .where('parent_inode', parentInode)
+      .first()
   }
   get path_from_root() {
     if (this.parent_inode === null) {
