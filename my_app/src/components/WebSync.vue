@@ -109,7 +109,14 @@ export default {
           }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
         )
         .then(response => {
-          for (var category of response.data) {
+          // デフォルトカテゴリー
+          // Category.insert({
+          //   data: {
+          //     online_id: response.data.default_category.id,
+          //     name: response.data.default_category.name
+          //   }
+          // })
+          for (let category of response.data.categories) {
             Category.insert({
               data: {
                 online_id: category.id,
