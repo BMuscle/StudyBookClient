@@ -82,7 +82,7 @@ export default {
       Category.insert({
         data: {
           online_id: this.defaultCategoryId,
-          name: '未定義'
+          name: '未分類'
         }
       })
     }
