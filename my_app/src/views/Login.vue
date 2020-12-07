@@ -32,7 +32,7 @@
 <script>
 import api from '../components/api'
 import axios from 'axios'
-import User from '../models/User'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'Modal',
@@ -44,11 +44,10 @@ export default {
     }
   },
   computed: {
-    user() {
-      return User.all()[0]
-    }
+    ...mapState('user', ['userId', 'token'])
   },
   methods: {
+    ...mapMutations('user', ['setUser', 'reset']),
     createToken() {
       this.isMessage = false
       api
@@ -57,10 +56,8 @@ export default {
           password: this.password
         })
         .then(response => {
-          User.deleteAll()
-          User.insert({
-            data: { user_id: response.data.user_id, token: response.data.token }
-          })
+          this.reset()
+          this.setUser({ userId: response.data.user_id, token: response.data.token })
           this.$router.push('/')
         })
         .catch(response => {
