@@ -45,7 +45,7 @@ export default class Note extends Model {
   }
   static async updateAllNotes(data) {
     this.update({
-      where: note => true,
+      where: () => true,
       data: data
     })
   }
