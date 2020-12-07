@@ -9,6 +9,9 @@ function notesRemove(path) {
   return path.slice(6)
 }
 export function getInode(path) {
+  if (path === '') {
+    return null
+  }
   const notesJoinedPath = notesJoin(path)
   return fs_wrapper.getInode(notesJoinedPath)
 }
