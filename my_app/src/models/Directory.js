@@ -26,4 +26,20 @@ export default class Directory extends Model {
       return path.join(parentDirectory.path_from_root, this.directory_name)
     }
   }
+  async deleteWithChildren() {
+    const directory = Directory.query()
+      .with('child_directories')
+      .with('notes')
+      .find(this.inode)
+    await Promise.all(
+      directory.child_directories.map(directory =>
+        directory.deleteWithChildren()
+      )
+    )
+    for (const note of directory.notes) {
+      note.is_exists = false
+      note.$save()
+    }
+    await this.$delete()
+  }
 }
