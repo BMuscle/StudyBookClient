@@ -2,7 +2,7 @@
   <div class="note">
     <div v-if="note != null">
       {{ note.parent_directory_path_from_root }}/{{ note.title }}
-      <!-- <Tags :name="testTag" /> -->
+      <Tags :note="note" />
       <DisplayMd :md-data="noteBody" />
     </div>
   </div>
@@ -15,7 +15,7 @@ import Note from '@/models/Note'
 import Tag from '@/models/Tag'
 import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
-import Tags from './Tag.vue'
+import Tags from './Tags.vue'
 import { readNoteBody } from './NoteCRUD'
 
 export default {

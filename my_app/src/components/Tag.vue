@@ -5,7 +5,7 @@
         ref="textInput"
         v-model="printingName"
         @focus="focus"
-        @keydown.enter="confirmTagEditing"
+        @keypress.enter="confirmTagEditing"
         @blur="cancelTagEditing"
       />
     </div>

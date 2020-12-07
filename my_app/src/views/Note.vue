@@ -23,7 +23,6 @@ export default {
   height: calc(100% - 32px);
 }
 .note {
-  position:relative;
   height: 100%;
 }
 </style>
