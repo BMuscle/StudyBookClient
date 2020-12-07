@@ -16,6 +16,7 @@
       </div>
     </ul>
   </div>
+  <NoteSort :is-select="1"></NoteSort>
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'
@@ -24,22 +25,26 @@ import Tag from '@/models/Tag'
 import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
 import Note from '@/models/Note'
+import NoteSort from '../components/NoteSort.vue'
 //import
 export default {
+  components: {
+    NoteSort
+  },
+  data() {
+    1
+  },
   computed: {
     ...mapState('notes', {
       filteredNotes: state => state.filteredNotes
     }),
     notes() {
-      return (
-        Note.query()
-          .whereIdIn(this.filteredNotes)
-          .with('category')
-          .with('tags')
-          //☆ここ追加した☆
-          .orderBy('inode', 'desc')
-          .get()
-      )
+      return Note.query()
+        .whereIdIn(this.filteredNotes)
+        .with('category')
+        .with('tags')
+        .orderBy('inode', 'desc')
+        .get()
     }
   },
   created: function() {

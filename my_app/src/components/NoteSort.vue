@@ -1,17 +1,15 @@
 <template>
-  <select id="sortSelect" name="sortSelect">
-    <option value="1" selected>昇順</option>
-    <option value="2">降順</option>
-  </select>
-  <div>
-    aaaa
-  </div>
+<select id="sortSelect" name="sortSelect">
+  <option value="1" selected @click="isSelect = 1">昇順</option>
+  <option value="2" @click="isSelect = 2">降順</option>
+</select>
 </template>
 
 <script>
 export default {
-  created: function(){
-    console.log("hoge")
+  name: 'NoteSort',
+  props: {
+    isSelect: Object
   }
 }
 </script>
