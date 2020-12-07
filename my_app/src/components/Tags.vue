@@ -1,46 +1,65 @@
 <template>
   <div class="tags">
-    <div v-for="(tag, index) in tags" :key="tag">
-      <Tag
-        :name="tag"
-        @tag-change="editTag({ tag: $event, index: index })"
-        @pass-delete-tag="deleteTag({ tag: $event, index: index })"
-      />
-    </div>
-    <div>
-      <button v-show="!isEditing" @click="initCreatingTag">
-        タグ追加ボタン（仮）
-      </button>
-      <div v-show="isEditing">
-        <input
-          ref="createInput"
-          v-model="new_tag"
-          type="text"
-          @keydown.enter="createTag(new_tag), endCreatingTag()"
-          @blur="endCreatingTag"
+    <div v-if="tags.length > 0" class="note-tags">
+      <div  v-for="tag in tags" :key="tag" class= "tag">
+        <Tag
+          :name="tag.name"
+          @tag-change="updateTag($event, tag.name)"
+          @pass-delete-tag="deleteTag(tag.name)"
         />
       </div>
+    </div>
+    <div v-show="!isEditing" @click="initCreatingTag" class="tag-add-button">
+    </div>
+    <div v-show="isEditing" class="tag-add-input">
+      <input
+        ref="createInput"
+        v-model="new_tag"
+        type="text"
+        @keypress.enter="createTag(), endCreatingTag()"
+        @blur="endCreatingTag"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import Tag from './Tag'
-import { mapState, mapActions } from 'vuex'
+import Note from '@/models/Note'
+import { setHeader } from './NoteCRUD'
+
 export default {
   components: {
     Tag
   },
+  props: {
+    note: Object
+  },
   computed: {
-    ...mapState('md_header', {
-      tags: state => state.tags
-    })
+    tags() {
+      return this.note.tags
+    }
   },
   methods: {
-    ...mapActions('md_header', ['update', 'createTag', 'editTag', 'deleteTag']),
     async initCreatingTag() {
       await (this.isEditing = true)
       this.$refs.createInput.focus()
+    },
+    createTag() {
+      let tagName = this.new_tag.trim()
+      if (tagName == '') return
+      let header = { title: this.note.title, category: this.note.category.name , tags: this.tags.map(tag => tag.name).concat(tagName)}
+      setHeader(header, this.note.parent_directory_path_from_root, this.note.file_name)
+    },
+    updateTag(printingName, tagName) {
+      printingName = printingName.trim()
+      if (printingName == '') return
+      let header = { title: this.note.title, category: this.note.category.name , tags: this.tags.map(tag => { return tag.name == tagName ? printingName : tag.name })}
+      setHeader(header, this.note.parent_directory_path_from_root, this.note.file_name)
+    },
+    deleteTag(tagName) {
+      let header = { title: this.note.title, category: this.note.category.name , tags: this.tags.map(tag => tag.name).filter(tag => tag !== tagName)}
+      setHeader(header, this.note.parent_directory_path_from_root, this.note.file_name)
     },
     endCreatingTag() {
       this.isEditing = false
@@ -52,8 +71,45 @@ export default {
       new_tag: '',
       isEditing: false
     }
-  }
+  },
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.tags {
+  .note-tags {
+    display: inline-block;
+    height: 26px;
+    top: 1px;
+    position: relative;
+    .tag {
+      display: inline-block;
+      margin-right: 5px;
+    }
+  }
+  .tag-add-button {
+    background-color: #ddd;
+    display: inline-block;
+    vertical-align: middle;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    padding: 1px;
+    &:hover {
+      cursor: pointer;
+      background-color: #99FFCC;
+    }
+  }
+  .tag-add-input {
+    background-color: #ddd;
+    padding: 0 5px;
+    border-radius: 10px;
+    input {
+      border-radius: 10px;
+      border: none;
+      outline: 0;
+    }
+    display: inline-block;
+  }
+}
+</style>

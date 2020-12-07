@@ -1,3 +1,4 @@
+import fs from 'fs'
 import * as fs_wrapper from './fs_wrapper'
 import path from 'path'
 import mkdirp from 'mkdirp'
@@ -45,7 +46,7 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
           category = data
           break
         case 'tags':
-          tags = data.split(/,/).map(tag => tag.trim())
+          tags = data.split(/,/).map(tag => tag.trim()).filter( tag => tag != "");
           break
       }
     }
@@ -251,4 +252,10 @@ function extractContentToBody(content) {
     return content.substr(index + 2)
   }
   return false
+}
+
+export async function setHeader(header = { title: "", category: "", tags: [] }, parentDirectoryPath, fileName) {
+  const body = await readNoteBody(parentDirectoryPath, fileName) ?? ""
+  const content = `title: ${header.title}\ncategory: ${header.category}\ntags: ${header.tags.join(', ')}\n\n${body}`
+  overwriteNote(parentDirectoryPath, fileName, content)
 }
