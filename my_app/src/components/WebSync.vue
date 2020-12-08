@@ -3,7 +3,7 @@
     <button @click="init()">初期化</button>
     <button @click="sync()">同期</button>
     <!-- <div>
-      <div>UserId確認 {{user}}</div>
+      <div>UserId確認 {{userId}}</div>
       <div>NoteUpload確認 {{noteUploadsUpdatedAt}}</div>
       <div>NoteDownload確認 {{noteDownloadsUpdatedAt}}</div>
       <div>アップデート対象ノート確認 {{updateTargetNotes}}</div>
