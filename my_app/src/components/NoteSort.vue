@@ -1,15 +1,22 @@
 <template>
-<select id="sortSelect" name="sortSelect">
-  <option value="1" selected @click="isSelect = 1">昇順</option>
-  <option value="2" @click="isSelect = 2">降順</option>
-</select>
+  <select id="sort" name="sortSelect" @change="Select()">
+    <option value="asc" selected>昇順</option>
+    <option value="desc">降順</option>
+  </select>
 </template>
 
 <script>
 export default {
   name: 'NoteSort',
-  props: {
-    isSelect: Object
+  data() {
+    return {
+      sort: 'asc'
+    }
+  },
+  methods: {
+    Select() {
+      this.$emit('filterdNotes', this.uSort)
+    }
   }
 }
 </script>

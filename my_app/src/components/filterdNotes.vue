@@ -15,8 +15,8 @@
         </li>
       </div>
     </ul>
+    <NoteSort @close="sort"></NoteSort>
   </div>
-  <NoteSort :is-select="1"></NoteSort>
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'
@@ -31,8 +31,10 @@ export default {
   components: {
     NoteSort
   },
-  data() {
-    1
+  data: function() {
+    return {
+      uSort: '' //デフォルト
+    }
   },
   computed: {
     ...mapState('notes', {
@@ -43,7 +45,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
-        .orderBy('inode', 'desc')
+        .orderBy('inode', this.uSort)
         .get()
     }
   },
@@ -53,6 +55,9 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
+    updateSort(uSort) {
+      this.sort = uSort
+    },
     initialize() {
       Category.insert({
         data: {
