@@ -33,7 +33,8 @@ export default {
   },
   data: function() {
     return {
-      Sort: '' //デフォルト
+      Sort: '', //デフォルト
+      Selected: ''
     }
   },
   computed: {
@@ -45,7 +46,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
-        .orderBy('inode', this.Sort)
+        .orderBy(this.Selected, this.Sort)
         .get()
     }
   },
