@@ -15,7 +15,7 @@
         </li>
       </div>
     </ul>
-    <NoteSort @close="sort"></NoteSort>
+    <NoteSort @filterd-notes="Sort = $event" />
   </div>
 </template>
 <script>
@@ -33,7 +33,7 @@ export default {
   },
   data: function() {
     return {
-      uSort: '' //デフォルト
+      Sort: '' //デフォルト
     }
   },
   computed: {
@@ -45,7 +45,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
-        .orderBy('inode', this.uSort)
+        .orderBy('inode', this.Sort)
         .get()
     }
   },
@@ -55,9 +55,6 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
-    updateSort(uSort) {
-      this.sort = uSort
-    },
     initialize() {
       Category.insert({
         data: {

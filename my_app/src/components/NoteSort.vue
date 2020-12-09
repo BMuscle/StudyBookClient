@@ -1,5 +1,5 @@
 <template>
-  <select id="sort" name="sortSelect" @change="Select()">
+  <select id="sort" name="sortSelect" @change="Select">
     <option value="asc" selected>昇順</option>
     <option value="desc">降順</option>
   </select>
@@ -10,12 +10,13 @@ export default {
   name: 'NoteSort',
   data() {
     return {
-      sort: 'asc'
+      Sort: 'asc'
     }
   },
   methods: {
-    Select() {
-      this.$emit('filterdNotes', this.uSort)
+    Select(event) {
+      this.Sort = event.target.value
+      this.$emit('filterd-notes', this.Sort)
     }
   }
 }
