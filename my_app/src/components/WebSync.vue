@@ -6,7 +6,6 @@
       <div>UserId確認 {{userId}}</div>
       <div>NoteUpload確認 {{noteUploadsUpdatedAt}}</div>
       <div>NoteDownload確認 {{noteDownloadsUpdatedAt}}</div>
-      <div>アップデート対象ノート確認 {{updateTargetNotes}}</div>
       <div>ディレクトリ確認 {{directory}}</div>
       <div>タグ確認 {{tags}}</div>
       <div>カテゴリ確認 {{categories}}</div>
@@ -84,6 +83,7 @@ export default {
   },
   methods: {
     ...mapMutations('user', ['setUser', 'reset']),
+    ...mapMutations('category_module', ['set_default_id']),
     createNote() {
       api
         .post('/api/v1/notes/uploads', {
@@ -92,8 +92,8 @@ export default {
         })
         .then(response => (this.note.guid = response.data[0].guid))
     },
-    sync() {
-      this.categoriesSync()
+    async sync() {
+      await this.categoriesSync()
       this.noteUploads()
       this.tagsSync()
       this.noteDownloads()
@@ -109,13 +109,6 @@ export default {
           }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
         )
         .then(response => {
-          // デフォルトカテゴリー
-          // Category.insert({
-          //   data: {
-          //     online_id: response.data.default_category.id,
-          //     name: response.data.default_category.name
-          //   }
-          // })
           for (let category of response.data.categories) {
             Category.insert({
               data: {
@@ -124,6 +117,8 @@ export default {
               }
             })
           }
+          console.log(response.data.default_category.id)
+          this.set_default_id(response.data.default_category.id)
           this.updateCategoriesUpdatedAt(categoryAt)
         })
     },
@@ -161,11 +156,11 @@ export default {
           guid: note.guid,
           title: note.title,
           body: readNoteBody(
-            note.parent_directory.path_from_root,
+            note.parent_directory_path_from_root,
             note.file_name
           ),
           category_id: note.category_id,
-          file_path: note.parent_directory.path_from_root,
+          file_path: note.parent_directory_path_from_root,
           tags: note.tags.map(tag => {
             return { id: tag.online_id, name: tag.name }
           })
@@ -179,7 +174,6 @@ export default {
           // GUIDの保存だけ行う。
           for (var note of response.data) {
             if (note.guid) {
-              // 更新成功チェック
               Note.update({
                 where: note.local_id,
                 data: {
@@ -210,7 +204,7 @@ export default {
           for (let deleted_note of response.data.deleted_notes) {
             let note = Note.query().where('guid', deleted_note.guid) // 存在する場合にだけ、削除
             if (note) {
-              deleteNote(note.parent_directory.path_from_root, note.file_name) // 削除できなくても問題なし
+              deleteNote(note.parent_directory_path_from_root, note.file_name) // 削除できなくても問題なし
             }
           }
           // 全てが正常に終わったので時間更新 ダウンロードより後にupdateを設定する
@@ -219,23 +213,24 @@ export default {
         })
     },
     noteUpdate(note, downloadAt) {
+      console.log()
       let local_note = Note.query()
         .where('guid', note.guid)
         .first()
       if (local_note) {
         // 存在する
         overwriteDownloadNote(
-          local_note.parent_directory.path_from_root,
+          local_note.parent_directory_path_from_root,
           local_note.file_name,
           note.title,
-          note.category,
+          Category.find(note.category_id).name,
           note.tags,
           note.body
         )
-        if (local_note.parent_directory.path_from_root != note.directory_path) {
+        if (local_note.parent_directory_path_from_root != note.directory_path) {
           // フォルダ移動
           moveDownloadNote(
-            local_note.parent_directory.path_from_root,
+            local_note.parent_directory_path_from_root,
             note.file_name,
             note.directory_path
           )
@@ -245,12 +240,11 @@ export default {
           data: { updated_at: downloadAt }
         })
       } else {
-        // 存在しない
-        // ノートファイル & ディレクトリ の追加
+        // 存在しない ノートファイル & ディレクトリ の追加
         createDownloadNote(
           note.directory_path,
           note.title,
-          note.category_id,
+          Category.find(note.category_id).name,
           note.tags,
           note.body
         ).then(noteFileName => {
