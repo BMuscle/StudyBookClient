@@ -34,7 +34,7 @@ export default class Note extends Model {
       updated_at: this.attr(0)
     }
   }
-  static async getNote(parentDirectoryPath, fileName) {
+  static getNote(parentDirectoryPath, fileName) {
     const parentInode = NoteCRUD.getInode(parentDirectoryPath)
     return this.query()
       .where('file_name', fileName)

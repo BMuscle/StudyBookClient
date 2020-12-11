@@ -254,22 +254,29 @@ export async function readNoteBody(parentDirectoryPath, fileName) {
   let content = await fs_wrapper.readFile(notesJoinedParentPath, fileName)
   return extractContentToBody(content)
 }
-export async function notesWatchHandler(callbackObject) {
-  const callbackObject2 = {
-    onChange(target) {
-      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
-      callbackObject.onChange(target)
-    },
-    onCreate(target) {
-      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
-      callbackObject.onCreate(target)
-    },
-    onDelete(target) {
-      target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
-      callbackObject.onDelete(target)
-    }
+
+export class NotesWatchHandler {
+  static callbackObject = null
+  static start(callbackObject) {
+    fs_wrapper.WatchHandler.start('notes', NotesWatchHandler)
+    NotesWatchHandler.callbackObject = callbackObject
   }
-  await fs_wrapper.watchHandler('notes', callbackObject2)
+  static onChangeNote(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onChangeNote(target)
+  }
+  static onCreateNote(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onCreateNote(target)
+  }
+  static onCreateDirectory(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onCreateDirectory(target)
+  }
+  static onDelete(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onDelete(target)
+  }
 }
 
 function extractContentToBody(content) {

@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { spawn } from 'child_process'
 import sd from 'string_decoder'
+import asyncLock from 'async-lock'
 
 const DANGEROUS_PATH_ERROR_MESSAGE =
   'アプリケーションのあるフォルダの外を操作する可能性があります'
@@ -168,12 +169,25 @@ export async function deleteDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
   fs.rmdirSync(deleteDirectoryPath, { recursive: true })
 }
-export async function watchHandler(directoryPath, callbackObject) {
-  const handle = spawn('.\\src\\components\\CodeHelper.exe', [directoryPath])
-  const stringDecoder = new sd.StringDecoder('utf8')
-
-  handle.stdout.on('data', data => {
-    const decodedData = stringDecoder.write(data)
+export class WatchHandler {
+  static stringDecoder = new sd.StringDecoder('utf8')
+  static handle = null
+  static callbackObject = null
+  static lock = new asyncLock()
+  static start(directoryPath, callbackObject) {
+    WatchHandler.handle = spawn('.\\src\\components\\CodeHelper.exe', [
+      directoryPath
+    ])
+    WatchHandler.handle.stdout.on('data', WatchHandler.onStdOut)
+    WatchHandler.callbackObject = callbackObject
+  }
+  static lockRun(func, target) {
+    WatchHandler.lock.acquire('WatchHandler', async () => {
+      await func(target)
+    })
+  }
+  static onStdOut(data) {
+    const decodedData = WatchHandler.stringDecoder.write(data)
     const events = decodedData.split(/\r\n|\n/).slice(0, -1)
     for (const event of events) {
       const type = event.substr(0, 1)
@@ -186,18 +200,30 @@ export async function watchHandler(directoryPath, callbackObject) {
         case '0':
           target.stat = fs.statSync(targetPath)
           if (target.stat.isFile()) {
-            callbackObject.onChange(target)
+            WatchHandler.lockRun(
+              WatchHandler.callbackObject.onChangeNote,
+              target
+            )
           }
           break
         case '1':
           target.stat = fs.statSync(targetPath)
-          callbackObject.onCreate(target)
+          if (target.stat.isFile()) {
+            WatchHandler.lockRun(
+              WatchHandler.callbackObject.onCreateNote,
+              target
+            )
+          } else {
+            WatchHandler.lockRun(
+              WatchHandler.callbackObject.onCreateDirectory,
+              target
+            )
+          }
           break
         case '2':
-          callbackObject.onDelete(target)
+          WatchHandler.lockRun(WatchHandler.callbackObject.onDelete, target)
           break
       }
     }
-  })
-  return handle
+  }
 }
