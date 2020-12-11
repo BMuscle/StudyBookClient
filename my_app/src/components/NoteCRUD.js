@@ -56,7 +56,10 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
           category = data
           break
         case 'tags':
-          tags = data.split(/,/).map(tag => tag.trim()).filter( tag => tag != "");
+          tags = data
+            .split(/,/)
+            .map(tag => tag.trim())
+            .filter(tag => tag != '')
           break
       }
     }
@@ -281,15 +284,22 @@ export class NotesWatchHandler {
 }
 
 function extractContentToBody(content) {
+  content = content.replace(/\r\n?/g, '\n')
   let index = content.indexOf('\n\n')
   if (index != -1) {
     return content.substr(index + 2)
   }
-  return false
+  return '### 読み取りエラー'
 }
 
-export async function setHeader(header = { title: "", category: "", tags: [] }, parentDirectoryPath, fileName) {
-  const body = await readNoteBody(parentDirectoryPath, fileName) ?? ""
-  const content = `title: ${header.title}\ncategory: ${header.category}\ntags: ${header.tags.join(', ')}\n\n${body}`
+export async function setHeader(
+  header = { title: '', category: '', tags: [] },
+  parentDirectoryPath,
+  fileName
+) {
+  const body = (await readNoteBody(parentDirectoryPath, fileName)) ?? ''
+  const content = `title: ${header.title}\ncategory: ${
+    header.category
+  }\ntags: ${header.tags.join(', ')}\n\n${body}`
   overwriteNote(parentDirectoryPath, fileName, content)
 }

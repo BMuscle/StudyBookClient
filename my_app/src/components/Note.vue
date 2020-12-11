@@ -39,7 +39,7 @@ export default {
     }),
     note() {
       let note = Note.query()
-        .whereId(50601103)
+        .whereId(1125899906911517)
         .with('category')
         .with('tags')
         .with('parent_directory')
