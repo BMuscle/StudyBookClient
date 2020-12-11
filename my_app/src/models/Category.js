@@ -27,14 +27,6 @@ export const category_module = {
   getters: {
     get_default(state) {
       return Category.find(state.default_id)
-    },
-    get_category(state, getters) {
-      return name => {
-        const category = Category.query()
-          .where('name', name)
-          .first()
-        return category ?? getters.get_default
-      }
     }
   },
   mutations: {
