@@ -3,7 +3,8 @@
     <div v-if="note != null">
       <div class="header">
         <div class="file-path">
-          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} > {{ note.title }}
+          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
+          {{ note.title }}
         </div>
         <div class="tags">
           <Tags :note="note" />
@@ -18,9 +19,6 @@
 import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
-import Tag from '@/models/Tag'
-import Category from '@/models/Category'
-import NoteTag from '@/models/NoteTag'
 import Tags from './Tags.vue'
 import { readNoteBody } from './NoteCRUD'
 
@@ -32,7 +30,7 @@ export default {
   data: function() {
     return {
       testTag: 'aaaa', //仮tag
-      noteBody: '',
+      noteBody: ''
     }
   },
   computed: {
@@ -46,15 +44,18 @@ export default {
         .with('tags')
         .with('parent_directory')
         .first()
+      if (note == null) return
       this.setNote(note)
       return note
-    },
+    }
   },
   methods: {
     setNote(note) {
-      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response =>{
-        this.noteBody = response
-      })
+      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(
+        response => {
+          this.noteBody = response
+        }
+      )
     }
   }
 }
@@ -63,14 +64,14 @@ export default {
 <style scoped lang="scss">
 .note {
   .header {
-    background-color: #5EAAA8;
+    background-color: #5eaaa8;
     height: 32px;
     font-size: 0.8em;
     padding: 3px 10px;
     .file-path {
       vertical-align: middle;
       display: inline-block;
-      color: #E5E5E5;
+      color: #e5e5e5;
       margin-right: 10px;
     }
     .tags {
