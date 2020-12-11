@@ -117,7 +117,6 @@ export default {
               }
             })
           }
-          console.log(response.data.default_category.id)
           this.set_default_id(response.data.default_category.id)
           this.updateCategoriesUpdatedAt(categoryAt)
         })
@@ -213,7 +212,6 @@ export default {
         })
     },
     noteUpdate(note, downloadAt) {
-      console.log()
       let local_note = Note.query()
         .where('guid', note.guid)
         .first()
