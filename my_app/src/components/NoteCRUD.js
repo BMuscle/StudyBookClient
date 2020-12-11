@@ -16,6 +16,10 @@ export function getInode(path) {
   const notesJoinedPath = notesJoin(path)
   return fs_wrapper.getInode(notesJoinedPath)
 }
+export function getMtimeMs(parentDirectoryPath, fileName) {
+  const notesJoinedParentPath = notesJoin(parentDirectoryPath)
+  return fs_wrapper.getMtimeMs(notesJoinedParentPath, fileName)
+}
 export async function createNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
@@ -118,8 +122,8 @@ export async function readDirectory(parentDirectoryPath, directoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readDirectory(notesJoinedParentPath, directoryName)
 }
-export async function readNotesFolderRecursively() {
-  return await fs_wrapper.readdirRecursively('notes')
+export async function readFolderRecursively(directoryPath, inode = null) {
+  return await fs_wrapper.readdirRecursively(notesJoin(directoryPath), inode)
 }
 export async function moveDirectory(
   parentDirectoryPath,
@@ -250,6 +254,30 @@ export async function readNoteBody(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   let content = await fs_wrapper.readFile(notesJoinedParentPath, fileName)
   return extractContentToBody(content)
+}
+
+export class NotesWatchHandler {
+  static callbackObject = null
+  static start(callbackObject) {
+    fs_wrapper.WatchHandler.start('notes', NotesWatchHandler)
+    NotesWatchHandler.callbackObject = callbackObject
+  }
+  static onChangeNote(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onChangeNote(target)
+  }
+  static onCreateNote(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onCreateNote(target)
+  }
+  static onCreateDirectory(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onCreateDirectory(target)
+  }
+  static onDelete(target) {
+    target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
+    NotesWatchHandler.callbackObject.onDelete(target)
+  }
 }
 
 function extractContentToBody(content) {

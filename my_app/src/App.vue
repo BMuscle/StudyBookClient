@@ -95,13 +95,13 @@ export default {
     //Directory.insert({ data: directoryData })
     const my_listData = MyListData
     MyList.insert({ data: my_listData })
-    const noteData = NoteData
-    Note.insert({ data: noteData })
+    //const noteData = NoteData
+    //Note.insert({ data: noteData })
     MyListNoteIndex.insert({ data: MyListNoteIndexData })
     MyListNoteTag.insert({ data: MyListNoteTagData })
     MyListNote.insert({ data: MyListNoteData })
-    const noteTagData = NoteTagData
-    NoteTag.insert({ data: noteTagData })
+    //const noteTagData = NoteTagData
+    //NoteTag.insert({ data: noteTagData })
     const tagData = TagData
     Tag.insert({ data: tagData })
 

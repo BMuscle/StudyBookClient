@@ -39,15 +39,13 @@ export default class Directory extends Model {
       .with('child_directories')
       .with('notes')
       .find(this.inode)
-    await Promise.all(
-      directory.child_directories.map(directory =>
-        directory.deleteWithChildren()
-      )
-    )
+    for (const directory of directory.child_directories) {
+      await directory.deleteWithChildren()
+    }
     for (const note of directory.notes) {
       note.is_exists = false
       note.$save()
     }
-    await this.$delete()
+    this.$delete()
   }
 }

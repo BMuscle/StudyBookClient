@@ -31,21 +31,22 @@ export default class Note extends Model {
         'inode',
         'id'
       ),
-      updated_at: this.attr(new Date().getTime())
+      updated_at: this.attr(0)
     }
   }
-  static async getNote(filePath) {
-    const fileName = path.basename(filePath)
-    const parentDirectoryPath = path.dirname(filePath)
+  static getNote(parentDirectoryPath, fileName) {
     const parentInode = NoteCRUD.getInode(parentDirectoryPath)
     return this.query()
       .where('file_name', fileName)
       .where('parent_inode', parentInode)
       .first()
   }
+  static queryExists() {
+    return this.query().where('is_exists', true)
+  }
   static async updateAllNotes(data) {
     this.update({
-      where: note => true,
+      where: () => true,
       data: data
     })
   }
@@ -58,13 +59,22 @@ export default class Note extends Model {
       : ''
     return pathFromRoot
   }
-  async updateHead() {
+  async updateHeadAndUpdatedAt(
+    updatedAt = NoteCRUD.getMtimeMs(
+      this.parent_directory_path_from_root,
+      this.file_name
+    )
+  ) {
+    if (updatedAt === this.updated_at) {
+      return
+    }
     const { title, category, tags } = await readNoteHeader(
       this.parent_directory_path_from_root,
       this.file_name
     )
     this.title = title
     this.category_id = Category.getCategory(category).online_id
+    this.updated_at = updatedAt
     this.$save()
     await this.updateTags(tags)
   }
@@ -87,13 +97,7 @@ export default class Note extends Model {
   deleteTags() {
     NoteTag.delete(record => record.note_inode === this.inode)
   }
-  insertDeletedLocalNote() {
-    if (this.guid != null) {
-      DeletedLocalNote.insert({ data: { guid: this.guid } })
-    }
-  }
   static beforeDelete(record) {
     record.deleteTags()
-    record.insertDeletedLocalNote()
   }
 }

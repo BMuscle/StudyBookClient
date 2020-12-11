@@ -10,6 +10,7 @@
     <Data :name="'Category'" :data="categories" />
     <Data :name="'NoteTag'" :data="noteTags" />
     <Data :name="'Tag'" :data="tags" />
+    <Data :name="'UpdatedAt'" :data="updatedAts" />
   </div>
 </template>
 
@@ -25,6 +26,7 @@ import MyList from '../models/MyList'
 import Category from '../models/Category'
 import NoteTag from '../models/NoteTag'
 import Tag from '../models/Tag'
+import UpdatedAt from '../models/UpdatedAt'
 
 export default {
   components: {
@@ -60,6 +62,9 @@ export default {
     },
     tags() {
       return this.getAllRecursive(Tag)
+    },
+    updatedAts() {
+      return this.getAllRecursive(UpdatedAt)
     }
   },
   methods: {

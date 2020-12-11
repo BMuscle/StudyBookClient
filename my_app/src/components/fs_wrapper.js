@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { spawn } from 'child_process'
 import sd from 'string_decoder'
+import asyncLock from 'async-lock'
 
 const DANGEROUS_PATH_ERROR_MESSAGE =
   'アプリケーションのあるフォルダの外を操作する可能性があります'
@@ -50,6 +51,13 @@ export function getInode(path) {
   ThrowAnErrorIfThePathDoesNotExist(path)
   return fs.statSync(path).ino
 }
+export function getMtimeMs(parentDirectoryPath, fileName) {
+  const filePath = path.join(parentDirectoryPath, fileName)
+  ThrowAnErrorIfAnyPathIsDangerous(filePath)
+  ThrowAnErrorIfThePathDoesNotExist(filePath)
+  return fs.statSync(filePath).mtimeMs
+}
+
 export async function createFile(parentDirectoryPath, fileName) {
   const createFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfAnyPathIsDangerous(createFilePath)
@@ -117,8 +125,7 @@ export async function readdirRecursively(directoryPath, inode = null) {
         isDirectory: dirent.isDirectory(),
         inode: status.ino,
         parent_inode: inode,
-        name: dirent.name,
-        updated_at: status.mtimeMs
+        name: dirent.name
       }
     })
   var add_children = []
@@ -162,22 +169,61 @@ export async function deleteDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
   fs.rmdirSync(deleteDirectoryPath, { recursive: true })
 }
-export async function watchHandler(directoryPath, callback) {
-  const handle = spawn('.\\src\\components\\CodeHelper.exe', [directoryPath])
-  const stringDecoder = new sd.StringDecoder('utf8')
-
-  handle.stdout.on('data', data => {
-    const decodedData = stringDecoder.write(data)
-    const events = decodedData
-      .split(/\r\n|\n/)
-      .slice(0, -1)
-      .map(event => {
-        return {
-          type: event.substr(0, 1),
-          path: event.substr(2)
-        }
-      })
-    callback(events)
-  })
-  return handle
+export class WatchHandler {
+  static stringDecoder = new sd.StringDecoder('utf8')
+  static handle = null
+  static callbackObject = null
+  static lock = new asyncLock()
+  static start(directoryPath, callbackObject) {
+    WatchHandler.handle = spawn('.\\src\\components\\CodeHelper.exe', [
+      directoryPath
+    ])
+    WatchHandler.handle.stdout.on('data', WatchHandler.onStdOut)
+    WatchHandler.callbackObject = callbackObject
+  }
+  static lockRun(func, target) {
+    WatchHandler.lock.acquire('WatchHandler', async () => {
+      await func(target)
+    })
+  }
+  static onStdOut(data) {
+    const decodedData = WatchHandler.stringDecoder.write(data)
+    const events = decodedData.split(/\r\n|\n/).slice(0, -1)
+    for (const event of events) {
+      const type = event.substr(0, 1)
+      const targetPath = event.substr(2)
+      const target = {
+        parentDirectoryPath: path.dirname(targetPath),
+        name: path.basename(targetPath)
+      }
+      switch (type) {
+        case '0':
+          target.stat = fs.statSync(targetPath)
+          if (target.stat.isFile()) {
+            WatchHandler.lockRun(
+              WatchHandler.callbackObject.onChangeNote,
+              target
+            )
+          }
+          break
+        case '1':
+          target.stat = fs.statSync(targetPath)
+          if (target.stat.isFile()) {
+            WatchHandler.lockRun(
+              WatchHandler.callbackObject.onCreateNote,
+              target
+            )
+          } else {
+            WatchHandler.lockRun(
+              WatchHandler.callbackObject.onCreateDirectory,
+              target
+            )
+          }
+          break
+        case '2':
+          WatchHandler.lockRun(WatchHandler.callbackObject.onDelete, target)
+          break
+      }
+    }
+  }
 }
