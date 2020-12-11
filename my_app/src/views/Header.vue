@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand navbar-dark">
-    <web-sync v-if="user"></web-sync>
+    <web-sync v-if="userId && token"></web-sync>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <router-link
@@ -20,7 +20,7 @@
           マイリスト
         </router-link>
       </li>
-      <li v-if="user" class="nav-item">
+      <li v-if="userId && token" class="nav-item">
         <a class="nav-link" @click="logOut()">ログアウト</a>
       </li>
       <li v-else class="nav-item">
@@ -37,20 +37,20 @@
 </template>
 
 <script>
-import User from '../models/User'
 import WebSync from '../components/WebSync.vue'
+import { mapState, mapMutations } from 'vuex'
+
 export default {
   components: {
     WebSync
   },
   computed: {
-    user() {
-      return User.all()[0]
-    }
+    ...mapState('user', ['userId', 'token']),
   },
   methods: {
+    ...mapMutations('user', ['reset']),
     logOut() {
-      User.deleteAll()
+      this.reset()
     }
   }
 }
