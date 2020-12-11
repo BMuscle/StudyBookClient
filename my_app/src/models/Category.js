@@ -1,4 +1,5 @@
 import { Model } from '@vuex-orm/core'
+import store from '../store'
 
 export default class Category extends Model {
   static entity = 'categories'
@@ -10,12 +11,32 @@ export default class Category extends Model {
       name: this.string()
     }
   }
+  static getCategory(name) {
+    const category = Category.query()
+      .where('name', name)
+      .first()
+    return category ?? store.getters['category_module/get_default']
+  }
 }
 
-export function getCategory(name) {
-  return name
-    ? Category.query()
-        .where('name', name)
-        .first()
-    : Category.query().find(0) //カテゴリー=未分類の online_id が決まってないので、暫定で 0
+export const category_module = {
+  namespaced: true,
+  state: {
+    default_id: 0
+  },
+  getters: {
+    get_default(state) {
+      return Category.find(state.default_id)
+    }
+  },
+  mutations: {
+    set_default_id(state, default_id) {
+      state.default_id = default_id
+    }
+  },
+  actions: {
+    set_default_id({ commit }, default_id) {
+      commit('set_default_id', default_id)
+    }
+  }
 }

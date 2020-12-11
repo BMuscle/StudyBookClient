@@ -3,12 +3,7 @@ import path from 'path'
 import { spawn } from 'child_process'
 import sd from 'string_decoder'
 import * as NoteCRUD from './NoteCRUD'
-import Note, {
-  updateHead,
-  getNote,
-  updateAllNotes,
-  deleteNotefromDataBase
-} from '../models/Note'
+import Note from '../models/Note'
 import Directory from '../models/Directory'
 
 export async function onAppReady() {
@@ -21,7 +16,7 @@ export async function onAppReady() {
       Directory.insert({ data: directory })
     })
 
-  await updateAllNotes({ is_exists: false })
+  await Note.updateAllNotes({ is_exists: false })
   children
     .filter(child => !child.isDirectory)
     .forEach(note => {
@@ -30,19 +25,16 @@ export async function onAppReady() {
       Note.insertOrUpdate({ data: note })
     })
   deleteDoNotExistNotesFromDataBase()
-  Note.all().forEach(note => updateHead(note))
+  Note.all().forEach(note => note.updateHead())
 }
 
 function deleteDoNotExistNotesFromDataBase() {
   Note.query()
     .where('is_exists', false)
     .get()
-    .forEach(note => deleteNotefromDataBase(note))
+    .forEach(note => note.$delete())
 }
 
 async function onDeleteNote(path) {
-  const note = await getNote(path)
-  if (note !== null) {
-    deleteNotefromDataBase(note)
-  }
+  await Note.getNote(path)?.$delete()
 }

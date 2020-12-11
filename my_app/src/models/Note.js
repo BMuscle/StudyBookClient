@@ -3,11 +3,9 @@ import path from 'path'
 import * as NoteCRUD from '../components/NoteCRUD'
 import { readNoteHeader } from '../components/NoteCRUD'
 import Directory from './Directory'
-import Category, { getCategory } from './Category'
-import Tag, { insertTag } from './Tag'
+import Category from './Category'
+import Tag from './Tag'
 import NoteTag from './NoteTag'
-import MyList from './MyList'
-import MyListNoteIndex from './MyListNoteIndex'
 import DeletedLocalNote from './DeletedLocalNote'
 
 export default class Note extends Model {
@@ -25,14 +23,6 @@ export default class Note extends Model {
       title: this.string(),
       category_id: this.number(),
       category: this.belongsTo(Category, 'category_id', 'online_id'),
-      my_lists: this.belongsToMany(
-        MyList,
-        MyListNoteIndex,
-        'note_inode',
-        'my_list_id',
-        'inode',
-        'id'
-      ),
       tags: this.belongsToMany(
         Tag,
         NoteTag,
@@ -44,6 +34,21 @@ export default class Note extends Model {
       updated_at: this.attr(new Date().getTime())
     }
   }
+  static async getNote(filePath) {
+    const fileName = path.basename(filePath)
+    const parentDirectoryPath = path.dirname(filePath)
+    const parentInode = NoteCRUD.getInode(parentDirectoryPath)
+    return this.query()
+      .where('file_name', fileName)
+      .where('parent_inode', parentInode)
+      .first()
+  }
+  static async updateAllNotes(data) {
+    this.update({
+      where: note => true,
+      data: data
+    })
+  }
   get parent_directory_path_from_root() {
     const note = Note.query()
       .with('parent_directory')
@@ -53,56 +58,42 @@ export default class Note extends Model {
       : ''
     return pathFromRoot
   }
-}
-
-//指定されたノートのヘッダー情報を更新する。
-export async function updateHead(note) {
-  const header = await readNoteHeader(
-    note.parent_directory_path_from_root,
-    note.file_name
-  )
-  Note.update({
-    where: note.inode,
-    data: {
-      title: header.title,
-      category_id: getCategory(header.category).online_id
-    }
-  })
-  NoteTag.delete(record => record.note_inode === note.inode)
-  const tags = await Promise.all(header.tags.map(tagName => insertTag(tagName)))
-  for (const tag of tags) {
-    NoteTag.insert({
+  async updateHead() {
+    const { title, category, tags } = await readNoteHeader(
+      this.parent_directory_path_from_root,
+      this.file_name
+    )
+    this.title = title
+    this.category_id = Category.getCategory(category).online_id
+    this.$save()
+    await this.updateTags(tags)
+  }
+  async updateTags(tags) {
+    await this.deleteTags()
+    await this.insertTags(tags)
+  }
+  async insertTags(tags) {
+    await Promise.all(tags.map(tagName => this.insertTag(tagName)))
+  }
+  async insertTag(tagName) {
+    const tagId = await Tag.insertTag(tagName)
+    await NoteTag.insert({
       data: {
-        tag_id: tag,
-        note_inode: note.inode
+        tag_id: tagId,
+        note_inode: this.inode
       }
     })
   }
-}
-
-//削除されたノートのレコードをパスから検索する。
-export async function getNote(filePath) {
-  const fileName = path.basename(filePath)
-  const parentDirectoryPath = path.dirname(filePath)
-  const parentInode = NoteCRUD.getInode(parentDirectoryPath)
-  return Note.query()
-    .where('file_name', fileName)
-    .where('parent_inode', parentInode)
-    .first()
-}
-
-export async function updateAllNotes(data) {
-  Note.update({
-    where: note => true,
-    data: data
-  })
-}
-
-export function deleteNotefromDataBase(note) {
-  NoteTag.delete(record => record.note_inode === note.inode)
-  MyListNoteIndex.delete(record => record.note_inode === note.inode)
-  if (note.guid !== null) {
-    DeletedLocalNote.insert({ data: { guid: note.guid } })
+  deleteTags() {
+    NoteTag.delete(record => record.note_inode === this.inode)
   }
-  Note.delete(note.inode)
+  insertDeletedLocalNote() {
+    if (this.guid != null) {
+      DeletedLocalNote.insert({ data: { guid: this.guid } })
+    }
+  }
+  static beforeDelete(record) {
+    record.deleteTags()
+    record.insertDeletedLocalNote()
+  }
 }

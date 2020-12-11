@@ -19,4 +19,8 @@ export default class UpdatedAt extends Model {
       updated_at: this.attr(new Date().getTime()) // タイムスタンプを格納
     }
   }
+  async updateToCurrentTime() {
+    this.updated_at = new Date().getTime()
+    this.$save()
+  }
 }

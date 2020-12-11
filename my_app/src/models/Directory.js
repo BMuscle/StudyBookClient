@@ -1,6 +1,7 @@
 import { Model } from '@vuex-orm/core'
 import path from 'path'
 import Note from './Note'
+import * as NoteCRUD from '../components/NoteCRUD'
 
 export default class Directory extends Model {
   static entity = 'directories'
@@ -16,6 +17,13 @@ export default class Directory extends Model {
       notes: this.hasMany(Note, 'parent_inode', 'inode')
     }
   }
+  static getDirectory(parentDirectoryPath, directoryName) {
+    const parentInode = NoteCRUD.getInode(parentDirectoryPath)
+    return this.query()
+      .where('directory_name', directoryName)
+      .where('parent_inode', parentInode)
+      .first()
+  }
   get path_from_root() {
     if (this.parent_inode === null) {
       return this.directory_name
@@ -25,5 +33,21 @@ export default class Directory extends Model {
         .find(this.parent_inode)
       return path.join(parentDirectory.path_from_root, this.directory_name)
     }
+  }
+  async deleteWithChildren() {
+    const directory = Directory.query()
+      .with('child_directories')
+      .with('notes')
+      .find(this.inode)
+    await Promise.all(
+      directory.child_directories.map(directory =>
+        directory.deleteWithChildren()
+      )
+    )
+    for (const note of directory.notes) {
+      note.is_exists = false
+      note.$save()
+    }
+    await this.$delete()
   }
 }

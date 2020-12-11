@@ -1,6 +1,7 @@
 import { Model } from '@vuex-orm/core'
 import Note from './Note'
 import NoteTag from './NoteTag'
+import UpdatedAt from './UpdatedAt'
 
 export default class Tag extends Model {
   static entity = 'tags'
@@ -21,19 +22,17 @@ export default class Tag extends Model {
       )
     }
   }
-}
-
-export async function insertTag(name) {
-  const tag = Tag.query()
-    .where('name', name)
-    .first()
-  if (tag !== null) {
-    return tag.id
+  static afterCreate() {
+    UpdatedAt.find('tags').updateToCurrentTime()
   }
-  const entities = await Tag.insert({
-    data: {
-      name: name
+  static async insertTag(name) {
+    const tag = this.query()
+      .where('name', name)
+      .first()
+    if (tag !== null) {
+      return tag.id
     }
-  })
-  return entities.tags[0].id
+    const entities = await this.insert({ data: { name: name } })
+    return entities.tags[0].id
+  }
 }
