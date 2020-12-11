@@ -2,7 +2,6 @@
   <div :style="{ display: 'flex' }">
     <Data :name="'Note'" :data="notes" />
     <Data :name="'Directory'" :data="directories" />
-    <Data :name="'DeletedLocalNote'" :data="deletedLocalNotes" />
     <Data :name="'MyListNoteIndex'" :data="myListNoteIndexs" />
     <Data :name="'MyListNoteTag'" :data="myListNoteTags" />
     <Data :name="'MyListNote'" :data="myListNotes" />
@@ -18,7 +17,6 @@
 import Data from './Data'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
-import DeletedLocalNote from '../models/DeletedLocalNote'
 import MyListNoteIndex from '../models/MyListNoteIndex'
 import MyListNote from '../models/MyListNote'
 import MyListNoteTag from '../models/MyListNoteTag'
@@ -38,9 +36,6 @@ export default {
     },
     directories() {
       return this.getAllRecursive(Directory)
-    },
-    deletedLocalNotes() {
-      return this.getAllRecursive(DeletedLocalNote)
     },
     myListNoteIndexs() {
       return this.getAllRecursive(MyListNoteIndex)
