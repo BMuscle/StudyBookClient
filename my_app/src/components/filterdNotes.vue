@@ -15,7 +15,7 @@
         </li>
       </div>
     </ul>
-    <NoteSort @filterd-notes="Sort = $event" />
+    <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
   </div>
 </template>
 <script>
@@ -33,8 +33,7 @@ export default {
   },
   data: function() {
     return {
-      Sort: '', //デフォルト
-      Selected: ''
+      sort: []
     }
   },
   computed: {
@@ -46,7 +45,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
-        .orderBy(this.Selected, this.Sort)
+        .orderBy(this.sort[0], this.sort[1])
         .get()
     }
   },
