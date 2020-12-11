@@ -3,7 +3,7 @@
     <button @click="init()">初期化</button>
     <button @click="sync()">同期</button>
     <!-- <div>
-      <div>UserId確認 {{user}}</div>
+      <div>UserId確認 {{userId}}</div>
       <div>NoteUpload確認 {{noteUploadsUpdatedAt}}</div>
       <div>NoteDownload確認 {{noteDownloadsUpdatedAt}}</div>
       <div>アップデート対象ノート確認 {{updateTargetNotes}}</div>
@@ -17,7 +17,7 @@
 <script>
 import api from './api'
 import axios from 'axios'
-import User from '../models/User'
+import { mapState, mapMutations } from 'vuex'
 import Note from '../models/Note'
 import MyList from '../models/MyList'
 import MyListNote from '../models/MyListNote'
@@ -29,6 +29,7 @@ import Category from '../models/Category'
 import Directory from '../models/Directory'
 import UpdatedAt from '../models/UpdatedAt'
 import DeletedLocalNote from '../models/DeletedLocalNote'
+
 import {
   createDownloadNote,
   notesJoin,
@@ -41,11 +42,9 @@ import fs from 'fs'
 
 export default {
   computed: {
+    ...mapState('user', ['userId', 'token']),
     getAuthParams() {
-      return { user_id: this.user.user_id, token: this.user.token }
-    },
-    user() {
-      return User.all()[0]
+      return { user_id: this.userId, token: this.token }
     },
     categoriesUpdatedAt() {
       return UpdatedAt.find('categories').updated_at
@@ -84,6 +83,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('user', ['setUser', 'reset']),
     createNote() {
       api
         .post('/api/v1/notes/uploads', {
@@ -109,7 +109,14 @@ export default {
           }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
         )
         .then(response => {
-          for (var category of response.data) {
+          // デフォルトカテゴリー
+          // Category.insert({
+          //   data: {
+          //     online_id: response.data.default_category.id,
+          //     name: response.data.default_category.name
+          //   }
+          // })
+          for (let category of response.data.categories) {
             Category.insert({
               data: {
                 online_id: category.id,
@@ -201,7 +208,7 @@ export default {
           }
           // ノートの削除
           for (let deleted_note of response.data.deleted_notes) {
-            let note = User.query().where('guid', deleted_note.guid) // 存在する場合にだけ、削除
+            let note = Note.query().where('guid', deleted_note.guid) // 存在する場合にだけ、削除
             if (note) {
               deleteNote(note.parent_directory.path_from_root, note.file_name) // 削除できなくても問題なし
             }
@@ -268,14 +275,7 @@ export default {
       api
         .delete('/api/v1/notes', { ...this.getAuthParams, notes: deleteNotes })
         .then(response => {
-          for (let note of response.data) {
-            User.update({
-              where: note.local_id,
-              data: {
-                guid: note.guid
-              }
-            })
-          }
+          // 削除の更新を受け取った際、ノートの削除を行う。
         })
     },
     myListSync() {
