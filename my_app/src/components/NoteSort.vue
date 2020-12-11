@@ -2,14 +2,13 @@
   <select id="sort" name="sortSelect" @change="Select">
     <option value="inode,asc" selected>タイトルの昇順</option>
     <option value="inode,desc">タイトルの降順</option>
-    <option value="inode,asc">更新時間の昇順</option>
-    <option value="inode,desc">更新時間の降順</option>
+    <option value="updated_at,asc">更新時間の昇順</option>
+    <option value="updated_at,desc">更新時間の降順</option>
   </select>
 </template>
 
 <script>
 export default {
-  name: 'NoteSort',
   data() {
     return {
       Sort: 'asc inode'
