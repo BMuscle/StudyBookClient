@@ -11,7 +11,7 @@
 export default {
   data() {
     return {
-      Sort: 'asc inode'
+      Sort: 'asc,inode'
     }
   },
   methods: {
