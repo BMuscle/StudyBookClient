@@ -1,15 +1,6 @@
 <template>
   <div>
-    <button @click="init()">初期化</button>
     <button @click="sync()">同期</button>
-    <!-- <div>
-      <div>UserId確認 {{userId}}</div>
-      <div>NoteUpload確認 {{noteUploadsUpdatedAt}}</div>
-      <div>NoteDownload確認 {{noteDownloadsUpdatedAt}}</div>
-      <div>ディレクトリ確認 {{directory}}</div>
-      <div>タグ確認 {{tags}}</div>
-      <div>カテゴリ確認 {{categories}}</div>
-    </div> -->
   </div>
 </template>
 
@@ -62,7 +53,9 @@ export default {
       return Note.query()
         .where(note => {
           return (
-            note.updated_at >= this.noteUploadsUpdatedAt || note.guid == null
+            (note.updated_at >= this.noteUploadsUpdatedAt ||
+              note.guid == null) &&
+            note.is_exists
           )
         })
         .with('parent_directory')
@@ -213,9 +206,12 @@ export default {
           }
           // ノートの削除
           for (let deleted_note of response.data.deleted_notes) {
-            let note = Note.query().where('guid', deleted_note.guid) // 存在する場合にだけ、削除
+            let note = Note.query()
+              .where('guid', deleted_note.guid)
+              .first() // 存在する場合にだけ、削除
             if (note) {
               deleteNote(note.parent_directory_path_from_root, note.file_name) // 削除できなくても問題なし
+              Note.delete(note.inode)
             }
           }
           // 全てが正常に終わったので時間更新 ダウンロードより後にupdateを設定する
@@ -273,13 +269,28 @@ export default {
       }
     },
     noteDeletes() {
-      let deleteNotes = this.deletedLocalNotes.map(note => {
-        return { guid: note.guid }
-      })
+      let notExistsNotes = Note.query()
+        .where(note => {
+          return note.is_exists == false
+        })
+        .all()
+        .map(note => {
+          return { guid: note.guid }
+        })
       api
-        .delete('/api/v1/notes', { ...this.getAuthParams, notes: deleteNotes })
+        .delete('/api/v1/notes', {
+          ...this.getAuthParams,
+          notes: notExistsNotes
+        })
         .then(response => {
           // 削除の更新を受け取った際、ノートの削除を行う。
+          for (let deletedNote of response.data) {
+            let note = Note.query().where('guid', deletedNote.guid) // 存在する場合にだけ、削除
+            if (note) {
+              deleteNote(note.parent_directory_path_from_root, note.file_name)
+              Note.delete(note.inode)
+            }
+          }
         })
     },
     myListSync() {
