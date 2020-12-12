@@ -16,7 +16,7 @@
 <script>
 import api from './api'
 import axios from 'axios'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 import Note from '../models/Note'
 import MyList from '../models/MyList'
 import MyListNote from '../models/MyListNote'
@@ -42,6 +42,7 @@ import fs from 'fs'
 export default {
   computed: {
     ...mapState('user', ['userId', 'token']),
+    ...mapGetters('category_module', ['get_default']),
     getAuthParams() {
       return { user_id: this.userId, token: this.token }
     },
@@ -94,32 +95,39 @@ export default {
     },
     async sync() {
       await this.categoriesSync()
-      this.noteUploads()
+      await this.noteUploads()
       this.tagsSync()
       this.noteDownloads()
       this.noteDeletes()
       this.myListSync()
     },
-    categoriesSync() {
+    async categoriesSync() {
       const categoryAt = new Date().getTime()
-      api
-        .get(
-          `/api/v1/categories?user_id=${this.getAuthParams.user_id}&token=${
-            this.getAuthParams.token
-          }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
-        )
-        .then(response => {
-          for (let category of response.data.categories) {
-            Category.insert({
-              data: {
-                online_id: category.id,
-                name: category.name
-              }
-            })
+      const response = await api.get(
+        `/api/v1/categories?user_id=${this.getAuthParams.user_id}&token=${
+          this.getAuthParams.token
+        }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
+      )
+      for (let category of response.data.categories) {
+        Category.insert({
+          data: {
+            online_id: category.id,
+            name: category.name
           }
-          this.set_default_id(response.data.default_category.id)
-          this.updateCategoriesUpdatedAt(categoryAt)
         })
+      }
+      // カテゴリーidがデフォルトの物全てに対して、idの設定を行う。
+      Note.update({
+        where: note => {
+          return note.category_id == this.get_default.online_id
+        },
+        data: {
+          category_id: response.data.default_category.id
+        }
+      })
+      Category.delete(0)
+      this.set_default_id(response.data.default_category.id)
+      this.updateCategoriesUpdatedAt(categoryAt)
     },
     tagsSync() {
       const tagAt = new Date().getTime()
@@ -147,43 +155,47 @@ export default {
           this.updateTagsUpdatedAt(tagAt)
         })
     },
-    noteUploads() {
+    async noteUploads() {
       // 更新対象取得 整形
-      let notes = this.updateTargetNotes.map(note => {
-        return {
+      let notes = []
+      for (let note of this.updateTargetNotes) {
+        notes.push({
           local_id: note.inode,
           guid: note.guid,
           title: note.title,
-          body: readNoteBody(
+          body: await readNoteBody(
             note.parent_directory_path_from_root,
             note.file_name
           ),
           category_id: note.category_id,
           file_path: note.parent_directory_path_from_root,
           tags: note.tags.map(tag => {
-            return { id: tag.online_id, name: tag.name }
+            if (typeof tag.online_id === 'undefined') {
+              return { id: '', name: tag.name }
+            } else {
+              return { id: tag.online_id, name: tag.name }
+            }
           })
-        }
-      })
+        })
+      }
       // 送信
       const uploadAt = new Date().getTime()
-      api
-        .post('/api/v1/notes/uploads', { ...this.getAuthParams, notes: notes })
-        .then(response => {
-          // GUIDの保存だけ行う。
-          for (var note of response.data) {
-            if (note.guid) {
-              Note.update({
-                where: note.local_id,
-                data: {
-                  guid: note.guid,
-                  updated_at: uploadAt
-                }
-              })
+      const response = await api.post('/api/v1/notes/uploads', {
+        ...this.getAuthParams,
+        notes: notes
+      })
+      for (var note of response.data) {
+        if (note.guid) {
+          Note.update({
+            where: note.local_id,
+            data: {
+              guid: note.guid,
+              updated_at: uploadAt
             }
-          }
-          this.updateUploadsUpdatedAt(uploadAt + 1)
-        })
+          })
+        }
+      }
+      this.updateUploadsUpdatedAt(uploadAt + 1)
     },
     noteDownloads() {
       const downloadAt = new Date().getTime()
@@ -350,48 +362,6 @@ export default {
           updated_at: updated_at
         }
       })
-    },
-    init() {
-      // テストデータ初期化用
-      UpdatedAt.insert({ data: { label: 'my_lists', updated_at: 0 } })
-      UpdatedAt.insert({ data: { label: 'tags', updated_at: 0 } })
-      UpdatedAt.insert({ data: { label: 'categories', updated_at: 0 } })
-      UpdatedAt.insert({ data: { label: 'note_downloads', updated_at: 0 } })
-      UpdatedAt.insert({ data: { label: 'note_uploads', updated_at: 0 } })
-      Tag.insert({ data: { id: 1, name: 'test_tag' } })
-      Note.insert({
-        data: {
-          inode: 1,
-          file_name: 'test.md',
-          title: '',
-          category_id: 1,
-          updated_at: new Date().getTime(),
-          parent_inode: 3
-        }
-      })
-      Note.insert({
-        data: {
-          inode: 2,
-          file_name: 'test1.md',
-          title: 'テスト2',
-          category_id: 1,
-          updated_at: 0,
-          parent_inode: 3
-        }
-      })
-      Note.deleteAll()
-      NoteTag.insert({ data: { tag_id: 1, note_inode: 1 } })
-      Category.insert({ data: { online_id: 1, name: 'プログラミング' } })
-      Directory.insert({
-        data: {
-          inode: 3,
-          parent_inode: null,
-          directory_name: 'notes',
-          path_from_root: 'folder'
-        }
-      })
-      DeletedLocalNote.deleteAll()
-      // DeletedLocalNote.insert( { data: { guid: "b009531a-680f-4a89-b2d2-ee062307fdb4"}})
     }
   }
 }
