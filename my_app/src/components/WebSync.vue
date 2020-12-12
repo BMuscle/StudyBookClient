@@ -161,7 +161,7 @@ export default {
             note.file_name
           ),
           category_id: note.category_id,
-          file_path: note.parent_directory_path_from_root,
+          directory_path: note.parent_directory_path_from_root,
           tags: note.tags.map(tag => {
             if (typeof tag.online_id === 'undefined') {
               return { id: '', name: tag.name }
@@ -233,6 +233,7 @@ export default {
           note.tags,
           note.body
         )
+        if (note.directory_path == null) note.directory_path = ''
         if (local_note.parent_directory_path_from_root != note.directory_path) {
           // フォルダ移動
           moveDownloadNote(
