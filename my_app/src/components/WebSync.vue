@@ -28,7 +28,6 @@ import NoteTag from '../models/NoteTag'
 import Category from '../models/Category'
 import Directory from '../models/Directory'
 import UpdatedAt from '../models/UpdatedAt'
-import DeletedLocalNote from '../models/DeletedLocalNote'
 
 import {
   createDownloadNote,
@@ -70,7 +69,7 @@ export default {
         .get()
     },
     deletedLocalNotes() {
-      return DeletedLocalNote.all()
+      return Note.deletedLocalNotes()
     },
     directory() {
       return Directory.all()
@@ -398,7 +397,9 @@ export default {
           path_from_root: 'folder'
         }
       })
-      DeletedLocalNote.deleteAll()
+      Note.deletedLocalNotes().forEach(note => {
+        note.$delete()
+      })
       // DeletedLocalNote.insert( { data: { guid: "b009531a-680f-4a89-b2d2-ee062307fdb4"}})
     }
   }

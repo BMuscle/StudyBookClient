@@ -8,7 +8,6 @@ import MyListNoteTag from '../models/MyListNoteTag'
 import Category from '../models/Category'
 import Tag from '../models/Tag'
 import NoteTag from '../models/NoteTag'
-import DeletedLocalNote from '../models/DeletedLocalNote'
 import UpdatedAt from '../models/UpdatedAt'
 
 const database = new Database()
@@ -22,7 +21,6 @@ database.register(MyListNoteIndex)
 database.register(Category)
 database.register(Tag)
 database.register(NoteTag)
-database.register(DeletedLocalNote)
 database.register(UpdatedAt)
 
 export default database

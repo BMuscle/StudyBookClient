@@ -1,7 +1,6 @@
 import { createStore } from 'vuex'
 import VuexORM from '@vuex-orm/core'
 import createPersistedState from 'vuex-persistedstate'
-import md_header from './md_header'
 import notes from './notes'
 import { category_module } from '../models/Category'
 import user from './user'
@@ -32,7 +31,6 @@ export default createStore({
   mutations: {},
   actions: {},
   modules: {
-    md_header,
     notes,
     category_module,
     user
