@@ -1,8 +1,6 @@
 <template>
   <div class="left-bar">
-    <div>
-      要素はここへ
-    </div>
+    <MyListsSection />
     <div
       id="left_bar_bar"
       class="move-bar"
@@ -15,7 +13,12 @@
 </template>
 
 <script>
+import MyListsSection from '../components/MyListsSection.vue'
+
 export default {
+  components: {
+    MyListsSection,
+  },
   data: function() {
     return {
       isWidthChange: false
@@ -61,6 +64,7 @@ export default {
   width: 180px;
   min-width: 180px;
   float: left;
+  padding: 10px 8px;
 }
 .move-bar {
   position: absolute;

@@ -29,7 +29,6 @@ export default {
   },
   data: function() {
     return {
-      testTag: 'aaaa', //仮tag
       noteBody: ''
     }
   },
@@ -68,6 +67,7 @@ export default {
     height: 32px;
     font-size: 0.8em;
     padding: 3px 10px;
+    white-space: nowrap;
     .file-path {
       vertical-align: middle;
       display: inline-block;

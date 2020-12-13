@@ -58,6 +58,7 @@ export default {
 
 <style scoped lang="scss">
 .navbar {
+  white-space: nowrap;
   height: 32px;
   padding-top: 4px;
   padding-bottom: 4px;

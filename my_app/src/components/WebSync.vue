@@ -88,7 +88,7 @@ export default {
     async sync() {
       await this.categoriesSync()
       await this.noteUploads()
-      this.tagsSync()
+      await this.tagsSync()
       this.noteDownloads()
       this.noteDeletes()
       this.myListSync()
@@ -121,31 +121,34 @@ export default {
       this.set_default_id(response.data.default_category.id)
       this.updateCategoriesUpdatedAt(categoryAt)
     },
-    tagsSync() {
+    async tagsSync() {
       const tagAt = new Date().getTime()
-      api
-        .get(
-          `/api/v1/tags?user_id=${this.getAuthParams.user_id}&token=${
-            this.getAuthParams.token
-          }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
-        )
-        .then(response => {
-          for (var tag of response.data) {
-            if (
-              Tag.query()
-                .where('online_id', tag.id)
-                .exists()
-            )
-              // タグの存在確認
-              Tag.insert({
-                data: {
-                  online_id: tag.id,
-                  name: tag.name
-                }
-              })
-          }
-          this.updateTagsUpdatedAt(tagAt)
-        })
+      const response = await api.get(
+        `/api/v1/tags?user_id=${this.getAuthParams.user_id}&token=${
+          this.getAuthParams.token
+        }&updated_at=${new Date(this.tagsUpdatedAt).toUTCString()}`
+      )
+      for (var tag of response.data) {
+        const localTag = Tag.query().where('name', tag.name).first()
+        if (localTag) {
+          // タグが存在
+          Tag.update({
+            where: localTag.id,
+            data: {
+              online_id: tag.id,
+            }
+          })
+        } else {
+          // 存在しない
+          Tag.insert({
+            data: {
+              online_id: tag.id,
+              name: tag.name
+            }
+          })
+        }
+      }
+      this.updateTagsUpdatedAt(tagAt)
     },
     async noteUploads() {
       // 更新対象取得 整形
@@ -332,13 +335,14 @@ export default {
               MyListNoteIndex.insertOrUpdate({
                 data: {
                   my_list_id: my_list.id,
-                  my_list_note_id: note.id
+                  my_list_note_id: note.id,
+                  index: note.index,
                 }
               })
               for (let tag of note.tags) {
                 MyListNoteTag.insertOrUpdate({
                   data: {
-                    tag_id: tag.id,
+                    tag_id: Tag.query().where('online_id', tag.id).first().id,
                     my_list_note_id: note.id
                   }
                 })
