@@ -12,6 +12,7 @@ export default createStore({
     VuexORM.install(database),
     createPersistedState({
       paths: [
+        'category_module',
         'user',
         'entities.notes',
         'entities.my_lists',
@@ -19,7 +20,6 @@ export default createStore({
         'entities.my_list_note_tag',
         'entities.my_list_note_index',
         'entities.categories',
-        'category_module',
         'entities.tags',
         'entities.note_tag',
         'entities.deleted_local_notes',
