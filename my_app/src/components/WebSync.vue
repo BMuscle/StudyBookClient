@@ -166,11 +166,7 @@ export default {
             '/'
           ),
           tags: note.tags.map(tag => {
-            if (typeof tag.online_id === 'undefined') {
-              return { id: '', name: tag.name }
-            } else {
-              return { id: tag.online_id, name: tag.name }
-            }
+            return { id: tag.online_id ?? '', name: tag.name }
           })
         })
       }
