@@ -14,24 +14,6 @@ import UpdatedAt from './models/UpdatedAt'
 import AllData from './components/AllData'
 
 import Category from './models/Category'
-import Directory from './models/Directory'
-import MyList from './models/MyList'
-import Note from './models/Note'
-import MyListNote from './models/MyListNote'
-import MyListNoteTag from './models/MyListNoteTag'
-import MyListNoteIndex from './models/MyListNoteIndex'
-import NoteTag from './models/NoteTag'
-import Tag from './models/Tag'
-
-import CategoryData from './initialData/CategoryData'
-import DirectoryData from './initialData/DirectoryData'
-import MyListData from './initialData/MyListData'
-import MyListNoteData from './initialData/MyListNoteData'
-import MyListNoteTagData from './initialData/MyListNoteTagData'
-import MyListNoteIndexData from './initialData/MyListNoteIndexData'
-import NoteData from './initialData/NoteData'
-import NoteTagData from './initialData/NoteTagData'
-import TagData from './initialData/TagData'
 
 // 全体で共通のコンポーネント
 export default {
@@ -85,22 +67,6 @@ export default {
         }
       })
     }
-
-    const categoryData = CategoryData
-    Category.insert({ data: categoryData })
-    //const directoryData = DirectoryData
-    //Directory.insert({ data: directoryData })
-    const my_listData = MyListData
-    MyList.insert({ data: my_listData })
-    //const noteData = NoteData
-    //Note.insert({ data: noteData })
-    MyListNoteIndex.insert({ data: MyListNoteIndexData })
-    MyListNoteTag.insert({ data: MyListNoteTagData })
-    MyListNote.insert({ data: MyListNoteData })
-    //const noteTagData = NoteTagData
-    //NoteTag.insert({ data: noteTagData })
-    const tagData = TagData
-    Tag.insert({ data: tagData })
 
     watcher.onAppReady()
   }
