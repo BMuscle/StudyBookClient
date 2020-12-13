@@ -15,6 +15,7 @@
         </li>
       </div>
     </ul>
+    <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
   </div>
 </template>
 <script>
@@ -24,8 +25,17 @@ import Tag from '@/models/Tag'
 import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
 import Note from '@/models/Note'
+import NoteSort from '../components/NoteSort.vue'
 //import
 export default {
+  components: {
+    NoteSort
+  },
+  data: function() {
+    return {
+      sort: []
+    }
+  },
   computed: {
     ...mapState('notes', {
       filteredNotes: state => state.filteredNotes
@@ -35,6 +45,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
+        .orderBy(this.sort[0], this.sort[1])
         .get()
     }
   },

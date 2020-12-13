@@ -3,6 +3,8 @@
     <div>
       要素はここへ
       <SearchNotes />
+      <filterdNotes />
+      <NoteSort />
     </div>
     <div
       id="left_bar_bar"
@@ -17,9 +19,11 @@
 
 <script>
 import SearchNotes from '../components/SearchNotes'
+import filterdNotes from '../components/filterdNotes.vue'
 export default {
   components: {
-    SearchNotes
+    SearchNotes,
+    filterdNotes
   },
   data: function() {
     return {
