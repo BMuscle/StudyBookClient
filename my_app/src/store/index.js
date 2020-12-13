@@ -12,6 +12,8 @@ export default createStore({
     VuexORM.install(database),
     createPersistedState({
       paths: [
+        'notes',
+        'my_lists',
         'category_module',
         'user',
         'entities.notes',
