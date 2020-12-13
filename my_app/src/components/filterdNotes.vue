@@ -18,6 +18,7 @@
     <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
   </div>
 </template>
+
 <script>
 import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
