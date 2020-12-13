@@ -6,7 +6,6 @@ import Directory from './Directory'
 import Category from './Category'
 import Tag from './Tag'
 import NoteTag from './NoteTag'
-import DeletedLocalNote from './DeletedLocalNote'
 
 export default class Note extends Model {
   static entity = 'notes'
@@ -43,6 +42,11 @@ export default class Note extends Model {
   }
   static queryExists() {
     return this.query().where('is_exists', true)
+  }
+  static deletedLocalNotes() {
+    return this.query()
+      .where('is_exists', false)
+      .get()
   }
   static async updateAllNotes(data) {
     this.update({

@@ -14,7 +14,6 @@ import UpdatedAt from './models/UpdatedAt'
 import AllData from './components/AllData'
 
 import Category from './models/Category'
-import DeletedLocalNote from './models/DeletedLocalNote'
 import Directory from './models/Directory'
 import MyList from './models/MyList'
 import Note from './models/Note'
@@ -25,7 +24,6 @@ import NoteTag from './models/NoteTag'
 import Tag from './models/Tag'
 
 import CategoryData from './initialData/CategoryData'
-import DeletedLocalNoteData from './initialData/DeletedLocalNoteData'
 import DirectoryData from './initialData/DirectoryData'
 import MyListData from './initialData/MyListData'
 import MyListNoteData from './initialData/MyListNoteData'
@@ -90,8 +88,6 @@ export default {
 
     const categoryData = CategoryData
     Category.insert({ data: categoryData })
-    const deletedLocalNoteData = DeletedLocalNoteData
-    DeletedLocalNote.insert({ data: deletedLocalNoteData })
     //const directoryData = DirectoryData
     //Directory.insert({ data: directoryData })
     const my_listData = MyListData
