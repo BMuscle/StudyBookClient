@@ -10,9 +10,8 @@
 import store from './store'
 import * as watcher from './components/watcher'
 import Header from './views/Header'
-import UpdatedAt from './models/UpdatedAt'
 import AllData from './components/AllData'
-
+import UpdatedAt from './models/UpdatedAt'
 import Category from './models/Category'
 
 // 全体で共通のコンポーネント
