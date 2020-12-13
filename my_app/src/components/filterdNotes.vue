@@ -9,7 +9,7 @@
           <div v-for="tag in note.tags" :key="tag.id">
             {{ tag.name }}
           </div>
-          <div v-if="note.category">
+          <div v-if="note.category" @click="log()">
             {{ note.category.name }}
           </div>
         </li>
@@ -55,6 +55,9 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
+    log() {
+      console.log('aaa')
+    },
     initialize() {
       Category.insert({
         data: {
