@@ -1,9 +1,6 @@
 <template>
   <div class="left-bar">
-    <div>
-      要素はここへ
-      <MyListsSection />
-    </div>
+    <MyListsSection />
     <div
       id="left_bar_bar"
       class="move-bar"
@@ -67,6 +64,7 @@ export default {
   width: 180px;
   min-width: 180px;
   float: left;
+  padding: 10px 8px;
 }
 .move-bar {
   position: absolute;

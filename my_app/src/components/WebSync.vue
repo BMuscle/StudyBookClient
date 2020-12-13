@@ -335,7 +335,8 @@ export default {
               MyListNoteIndex.insertOrUpdate({
                 data: {
                   my_list_id: my_list.id,
-                  my_list_note_id: note.id
+                  my_list_note_id: note.id,
+                  index: note.index,
                 }
               })
               for (let tag of note.tags) {
