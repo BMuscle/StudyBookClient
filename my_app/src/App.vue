@@ -78,7 +78,7 @@ export default {
     ) {
       UpdatedAt.insert({ data: { label: 'note_uploads', updated_at: 0 } })
     }
-    if (!Category.find(0)) {
+    if (!Category.find(this.defaultCategoryId)) {
       // デフォルトカテゴリー生成（仮）
       Category.insert({
         data: {
