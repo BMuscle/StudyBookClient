@@ -7,7 +7,7 @@
       <h3 class="mt-2 mb-3">
         StudyBookへログイン
       </h3>
-      <form>
+      <form @submit.prevent="createToken()">
         <div class="form-group">
           <label for="email"> Eメール </label>
           <input id="email" v-model="email" type="email" class="form-control" />
@@ -21,7 +21,7 @@
             class="form-control"
           />
         </div>
-        <button type="button" class="btn btn-primary" @click="createToken()">
+        <button type="submit" class="btn btn-primary">
           ログイン
         </button>
       </form>
@@ -57,7 +57,10 @@ export default {
         })
         .then(response => {
           this.reset()
-          this.setUser({ userId: response.data.user_id, token: response.data.token })
+          this.setUser({
+            userId: response.data.user_id,
+            token: response.data.token
+          })
           this.$router.push('/')
         })
         .catch(response => {

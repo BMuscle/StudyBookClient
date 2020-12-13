@@ -29,7 +29,7 @@ class NotesWatcher {
     NoteCRUD.NotesWatchHandler.start(NotesWatcher)
   }
   static onChangeNote(target) {
-    Note.find(target.stat.inode).updateHeadAndUpdatedAt()
+    Note.find(target.stat.ino).updateHeadAndUpdatedAt()
   }
   static onCreateNote(target) {
     Note.insertOrUpdate({
