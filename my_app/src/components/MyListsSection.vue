@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MyLists @myListClick="onMyListClick" />
+    <MyLists @my-list-click="onMyListClick" />
     <MyList
       v-if="choiced"
       :my-list-id="choicedMyListId"

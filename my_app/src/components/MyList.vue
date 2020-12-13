@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-for="note in notes" :key="note.inode">
-      <div @click="this.$emit('noteClick', note.inode)">
-        {{ note.title }}
+    <div v-for="my_list_note in my_list_notes" :key="my_list_note.id">
+      <div @click="clickMyListNote(my_list_note.id)">
+        {{ my_list_note.title }}
       </div>
     </div>
   </div>
@@ -10,25 +10,26 @@
 
 <script>
 import MyList from '../models/MyList'
+import { mapMutations } from 'vuex'
 
 export default {
   components: {},
   props: {
-    myListId: String
-  },
-  data: function() {
-    return {}
+    myListId: Number
   },
   computed: {
-    notes() {
-      const my_list = MyList.query()
+    my_list_notes() {
+      return MyList.query()
         .with('notes')
-        .find(this.myListId)
-      const notes = myList.notes
-      return notes
-    }
+        .find(this.myListId).notes
+    },
   },
-  methods: {}
+  methods: {
+    ...mapMutations('my_lists', ['setFocusMyListNote']),
+    clickMyListNote(id) {
+      this.setFocusMyListNote(id)
+    }
+  }
 }
 </script>
 

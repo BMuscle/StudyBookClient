@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import VuexORM from '@vuex-orm/core'
 import createPersistedState from 'vuex-persistedstate'
 import notes from './notes'
+import my_lists from './my_lists'
 import { category_module } from '../models/Category'
 import user from './user'
 import database from '../database'
@@ -32,6 +33,7 @@ export default createStore({
   actions: {},
   modules: {
     notes,
+    my_lists,
     category_module,
     user
   }

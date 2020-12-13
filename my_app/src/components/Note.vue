@@ -29,7 +29,6 @@ export default {
   },
   data: function() {
     return {
-      testTag: 'aaaa', //仮tag
       noteBody: ''
     }
   },

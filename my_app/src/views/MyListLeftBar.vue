@@ -2,6 +2,7 @@
   <div class="left-bar">
     <div>
       要素はここへ
+      <MyListsSection />
     </div>
     <div
       id="left_bar_bar"
@@ -15,7 +16,12 @@
 </template>
 
 <script>
+import MyListsSection from '../components/MyListsSection.vue'
+
 export default {
+  components: {
+    MyListsSection,
+  },
   data: function() {
     return {
       isWidthChange: false
