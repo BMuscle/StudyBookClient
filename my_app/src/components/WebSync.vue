@@ -292,9 +292,8 @@ export default {
         .then(response => {
           // 削除の更新を受け取った際、ノートの削除を行う。
           for (let deletedNote of response.data) {
-            let note = Note.query().where('guid', deletedNote.guid) // 存在する場合にだけ、削除
+            let note = Note.query().where('guid', deletedNote.guid).first() // 存在する場合にだけ、削除
             if (note) {
-              deleteNote(note.parent_directory_path_from_root, note.file_name)
               Note.delete(note.inode)
             }
           }
