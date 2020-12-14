@@ -4,7 +4,6 @@
       要素はここへ
       <SearchNotes />
       <filterdNotes />
-      <NoteSort />
     </div>
     <div
       id="left_bar_bar"

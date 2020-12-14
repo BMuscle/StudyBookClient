@@ -1,8 +1,8 @@
 <template>
   <div class="main">
-    <NoteLeftBar/>
+    <NoteLeftBar />
     <div class="note">
-      <Note class="overflow-auto"/>
+      <Note class="overflow-auto" />
     </div>
   </div>
 </template>
