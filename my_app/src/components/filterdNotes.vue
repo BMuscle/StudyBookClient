@@ -5,7 +5,7 @@
       note
       <div v-for="note in notes" :key="note.inode">
         <li>
-          <div @click="focusNote = note.inode">
+          <div @click="log(note.inode)">
             {{ note.title }}<br>
             {{ focusNote }}
           </div>
@@ -57,11 +57,15 @@ export default {
     this.initialize()
     this.setFilteredNotes([1, 2, 3, 4, 5, 6])
   },
+  actions: {
+    log(hoge) {
+      console.log(this.focusNote)
+      console.log(hoge)
+      this.focusNote.commit(hoge)
+    }
+  },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
-    log() {
-      console.log('aaa')
-    },
     initialize() {
       Category.insert({
         data: {

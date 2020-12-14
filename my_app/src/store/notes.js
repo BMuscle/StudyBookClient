@@ -3,7 +3,7 @@ export default {
   state: {
     descendantNotes: [],
     filteredNotes: [],
-    focusNote: ''
+    focusNote: 1
   },
   mutations: {
     setDescendantNotes(state, inodes) {
