@@ -5,11 +5,14 @@
       note
       <div v-for="note in notes" :key="note.inode">
         <li>
-          {{ note.title }}
+          <div @click="focusNote = note.inode">
+            {{ note.title }}<br>
+            {{ focusNote }}
+          </div>
           <div v-for="tag in note.tags" :key="tag.id">
             {{ tag.name }}
           </div>
-          <div v-if="note.category" @click="log()">
+          <div v-if="note.category">
             {{ note.category.name }}
           </div>
         </li>
@@ -38,7 +41,8 @@ export default {
   },
   computed: {
     ...mapState('notes', {
-      filteredNotes: state => state.filteredNotes
+      filteredNotes: state => state.filteredNotes,
+      focusNote: state => state.focusNote
     }),
     notes() {
       return Note.query()
