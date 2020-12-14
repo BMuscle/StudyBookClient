@@ -40,7 +40,7 @@ export default {
     }),
     note() {
       let note = Note.query()
-        .whereId(1125899906911517)
+        .whereId(this.focusNote)
         .with('category')
         .with('tags')
         .with('parent_directory')
