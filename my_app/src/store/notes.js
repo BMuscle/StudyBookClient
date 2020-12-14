@@ -11,6 +11,9 @@ export default {
     },
     setFilteredNotes(state, inodes) {
       state.filteredNotes = inodes
+    },
+    setFocusNote(state, inodes) {
+      state.focusNote = inodes
     }
   }
 }
