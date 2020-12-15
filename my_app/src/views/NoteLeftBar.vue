@@ -3,6 +3,7 @@
     <div>
       要素はここへ
       <SearchNotes />
+      <DirectoryTreeView />
       <filterdNotes />
     </div>
     <div
@@ -19,10 +20,12 @@
 <script>
 import SearchNotes from '../components/SearchNotes'
 import filterdNotes from '../components/filterdNotes.vue'
+import DirectoryTreeView from '../components/DirectoryTreeView'
 export default {
   components: {
     SearchNotes,
-    filterdNotes
+    filterdNotes,
+    DirectoryTreeView
   },
   data: function() {
     return {
