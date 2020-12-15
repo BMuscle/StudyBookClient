@@ -10,7 +10,7 @@
           <Tags :note="note" />
         </div>
       </div>
-      <DisplayMd class="body" :md-data="md(focusNote)" />
+      <DisplayMd class="body" :md-data="noteBody" />
     </div>
   </div>
 </template>
@@ -21,7 +21,6 @@ import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
 import Tags from './Tags.vue'
 import { readNoteBody } from './NoteCRUD'
-import NoteCRUD from './NoteCRUD.js'
 
 export default {
   components: {
@@ -30,7 +29,7 @@ export default {
   },
   data: function() {
     return {
-      testTag: 'aaaa', //仮tag
+      testTag: '',
       noteBody: ''
     }
   },
@@ -46,17 +45,12 @@ export default {
         .with('parent_directory')
         .first()
       if (note == null) return
-      this.setNote(note)
       return note
-    },
-    md(inode) {
-      const note = Note.find(inode)
-      const mdData = NoteCRUD.readNoteBody(
-        note.parent_directory_path_from_root,
-        note.file_name
-      )
-      console.log('aaaa')
-      return mdData
+    }
+  },
+  watch: {
+    note(newNote) {
+      this.setNote(newNote)
     }
   },
   methods: {

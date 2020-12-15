@@ -28,6 +28,7 @@ import Category from '@/models/Category'
 import NoteTag from '@/models/NoteTag'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
+import { getInode } from './fs_wrapper'
 //import
 export default {
   components: {
@@ -52,13 +53,8 @@ export default {
         .get()
     }
   },
-  created: function() {
-    this.initialize()
-    this.setFilteredNotes([1, 2, 3, 4, 5, 6])
-  },
   methods: {
-    ...mapMutations('notes', ['setFilteredNotes', 'setFocusNote']),
-    initialize() {}
+    ...mapMutations('notes', ['setFilteredNotes', 'setFocusNote'])
   }
 }
 </script>
