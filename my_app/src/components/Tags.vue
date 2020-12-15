@@ -1,7 +1,7 @@
 <template>
   <div class="tags">
     <div v-if="tags.length > 0" class="note-tags">
-      <div  v-for="tag in tags" :key="tag" class= "tag">
+      <div v-for="tag in tags" :key="tag.id" class="tag">
         <Tag
           :name="tag.name"
           @tag-change="updateTag($event, tag.name)"
