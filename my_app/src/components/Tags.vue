@@ -9,8 +9,11 @@
         />
       </div>
     </div>
-    <div v-show="!isEditing" @click="initCreatingTag" class="tag-add-button">
-    </div>
+    <div
+      v-show="!isEditing"
+      class="tag-add-button"
+      @click="initCreatingTag"
+    ></div>
     <div v-show="isEditing" class="tag-add-input">
       <input
         ref="createInput"
@@ -35,6 +38,12 @@ export default {
   props: {
     note: Object
   },
+  data: function() {
+    return {
+      new_tag: '',
+      isEditing: false
+    }
+  },
   computed: {
     tags() {
       return this.note.tags
@@ -48,30 +57,50 @@ export default {
     createTag() {
       let tagName = this.new_tag.trim()
       if (tagName == '') return
-      let header = { title: this.note.title, category: this.note.category.name , tags: this.tags.map(tag => tag.name).concat(tagName)}
-      setHeader(header, this.note.parent_directory_path_from_root, this.note.file_name)
+      let header = {
+        title: this.note.title,
+        category: this.note.category.name,
+        tags: this.tags.map(tag => tag.name).concat(tagName)
+      }
+      setHeader(
+        header,
+        this.note.parent_directory_path_from_root,
+        this.note.file_name
+      )
     },
     updateTag(printingName, tagName) {
       printingName = printingName.trim()
       if (printingName == '') return
-      let header = { title: this.note.title, category: this.note.category.name , tags: this.tags.map(tag => { return tag.name == tagName ? printingName : tag.name })}
-      setHeader(header, this.note.parent_directory_path_from_root, this.note.file_name)
+      let header = {
+        title: this.note.title,
+        category: this.note.category.name,
+        tags: this.tags.map(tag => {
+          return tag.name == tagName ? printingName : tag.name
+        })
+      }
+      setHeader(
+        header,
+        this.note.parent_directory_path_from_root,
+        this.note.file_name
+      )
     },
     deleteTag(tagName) {
-      let header = { title: this.note.title, category: this.note.category.name , tags: this.tags.map(tag => tag.name).filter(tag => tag !== tagName)}
-      setHeader(header, this.note.parent_directory_path_from_root, this.note.file_name)
+      let header = {
+        title: this.note.title,
+        category: this.note.category.name,
+        tags: this.tags.map(tag => tag.name).filter(tag => tag !== tagName)
+      }
+      setHeader(
+        header,
+        this.note.parent_directory_path_from_root,
+        this.note.file_name
+      )
     },
     endCreatingTag() {
       this.isEditing = false
       this.new_tag = ''
     }
-  },
-  data: function() {
-    return {
-      new_tag: '',
-      isEditing: false
-    }
-  },
+  }
 }
 </script>
 
@@ -97,7 +126,7 @@ export default {
     padding: 1px;
     &:hover {
       cursor: pointer;
-      background-color: #99FFCC;
+      background-color: #99ffcc;
     }
   }
   .tag-add-input {
