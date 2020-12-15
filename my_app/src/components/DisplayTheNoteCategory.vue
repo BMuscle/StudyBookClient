@@ -1,28 +1,42 @@
 <template>
   <div>
     <input
-      :value="category"
+      :value="note.category.name"
       autocomplete="on"
       list="categories"
-      @input="set_category($event.target.value)"
+      @change="setCategory($event.target.value)"
     />
     <datalist id="categories">
-      <option v-for="n in categories" :key="n">{{ n }}</option>
+      <option v-for="category in categories" :key="category.online_id">
+        {{ category.name }}
+      </option>
     </datalist>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
+import Category from '../models/Category'
+import Note from '../models/Note'
 
 export default {
-  data() {
-    return {
-      categories: ['ハンバーガー', 'てりやきバーガー', 'ポテト']
+  computed: {
+    ...mapState('notes', ['focusNote']),
+    categories() {
+      return Category.all()
+    },
+    note() {
+      return Note.query()
+        .with('category')
+        .find(this.focusNote)
     }
   },
-  computed: mapState(['category']),
-  methods: mapMutations(['set_category'])
+  methods: {
+    setCategory(name) {
+      this.note.category_id = Category.getCategory(name).online_id
+      this.note.$save()
+    }
+  }
 }
 </script>
 
