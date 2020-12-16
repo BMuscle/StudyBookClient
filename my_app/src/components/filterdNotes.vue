@@ -20,12 +20,9 @@
     <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
   </div>
 </template>
+
 <script>
 import { mapMutations, mapState } from 'vuex'
-
-import Tag from '@/models/Tag'
-import Category from '@/models/Category'
-import NoteTag from '@/models/NoteTag'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
 import { getInode } from './fs_wrapper'
@@ -55,7 +52,7 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes', 'setFocusNote'])
-  }
+  },
 }
 </script>
 

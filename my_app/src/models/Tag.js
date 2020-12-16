@@ -1,7 +1,6 @@
 import { Model } from '@vuex-orm/core'
 import Note from './Note'
 import NoteTag from './NoteTag'
-import UpdatedAt from './UpdatedAt'
 
 export default class Tag extends Model {
   static entity = 'tags'
@@ -21,9 +20,6 @@ export default class Tag extends Model {
         'inode'
       )
     }
-  }
-  static afterCreate() {
-    UpdatedAt.find('tags').updateToCurrentTime()
   }
   static async insertTag(name) {
     const tag = this.query()
