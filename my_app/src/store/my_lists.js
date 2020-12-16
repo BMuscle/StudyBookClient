@@ -3,7 +3,8 @@ export default {
   state: {
     filteredMyLists: [],
     focusMyList: null,
-    focusMyListNote: null
+    focusMyListNote: null,
+    searchParams: '',
   },
   mutations: {
     setFilteredMyLists(state, ids) {
@@ -14,6 +15,9 @@ export default {
     },
     setFocusMyListNote(state, id) {
       state.focusMyListNote = id
+    },
+    setSearchParams(state, params) {
+      state.searchParams = params
     }
   }
 }

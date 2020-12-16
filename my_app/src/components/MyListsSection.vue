@@ -1,5 +1,8 @@
 <template>
   <div class="section">
+    <div>
+      <SearchMyLists />
+    </div>
     <div class="my-lists overflow-auto">
       <MyLists @my-list-click="onMyListClick" />
     </div>
@@ -17,11 +20,13 @@
 <script>
 import MyList from './MyList'
 import MyLists from './MyLists'
+import SearchMyLists from './SearchMyLists'
 
 export default {
   components: {
     MyList,
-    MyLists
+    MyLists,
+    SearchMyLists
   },
   data: function() {
     return {

@@ -319,7 +319,7 @@ export default {
                 id: my_list.id,
                 title: my_list.title,
                 category_id: my_list.category_id,
-                description: my_list.description
+                description: my_list.description ?? ''
               }
             })
             for (let note of my_list.notes) {
