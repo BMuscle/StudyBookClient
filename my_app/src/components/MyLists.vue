@@ -1,29 +1,42 @@
 <template>
   <div class="my-lists">
     <div v-for="myList in myLists" :key="myList.id" @click="setMyList(myList.id)" class="my-list">
-      <div class="title">
-        {{ myList.title }}
-      </div>
+      <div class="title" v-html="highLight(myList.title)" />
       <div class="category">
-        {{ myList.category.name }}
+        <div class="category-name">
+          {{ myList.category.name }}
+        </div>
       </div>
+      <div class="description" v-html="highLight(myList.description)" />
     </div>
   </div>
 </template>
 
 <script>
 import MyList from '../models/MyList'
+import { mapState } from 'vuex'
 
 export default {
-  components: {},
   computed: {
+    ...mapState('my_lists', {
+      searchParams: state => state.searchParams
+    }),
     myLists() {
-      return MyList.query().with('category').all()
+      return MyList.query().with('notes').with('category').where(myList => { return (myList.title.includes(this.searchParams) || this.includeDescription(myList)) }).get()
     }
   },
   methods: {
     setMyList(myListId) {
       this.$emit('my-list-click', myListId)
+    },
+    includeDescription(myList) {
+      for(let param of this.searchParams.split(' ')) {
+        if(!myList.description.includes(param)) return false;
+      }
+      return true;
+    },
+    highLight(text) {
+      return text.replace(this.searchParams, `<b>${this.searchParams}</b>`)
     }
   }
 }
@@ -45,15 +58,22 @@ export default {
       border-top: none;
     }
     .title {
-      font-weight: 600;
+      font-weight: 400;
     }
     .category {
-      display: inline-block;
-      font-size: 0.8em;
-      background-color: #caffe6;
+      margin-top: -5px;
+      .category-name {
+        display: inline-block;
+        font-size: 0.7em;
+        background-color: #caffe6;
+        color: #6a6a6a;
+        border-radius: 20px;
+        padding: 1px 8px;
+      }
+    }
+    .description {
+      font-size: 0.7em;
       color: #6a6a6a;
-      border-radius: 20px;
-      padding: 1px 8px;
     }
   }
 }
