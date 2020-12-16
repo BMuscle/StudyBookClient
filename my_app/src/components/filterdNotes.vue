@@ -5,7 +5,9 @@
       note
       <div v-for="note in notes" :key="note.inode">
         <li>
-          {{ note.title }}
+          <div @click="setFocusNote(note.inode)">
+            {{ note.title }}
+          </div>
           <div v-for="tag in note.tags" :key="tag.id">
             {{ tag.name }}
           </div>
@@ -23,6 +25,7 @@
 import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
+import { getInode } from './fs_wrapper'
 //import
 export default {
   components: {
@@ -35,7 +38,8 @@ export default {
   },
   computed: {
     ...mapState('notes', {
-      filteredNotes: state => state.filteredNotes
+      filteredNotes: state => state.filteredNotes,
+      focusNote: state => state.focusNote
     }),
     notes() {
       return Note.query()
@@ -46,12 +50,9 @@ export default {
         .get()
     }
   },
-  created: function() {
-    this.setFilteredNotes([1, 2, 3, 4, 5, 6])
-  },
   methods: {
-    ...mapMutations('notes', ['setFilteredNotes'])
-  }
+    ...mapMutations('notes', ['setFilteredNotes', 'setFocusNote'])
+  },
 }
 </script>
 

@@ -38,14 +38,18 @@ export default {
     }),
     note() {
       let note = Note.query()
-        .whereId(1125899906911517)
+        .whereId(this.focusNote)
         .with('category')
         .with('tags')
         .with('parent_directory')
         .first()
       if (note == null) return
-      this.setNote(note)
       return note
+    }
+  },
+  watch: {
+    note(newNote) {
+      this.setNote(newNote)
     }
   },
   methods: {

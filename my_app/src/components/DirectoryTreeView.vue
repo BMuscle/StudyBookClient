@@ -42,15 +42,9 @@ export default {
   methods: {
     ...mapMutations('notes', ['setDescendantNotes']),
     initialize() {
-      let inodes = []
-      let directories = Directory.query()
-        .with('notes')
+      let inodes = Note.queryExists()
         .get()
-      for (let directory of directories) {
-        for (let note of directory.notes) {
-          inodes.push(note.inode)
-        }
-      }
+        .map(note => note.inode)
       this.setDescendantNotes(inodes)
     }
   },
