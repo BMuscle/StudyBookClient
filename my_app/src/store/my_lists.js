@@ -5,6 +5,7 @@ export default {
     focusMyList: null,
     focusMyListNote: null,
     searchParams: '',
+    filteringCategoryId: null
   },
   mutations: {
     setFilteredMyLists(state, ids) {
@@ -18,6 +19,9 @@ export default {
     },
     setSearchParams(state, params) {
       state.searchParams = params
+    },
+    setfilteringCategoryId(state, categoryId) {
+      state.filteringCategoryId = categoryId
     }
   }
 }

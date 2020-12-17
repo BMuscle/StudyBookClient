@@ -1,6 +1,11 @@
 <template>
   <div class="my-lists">
-    <div v-for="myList in myLists" :key="myList.id" @click="setMyList(myList.id)" class="my-list">
+    <div
+      v-for="myList in myLists"
+      :key="myList.id"
+      class="my-list"
+      @click="setMyList(myList.id)"
+    >
       <div class="title" v-html="highLight(myList.title)" />
       <div class="category">
         <div class="category-name">
@@ -19,10 +24,26 @@ import { mapState } from 'vuex'
 export default {
   computed: {
     ...mapState('my_lists', {
-      searchParams: state => state.searchParams
+      searchParams: state => state.searchParams,
+      filteringCategoryId: state => state.filteringCategoryId
     }),
+    myListQueryFilteredInCategory() {
+      const myListQuery = MyList.query()
+      return this.filteringCategoryId != null
+        ? myListQuery.where('category_id', this.filteringCategoryId)
+        : myListQuery
+    },
     myLists() {
-      return MyList.query().with('notes').with('category').where(myList => { return (myList.title.includes(this.searchParams) || this.includeDescription(myList)) }).get()
+      return this.myListQueryFilteredInCategory
+        .with('notes')
+        .with('category')
+        .where(myList => {
+          return (
+            myList.title.includes(this.searchParams) ||
+            this.includeDescription(myList)
+          )
+        })
+        .get()
     }
   },
   methods: {
@@ -30,10 +51,10 @@ export default {
       this.$emit('my-list-click', myListId)
     },
     includeDescription(myList) {
-      for(let param of this.searchParams.split(' ')) {
-        if(!myList.description.includes(param)) return false;
+      for (let param of this.searchParams.split(' ')) {
+        if (!myList.description.includes(param)) return false
       }
-      return true;
+      return true
     },
     highLight(text) {
       return text.replace(this.searchParams, `<b>${this.searchParams}</b>`)
@@ -53,7 +74,7 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     padding: 3px 5px;
-    border-top: solid 1px rgba(0,0,0,0.1);
+    border-top: solid 1px rgba(0, 0, 0, 0.1);
     &:first-child {
       border-top: none;
     }

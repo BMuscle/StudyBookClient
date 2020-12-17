@@ -2,7 +2,7 @@
   <div class="section">
     <div>
       <SearchMyLists />
-      <DisplayTheMyListCategory />
+      <MylistsFilterByCategory />
     </div>
     <div class="my-lists overflow-auto">
       <MyLists @my-list-click="onMyListClick" />
@@ -22,14 +22,14 @@
 import MyList from './MyList'
 import MyLists from './MyLists'
 import SearchMyLists from './SearchMyLists'
-import DisplayTheMyListCategory from './DisplayTheMyListCategory'
+import MylistsFilterByCategory from './MylistsFilterByCategory'
 
 export default {
   components: {
     MyList,
     MyLists,
     SearchMyLists,
-    DisplayTheMyListCategory
+    MylistsFilterByCategory
   },
   data: function() {
     return {
