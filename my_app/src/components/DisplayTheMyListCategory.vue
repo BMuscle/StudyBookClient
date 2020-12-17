@@ -1,7 +1,7 @@
 <template>
   <div>
     <input
-      :value="MyList.category.name"
+      :value="mylist.category.name"
       autocomplete="on"
       list="categories"
       @change="setCategory($event.target.value)"
@@ -21,11 +21,11 @@ import MyList from '../models/MyList'
 
 export default {
   computed: {
-    ...mapState('mylists', ['focusMyList']),
+    ...mapState('my_lists', ['focusMyList']),
     categories() {
       return Category.all()
     },
-    mylist() {
+    my_list() {
       return MyList.query()
         .with('category')
         .find(this.focusMyList)
@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     setCategory(name) {
-      this.mylist.category_id = Category.getCategory(name).online_id
+      this.my_list.category_id = Category.getCategory(name).online_id
       this.mylist.$save()
     }
   }

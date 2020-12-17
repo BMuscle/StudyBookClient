@@ -66,7 +66,7 @@ export default {
     border-radius: 3px;
     height: 45%;
     max-height: 45%;
-    background-color: #E8DED2;
+    background-color: #e8ded2;
   }
 }
 </style>
