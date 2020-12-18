@@ -1,5 +1,6 @@
 <template>
   <div class="my-lists">
+    <MyListSort @mylist-sort="sort = $event.split(',', 2)" />
     <div v-for="myList in myLists" :key="myList.id" @click="setMyList(myList.id)" class="my-list">
       <div class="title" v-html="highLight(myList.title)" />
       <div class="category">
@@ -15,14 +16,28 @@
 <script>
 import MyList from '../models/MyList'
 import { mapState } from 'vuex'
+import MyListSort from './MyListSort.vue'
 
 export default {
+  components: {
+    MyListSort
+  },
+  data: function(){
+    return {
+      sort: []
+    }
+  },
   computed: {
     ...mapState('my_lists', {
       searchParams: state => state.searchParams
     }),
     myLists() {
-      return MyList.query().with('notes').with('category').where(myList => { return (myList.title.includes(this.searchParams) || this.includeDescription(myList)) }).get()
+      return MyList.query()
+        .where(myList => { return (myList.title.includes(this.searchParams) || this.includeDescription(myList)) })
+        .with('notes')
+        .with('category')
+        .orderBy(this.sort[0], this.sort[1])
+        .get()
     }
   },
   methods: {
