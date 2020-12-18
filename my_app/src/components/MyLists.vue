@@ -27,7 +27,6 @@ export default {
       }
     },
     myLists() {
-      console.log(this.sort)
       return MyList.query()
         .with('notes')
         .with('category')
