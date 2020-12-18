@@ -3,6 +3,7 @@
     <div>
       <SearchMyLists />
     </div>
+    <MyListSort />
     <div class="my-lists overflow-auto">
       <MyLists @my-list-click="onMyListClick" />
     </div>
@@ -21,12 +22,14 @@
 import MyList from './MyList'
 import MyLists from './MyLists'
 import SearchMyLists from './SearchMyLists'
+import MyListSort from './MyListSort'
 
 export default {
   components: {
     MyList,
     MyLists,
-    SearchMyLists
+    SearchMyLists,
+    MyListSort
   },
   data: function() {
     return {
