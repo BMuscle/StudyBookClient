@@ -58,6 +58,11 @@ export default {
       this.setNote(newNote)
     }
   },
+  created() {
+    if (this.note != null) {
+      this.setNote(this.note)
+    }
+  },
   methods: {
     setNote(note) {
       readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
