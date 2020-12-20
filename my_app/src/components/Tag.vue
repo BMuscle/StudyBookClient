@@ -9,7 +9,7 @@
         @blur="cancelTagEditing"
       />
     </div>
-    <div @click="enableFocus" v-show="!onFocus" class="tag-view">
+    <div v-show="!onFocus" class="tag-view" @click="enableFocus">
       <label>{{ name }}</label>
       <div class="delete" @click="noticeDelete">×</div>
     </div>
@@ -47,7 +47,7 @@ export default {
       this.onFocus = false
     },
     async enableFocus(e) {
-      if(e.target.closest('.delete')) return;
+      if (e.target.closest('.delete')) return
       await (this.onFocus = true)
       this.$refs.textInput.focus()
     },
@@ -64,7 +64,7 @@ export default {
   background-color: #ddd;
   border-radius: 10px;
   &:hover {
-    background-color: #cFcCcF;
+    background-color: #cfcccf;
     cursor: pointer !important;
   }
   .tag-edit {
@@ -81,7 +81,7 @@ export default {
     label {
       margin: 0;
       &:hover {
-        background-color: #cFcCcF;
+        background-color: #cfcccf;
         cursor: pointer !important;
       }
     }

@@ -22,10 +22,7 @@ export function getMtimeMs(parentDirectoryPath, fileName) {
 }
 export async function createNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
-    notesJoinedParentPath,
-    fileName
-  )
+  const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
 }
 export async function readNote(parentDirectoryPath, fileName) {
@@ -76,11 +73,7 @@ export async function overwriteNote(parentDirectoryPath, fileName, content) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.overwriteFile(notesJoinedParentPath, fileName, content)
 }
-export async function moveNote(
-  parentDirectoryPath,
-  fileName,
-  destinationDirectoryPath
-) {
+export async function moveNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
@@ -100,11 +93,7 @@ export async function renameNote(parentDirectoryPath, fileName, newFileName) {
     notesJoinedParentPath,
     newFileName
   )
-  await fs_wrapper.renameFile(
-    notesJoinedParentPath,
-    fileName,
-    newFileNameWithoutDuplicate
-  )
+  await fs_wrapper.renameFile(notesJoinedParentPath, fileName, newFileNameWithoutDuplicate)
 }
 export async function deleteNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
@@ -116,10 +105,7 @@ export async function createDirectory(parentDirectoryPath, directoryName) {
     notesJoinedParentPath,
     directoryName
   )
-  await fs_wrapper.createDirectory(
-    notesJoinedParentPath,
-    directoryNameWithoutDuplicate
-  )
+  await fs_wrapper.createDirectory(notesJoinedParentPath, directoryNameWithoutDuplicate)
 }
 export async function readDirectory(parentDirectoryPath, directoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
@@ -128,11 +114,7 @@ export async function readDirectory(parentDirectoryPath, directoryName) {
 export async function readFolderRecursively(directoryPath, inode = null) {
   return await fs_wrapper.readdirRecursively(notesJoin(directoryPath), inode)
 }
-export async function moveDirectory(
-  parentDirectoryPath,
-  directoryName,
-  destinationDirectoryPath
-) {
+export async function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
   const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
@@ -146,11 +128,7 @@ export async function moveDirectory(
     directoryNameWithoutDuplicate
   )
 }
-export async function renameDirectory(
-  parentDirectoryPath,
-  directoryName,
-  newDirectoryName
-) {
+export async function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const newDirectoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
@@ -167,21 +145,9 @@ export async function deleteDirectory(parentDirectoryPath, directoryName) {
   await fs_wrapper.deleteDirectory(notesJoinedParentPath, directoryName)
 }
 
-export function createDownloadNote(
-  parentDirectoryPath,
-  title,
-  category,
-  tags,
-  body
-) {
+export function createDownloadNote(parentDirectoryPath, title, category, tags, body) {
   return new Promise(function(resolve, reject) {
-    var result = writeDownloadNote(
-      parentDirectoryPath,
-      title,
-      category,
-      tags,
-      body
-    )
+    var result = writeDownloadNote(parentDirectoryPath, title, category, tags, body)
     if (result) {
       resolve(result)
     } else {
@@ -191,13 +157,7 @@ export function createDownloadNote(
 }
 
 // 新規ノートダウンロード作成関数
-async function writeDownloadNote(
-  parentDirectoryPath,
-  title,
-  category,
-  tags,
-  body
-) {
+async function writeDownloadNote(parentDirectoryPath, title, category, tags, body) {
   parentDirectoryPath = parentDirectoryPath ? parentDirectoryPath : ''
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   mkdirp.sync(notesJoinedParentPath)
@@ -223,11 +183,7 @@ export async function overwriteDownloadNote(
   tags,
   body
 ) {
-  overwriteNote(
-    parentDirectoryPath,
-    fileName,
-    convertNoteToString(title, category, tags, body)
-  )
+  overwriteNote(parentDirectoryPath, fileName, convertNoteToString(title, category, tags, body))
 }
 
 // ノートデータを文字列変換
@@ -241,14 +197,8 @@ export function convertNoteToString(title, category, tags, body) {
   return content
 }
 
-export function moveDownloadNote(
-  parentDirectoryPath,
-  fileName,
-  destinationDirectoryPath
-) {
-  destinationDirectoryPath = destinationDirectoryPath
-    ? destinationDirectoryPath
-    : ''
+export function moveDownloadNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
+  destinationDirectoryPath = destinationDirectoryPath ? destinationDirectoryPath : ''
   mkdirp.sync(notesJoin(parentDirectoryPath))
   moveNote(parentDirectoryPath, fileName, destinationDirectoryPath)
 }

@@ -54,11 +54,9 @@ export default {
   },
   methods: {
     setNote(note) {
-      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(
-        response => {
-          this.noteBody = response
-        }
-      )
+      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
+        this.noteBody = response
+      })
     }
   }
 }

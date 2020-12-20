@@ -9,11 +9,7 @@
         />
       </div>
     </div>
-    <div
-      v-show="!isEditing"
-      class="tag-add-button"
-      @click="initCreatingTag"
-    ></div>
+    <div v-show="!isEditing" class="tag-add-button" @click="initCreatingTag"></div>
     <div v-show="isEditing" class="tag-add-input">
       <input
         ref="createInput"

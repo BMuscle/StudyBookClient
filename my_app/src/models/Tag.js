@@ -11,14 +11,7 @@ export default class Tag extends Model {
       id: this.uid(),
       online_id: this.number().nullable(),
       name: this.string(),
-      notes: this.belongsToMany(
-        Note,
-        NoteTag,
-        'tag_id',
-        'note_inode',
-        'id',
-        'inode'
-      )
+      notes: this.belongsToMany(Note, NoteTag, 'tag_id', 'note_inode', 'id', 'inode'),
     }
   }
   static async insertTag(name) {
