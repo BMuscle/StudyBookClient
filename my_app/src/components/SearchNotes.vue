@@ -17,8 +17,15 @@ export default {
   },
   computed: {
     ...mapState('notes', {
+      filteringCategoryId: state => state.filteringCategoryId,
       descendantNotes: state => state.descendantNotes
-    })
+    }),
+    noteQueryFilteredInCategory() {
+      const noteQuery = Note.query()
+      return this.filteringCategoryId != null
+        ? noteQuery.where('category_id', this.filteringCategoryId)
+        : noteQuery
+    }
   },
   watch: {
     descendantNotes: function(descendantNotes) {
@@ -27,12 +34,15 @@ export default {
     query: function(query) {
       this.filter(query, this.descendantNotes)
     },
+    filteringCategoryId: function() {
+      this.filter(this.query, this.descendantNotes)
+    }
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
     async filter(query, descendantNotes) {
       // idからノート全取得
-      let rawNotes = Note.query()
+      let rawNotes = this.noteQueryFilteredInCategory
         .whereIdIn(descendantNotes)
         .with('tags')
         .with('category')
