@@ -51,8 +51,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('notes', ['setFilteredNotes', 'setFocusNote'])
-  },
+    ...mapMutations('notes', ['setFocusNote'])
+  }
 }
 </script>
 

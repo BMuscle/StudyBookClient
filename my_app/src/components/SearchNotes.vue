@@ -7,9 +7,6 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
-import Tag from '@/models/Tag'
-import Category from '@/models/Category'
-import NoteTag from '@/models/NoteTag'
 import { readNoteBody } from './NoteCRUD'
 
 export default {
@@ -20,15 +17,32 @@ export default {
   },
   computed: {
     ...mapState('notes', {
-      filteredNotes: state => state.filteredNotes,
+      filteringCategoryId: state => state.filteringCategoryId,
       descendantNotes: state => state.descendantNotes
-    })
+    }),
+    noteQueryFilteredInCategory() {
+      const noteQuery = Note.query()
+      return this.filteringCategoryId != null
+        ? noteQuery.where('category_id', this.filteringCategoryId)
+        : noteQuery
+    }
+  },
+  watch: {
+    descendantNotes: function(descendantNotes) {
+      this.filter(this.query, descendantNotes)
+    },
+    query: function(query) {
+      this.filter(query, this.descendantNotes)
+    },
+    filteringCategoryId: function() {
+      this.filter(this.query, this.descendantNotes)
+    }
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
     async filter(query, descendantNotes) {
       // idからノート全取得
-      let rawNotes = Note.query()
+      let rawNotes = this.noteQueryFilteredInCategory
         .whereIdIn(descendantNotes)
         .with('tags')
         .with('category')
@@ -39,13 +53,10 @@ export default {
         // 本文読み込み & 正規化
         notes.push({
           inode: rawNote.inode,
-          title_category_tags: `${rawNote.title} ${
-            rawNote.category.name
-          } ${rawNote.tags.map(tag => tag.name).join(' ')}`,
-          body: readNoteBody(
-            rawNote.parent_directory_path_from_root,
-            rawNote.file_name
-          )
+          title_category_tags: `${rawNote.title} ${rawNote.category.name} ${rawNote.tags
+            .map(tag => tag.name)
+            .join(' ')}`,
+          body: readNoteBody(rawNote.parent_directory_path_from_root, rawNote.file_name)
         })
       }
       let resultIds = []
@@ -69,14 +80,6 @@ export default {
         }
       }
       return true
-    }
-  },
-  watch: {
-    descendantNotes: function(descendantNotes) {
-      this.filter(this.query, descendantNotes)
-    },
-    query: function(query) {
-      this.filter(query, this.descendantNotes)
     }
   }
 }
