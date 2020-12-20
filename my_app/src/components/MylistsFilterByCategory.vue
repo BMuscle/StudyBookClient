@@ -11,22 +11,19 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import Category from '../models/Category'
-import MyList from '../models/MyList'
 
 export default {
-  mounted() {
-    this.$refs.select.selectedIndex =
-      this.filteringCategoryId == null
-        ? 0
-        : this.categories.findIndex(
-            category => category.online_id == this.filteringCategoryId
-          )
-  },
   computed: {
     ...mapState('my_lists', ['filteringCategoryId']),
     categories() {
       return [{ name: '指定なし' }].concat(Category.all())
     }
+  },
+  mounted() {
+    this.$refs.select.selectedIndex =
+      this.filteringCategoryId == null
+        ? 0
+        : this.categories.findIndex(category => category.online_id == this.filteringCategoryId)
   },
   methods: {
     ...mapMutations('my_lists', ['setfilteringCategoryId']),

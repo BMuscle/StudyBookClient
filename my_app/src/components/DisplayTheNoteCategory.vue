@@ -1,40 +1,36 @@
 <template>
-  <div>
-    <input
-      :value="note.category.name"
-      autocomplete="on"
-      list="categories"
-      @change="setCategory($event.target.value)"
-    />
-    <datalist id="categories">
-      <option v-for="category in categories" :key="category.online_id">
-        {{ category.name }}
-      </option>
-    </datalist>
-  </div>
+  <select v-model="nowCategory.name" @change="emitChange($event.target.selectedIndex)">
+    <option v-for="category in categories" :key="category.online_id">
+      {{ category.name }}
+    </option>
+  </select>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Category from '../models/Category'
-import Note from '../models/Note'
 
 export default {
+  props: {
+    noteCategory: Category
+  },
+  data() {
+    return {
+      nowCategory: this.noteCategory
+    }
+  },
   computed: {
-    ...mapState('notes', ['focusNote']),
     categories() {
       return Category.all()
-    },
-    note() {
-      return Note.query()
-        .with('category')
-        .find(this.focusNote)
+    }
+  },
+  watch: {
+    noteCategory(newCategory) {
+      this.nowCategory = newCategory
     }
   },
   methods: {
-    setCategory(name) {
-      this.note.category_id = Category.getCategory(name).online_id
-      this.note.$save()
+    emitChange(index) {
+      this.$emit('category-change', this.categories[index].name)
     }
   }
 }

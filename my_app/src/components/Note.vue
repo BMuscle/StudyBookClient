@@ -6,8 +6,20 @@
           {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
           {{ note.title }}
         </div>
+        <div class="category">
+          <DisplayTheNoteCategory
+            :note-category="note.category"
+            @category-change="updateCategory($event)"
+          />
+        </div>
         <div class="tags">
-          <Tags :note="note" />
+          <Tags
+            :note="note"
+            :tags="note.tags"
+            @tag-create="createTag($event)"
+            @tag-change="updateTag($event)"
+            @tag-delete="deleteTag($event)"
+          />
         </div>
       </div>
       <DisplayMd class="body" :md-data="noteBody" />
@@ -19,12 +31,14 @@
 import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
+import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
 import Tags from './Tags.vue'
-import { readNoteBody } from './NoteCRUD'
+import { readNoteBody, setHeader } from './NoteCRUD'
 
 export default {
   components: {
     DisplayMd,
+    DisplayTheNoteCategory,
     Tags
   },
   data: function() {
@@ -52,13 +66,39 @@ export default {
       this.setNote(newNote)
     }
   },
+  created() {
+    if (this.note != null) {
+      this.setNote(this.note)
+    }
+  },
   methods: {
     setNote(note) {
-      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(
-        response => {
-          this.noteBody = response
-        }
-      )
+      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
+        this.noteBody = response
+      })
+    },
+    updateCategory(category) {
+      const header = this.note.header
+      header.category = category
+      this.overwriteNoteHeader(header)
+    },
+    createTag(tagName) {
+      const header = this.note.header
+      header.tags = header.tags.concat(tagName)
+      this.overwriteNoteHeader(header)
+    },
+    updateTag({ index, tagName }) {
+      const header = this.note.header
+      header.tags[index] = tagName
+      this.overwriteNoteHeader(header)
+    },
+    deleteTag(index) {
+      const header = this.note.header
+      header.tags.splice(index, 1)
+      this.overwriteNoteHeader(header)
+    },
+    overwriteNoteHeader(header) {
+      setHeader(header.toString, this.note.parent_directory_path_from_root, this.note.file_name)
     }
   }
 }
@@ -77,6 +117,9 @@ export default {
       display: inline-block;
       color: #e5e5e5;
       margin-right: 10px;
+    }
+    .category {
+      display: inline-block;
     }
     .tags {
       display: inline-block;
