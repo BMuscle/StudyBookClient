@@ -25,31 +25,28 @@ export default {
       return this.filteringCategoryId != null
         ? noteQuery.where('category_id', this.filteringCategoryId)
         : noteQuery
+    },
+    rawNotes() {
+      return this.noteQueryFilteredInCategory
+        .whereIdIn(this.descendantNotes)
+        .with('tags')
+        .with('category')
+        .get()
     }
   },
   watch: {
-    descendantNotes: function(descendantNotes) {
-      this.filter(this.query, descendantNotes)
+    query() {
+      this.filter()
     },
-    query: function(query) {
-      this.filter(query, this.descendantNotes)
-    },
-    filteringCategoryId: function() {
-      this.filter(this.query, this.descendantNotes)
+    rawNotes() {
+      this.filter()
     }
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
-    async filter(query, descendantNotes) {
-      // idからノート全取得
-      let rawNotes = this.noteQueryFilteredInCategory
-        .whereIdIn(descendantNotes)
-        .with('tags')
-        .with('category')
-        .get()
+    async filter() {
       let notes = []
-
-      for (let rawNote of rawNotes) {
+      for (let rawNote of this.rawNotes) {
         // 本文読み込み & 正規化
         notes.push({
           inode: rawNote.inode,
@@ -60,7 +57,7 @@ export default {
         })
       }
       let resultIds = []
-      let splitQuery = query.split(' ')
+      let splitQuery = this.query.split(' ')
       // queryを分割する
       for (let note of notes) {
         if (
