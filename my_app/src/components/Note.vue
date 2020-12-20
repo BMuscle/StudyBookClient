@@ -6,6 +6,12 @@
           {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
           {{ note.title }}
         </div>
+        <div class="category">
+          <DisplayTheNoteCategory
+            :note-category="note.category"
+            @category-change="updateCategory($event)"
+          />
+        </div>
         <div class="tags">
           <Tags
             :note="note"
@@ -25,12 +31,14 @@
 import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
+import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
 import Tags from './Tags.vue'
 import { readNoteBody, setHeader } from './NoteCRUD'
 
 export default {
   components: {
     DisplayMd,
+    DisplayTheNoteCategory,
     Tags
   },
   data: function() {
@@ -68,6 +76,12 @@ export default {
       readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
         this.noteBody = response
       })
+    },
+    updateCategory(category) {
+      const header = this.note.header
+      header.category = category
+      this.overwriteNoteHeader(header)
+    },
     createTag(tagName) {
       const header = this.note.header
       header.tags = header.tags.concat(tagName)
@@ -103,6 +117,9 @@ export default {
       display: inline-block;
       color: #e5e5e5;
       margin-right: 10px;
+    }
+    .category {
+      display: inline-block;
     }
     .tags {
       display: inline-block;
