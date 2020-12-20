@@ -4,10 +4,16 @@
       <input
         ref="textInput"
         v-model="printingName"
+        list="tags"
         @focus="focus"
         @keypress.enter="confirmTagEditing"
         @blur="cancelTagEditing"
       />
+      <datalist id="tags">
+        <option v-for="tag in allTagData" :key="tag.id">
+          {{ tag.name }}
+        </option>
+      </datalist>
     </div>
     <div v-show="!onFocus" class="tag-view" @click="enableFocus">
       <label>{{ name }}</label>
@@ -17,6 +23,8 @@
 </template>
 
 <script>
+import TagData from '../models/Tag'
+
 export default {
   props: {
     name: String
@@ -25,6 +33,11 @@ export default {
     return {
       onFocus: false,
       printingName: this.name
+    }
+  },
+  computed: {
+    allTagData() {
+      return TagData.thatHaveNotes()
     }
   },
   watch: {

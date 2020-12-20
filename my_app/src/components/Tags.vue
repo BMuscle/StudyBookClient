@@ -15,15 +15,22 @@
         ref="createInput"
         v-model="new_tag"
         type="text"
+        list="tags"
         @keypress.enter="noticeCreate(), endCreatingTag()"
         @blur="endCreatingTag"
       />
+      <datalist id="tags">
+        <option v-for="tag in allTagData" :key="tag.id">
+          {{ tag.name }}
+        </option>
+      </datalist>
     </div>
   </div>
 </template>
 
 <script>
 import Tag from './Tag'
+import TagData from '../models/Tag'
 
 export default {
   components: {
@@ -39,6 +46,8 @@ export default {
     }
   },
   computed: {
+    allTagData() {
+      return TagData.thatHaveNotes()
     }
   },
   methods: {
