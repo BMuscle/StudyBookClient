@@ -1,11 +1,11 @@
 <template>
   <div class="tags">
     <div v-if="tags.length > 0" class="note-tags">
-      <div v-for="tag in tags" :key="tag.id" class="tag">
+      <div v-for="(tag, index) in tags" :key="tag.id" class="tag">
         <Tag
           :name="tag.name"
-          @tag-change="updateTag($event, tag.name)"
-          @pass-delete-tag="deleteTag(tag.name)"
+          @tag-change="noticeChange(index, $event)"
+          @pass-delete-tag="noticeDelete(index)"
         />
       </div>
     </div>
@@ -15,7 +15,7 @@
         ref="createInput"
         v-model="new_tag"
         type="text"
-        @keypress.enter="createTag(), endCreatingTag()"
+        @keypress.enter="noticeCreate(), endCreatingTag()"
         @blur="endCreatingTag"
       />
     </div>
@@ -24,15 +24,13 @@
 
 <script>
 import Tag from './Tag'
-import Note from '@/models/Note'
-import { setHeader } from './NoteCRUD'
 
 export default {
   components: {
     Tag
   },
   props: {
-    note: Object
+    tags: Array
   },
   data: function() {
     return {
@@ -41,8 +39,6 @@ export default {
     }
   },
   computed: {
-    tags() {
-      return this.note.tags
     }
   },
   methods: {
@@ -50,47 +46,18 @@ export default {
       await (this.isEditing = true)
       this.$refs.createInput.focus()
     },
-    createTag() {
-      let tagName = this.new_tag.trim()
+    noticeCreate() {
+      const tagName = this.new_tag.trim()
       if (tagName == '') return
-      let header = {
-        title: this.note.title,
-        category: this.note.category.name,
-        tags: this.tags.map(tag => tag.name).concat(tagName)
-      }
-      setHeader(
-        header,
-        this.note.parent_directory_path_from_root,
-        this.note.file_name
-      )
+      this.$emit('tag-create', tagName)
     },
-    updateTag(printingName, tagName) {
-      printingName = printingName.trim()
-      if (printingName == '') return
-      let header = {
-        title: this.note.title,
-        category: this.note.category.name,
-        tags: this.tags.map(tag => {
-          return tag.name == tagName ? printingName : tag.name
-        })
-      }
-      setHeader(
-        header,
-        this.note.parent_directory_path_from_root,
-        this.note.file_name
-      )
+    noticeChange(index, tagName) {
+      tagName = tagName.trim()
+      if (tagName == '') return
+      this.$emit('tag-change', { index: index, tagName: tagName })
     },
-    deleteTag(tagName) {
-      let header = {
-        title: this.note.title,
-        category: this.note.category.name,
-        tags: this.tags.map(tag => tag.name).filter(tag => tag !== tagName)
-      }
-      setHeader(
-        header,
-        this.note.parent_directory_path_from_root,
-        this.note.file_name
-      )
+    noticeDelete(index) {
+      this.$emit('tag-delete', index)
     },
     endCreatingTag() {
       this.isEditing = false

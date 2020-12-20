@@ -7,7 +7,13 @@
           {{ note.title }}
         </div>
         <div class="tags">
-          <Tags :note="note" />
+          <Tags
+            :note="note"
+            :tags="note.tags"
+            @tag-create="createTag($event)"
+            @tag-change="updateTag($event)"
+            @tag-delete="deleteTag($event)"
+          />
         </div>
       </div>
       <DisplayMd class="body" :md-data="noteBody" />
@@ -20,7 +26,7 @@ import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
 import Tags from './Tags.vue'
-import { readNoteBody } from './NoteCRUD'
+import { readNoteBody, setHeader } from './NoteCRUD'
 
 export default {
   components: {
@@ -57,6 +63,23 @@ export default {
       readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
         this.noteBody = response
       })
+    createTag(tagName) {
+      const header = this.note.header
+      header.tags = header.tags.concat(tagName)
+      this.overwriteNoteHeader(header)
+    },
+    updateTag({ index, tagName }) {
+      const header = this.note.header
+      header.tags[index] = tagName
+      this.overwriteNoteHeader(header)
+    },
+    deleteTag(index) {
+      const header = this.note.header
+      header.tags.splice(index, 1)
+      this.overwriteNoteHeader(header)
+    },
+    overwriteNoteHeader(header) {
+      setHeader(header.toString, this.note.parent_directory_path_from_root, this.note.file_name)
     }
   }
 }

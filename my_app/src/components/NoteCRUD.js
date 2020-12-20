@@ -242,14 +242,8 @@ function extractContentToBody(content) {
   return '### 読み取りエラー'
 }
 
-export async function setHeader(
-  header = { title: '', category: '', tags: [] },
-  parentDirectoryPath,
-  fileName
-) {
+export async function setHeader(header, parentDirectoryPath, fileName) {
   const body = (await readNoteBody(parentDirectoryPath, fileName)) ?? ''
-  const content = `title: ${header.title}\ncategory: ${
-    header.category
-  }\ntags: ${header.tags.join(', ')}\n\n${body}`
+  const content = `${header}\n\n${body}`
   overwriteNote(parentDirectoryPath, fileName, content)
 }

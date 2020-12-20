@@ -52,7 +52,7 @@ export default {
       this.$refs.textInput.focus()
     },
     noticeDelete: function() {
-      this.$emit('pass-delete-tag', this.name)
+      this.$emit('pass-delete-tag')
     }
   }
 }
