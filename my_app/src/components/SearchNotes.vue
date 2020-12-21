@@ -20,14 +20,8 @@ export default {
       filteringCategoryId: state => state.filteringCategoryId,
       descendantNotes: state => state.descendantNotes
     }),
-    noteQueryFilteredInCategory() {
-      const noteQuery = Note.query()
-      return this.filteringCategoryId != null
-        ? noteQuery.where('category_id', this.filteringCategoryId)
-        : noteQuery
-    },
     rawNotes() {
-      return this.noteQueryFilteredInCategory
+      return this.noteQueryFilteredInCategory()
         .whereIdIn(this.descendantNotes)
         .with('tags')
         .with('category')
@@ -44,6 +38,12 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
+    noteQueryFilteredInCategory() {
+      let noteQuery = Note.query()
+      return this.filteringCategoryId != null
+        ? noteQuery.where('category_id', this.filteringCategoryId)
+        : noteQuery
+    },
     async filter() {
       let notes = []
       for (let rawNote of this.rawNotes) {

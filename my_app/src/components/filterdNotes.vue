@@ -26,7 +26,7 @@ import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
 import { getInode } from './fs_wrapper'
-//import
+
 export default {
   components: {
     NoteSort
