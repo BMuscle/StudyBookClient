@@ -6,6 +6,7 @@ import my_lists from './my_lists'
 import { category_module } from '../models/Category'
 import user from './user'
 import database from '../database'
+import bookmark from './bookmark'
 
 export default createStore({
   plugins: [
@@ -13,6 +14,7 @@ export default createStore({
     createPersistedState({
       paths: [
         'notes',
+        'bookmark',
         'my_lists',
         'category_module',
         'user',
@@ -33,6 +35,7 @@ export default createStore({
   actions: {},
   modules: {
     notes,
+    bookmark,
     my_lists,
     category_module,
     user
