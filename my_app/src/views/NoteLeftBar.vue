@@ -2,6 +2,7 @@
   <div class="left-bar">
     <div>
       要素はここへ
+      <BookmarkDirectory />
       <SearchNotes />
       <NotesFilterByCategory />
       <DirectoryTreeView />
@@ -23,12 +24,14 @@ import SearchNotes from '../components/SearchNotes'
 import NotesFilterByCategory from '../components/NotesFilterByCategory'
 import filterdNotes from '../components/filterdNotes.vue'
 import DirectoryTreeView from '../components/DirectoryTreeView'
+import BookmarkDirectory from '../components/BookmarkDirectory.vue'
 export default {
   components: {
     SearchNotes,
     NotesFilterByCategory,
     filterdNotes,
-    DirectoryTreeView
+    DirectoryTreeView,
+    BookmarkDirectory
   },
   data: function() {
     return {
