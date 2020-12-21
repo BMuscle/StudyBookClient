@@ -36,6 +36,9 @@ export default {
     getAuthParams() {
       return { user_id: this.userId, token: this.token }
     },
+    getAuthParamsStr() {
+      return `user_id=${this.userId}&token=${this.token}`
+    },
     categoriesUpdatedAt() {
       return UpdatedAt.find('categories').updated_at
     },
@@ -96,9 +99,7 @@ export default {
     async categoriesSync() {
       const categoryAt = new Date().getTime()
       const response = await api.get(
-        `/api/v1/categories?user_id=${this.getAuthParams.user_id}&token=${
-          this.getAuthParams.token
-        }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
+        `/api/v1/categories?${this.getAuthParamsStr}&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
       )
       for (let category of response.data.categories) {
         Category.insert({
@@ -124,9 +125,7 @@ export default {
     async tagsSync() {
       const tagAt = new Date().getTime()
       const response = await api.get(
-        `/api/v1/tags?user_id=${this.getAuthParams.user_id}&token=${
-          this.getAuthParams.token
-        }&updated_at=${new Date(this.tagsUpdatedAt).toUTCString()}`
+        `/api/v1/tags?${this.getAuthParamsStr}&updated_at=${new Date(this.tagsUpdatedAt).toUTCString()}`
       )
       for (var tag of response.data) {
         const localTag = Tag.query().where('name', tag.name).first()
@@ -195,9 +194,7 @@ export default {
       const downloadAt = new Date().getTime()
       api
         .get(
-          `/api/v1/notes/downloads?user_id=${
-            this.getAuthParams.user_id
-          }&token=${this.getAuthParams.token}&updated_at=${new Date(
+          `/api/v1/notes/downloads?${this.getAuthParamsStr}&updated_at=${new Date(
             this.noteDownloadsUpdatedAt
           ).toUTCString()}`
         )
@@ -305,7 +302,7 @@ export default {
       // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
       api
         .get(
-          `/api/v1/my_lists?user_id=${this.getAuthParams.user_id}&token=${this.getAuthParams.token}`
+          `/api/v1/my_lists?${this.getAuthParamsStr}`
         )
         .then(response => {
           // 一旦削除後に追加
@@ -340,9 +337,11 @@ export default {
                 }
               })
               for (let tag of note.tags) {
+                let local_tag = Tag.query().where('online_id', tag.id).first()
+                if (local_tag == null) return
                 MyListNoteTag.insertOrUpdate({
                   data: {
-                    tag_id: Tag.query().where('online_id', tag.id).first().id,
+                    tag_id: local_tag.id,
                     my_list_note_id: note.id
                   }
                 })
