@@ -55,9 +55,7 @@ export default {
       return Note.query()
         .where(note => {
           return (
-            (note.updated_at >= this.noteUploadsUpdatedAt ||
-              note.guid == null) &&
-            note.is_exists
+            (note.updated_at >= this.noteUploadsUpdatedAt || note.guid == null) && note.is_exists
           )
         })
         .with('parent_directory')
@@ -96,10 +94,19 @@ export default {
       this.noteDeletes()
       this.myListSync()
     },
+    requestCategories(updatedAt) {
+      return api.get(`/api/v1/categories?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
+    },
+    requestTags(updatedAt) {
+      return api.get(`/api/v1/tags?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
+    },
+    requestUploadNotes(notes) {
+      return api.post('/api/v1/notes/uploads', { ...this.getAuthParams, notes: notes })
+    },
     async categoriesSync() {
       const categoryAt = new Date().getTime()
-      const response = await api.get(
-        `/api/v1/categories?${this.getAuthParamsStr}&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
+      const response = await this.requestCategories(
+        new Date(this.categoriesUpdatedAt).toUTCString()
       )
       for (let category of response.data.categories) {
         Category.insert({
@@ -124,17 +131,17 @@ export default {
     },
     async tagsSync() {
       const tagAt = new Date().getTime()
-      const response = await api.get(
-        `/api/v1/tags?${this.getAuthParamsStr}&updated_at=${new Date(this.tagsUpdatedAt).toUTCString()}`
-      )
+      const response = await this.requestTags(new Date(this.categoriesUpdatedAt).toUTCString())
       for (var tag of response.data) {
-        const localTag = Tag.query().where('name', tag.name).first()
+        const localTag = Tag.query()
+          .where('name', tag.name)
+          .first()
         if (localTag) {
           // タグが存在
           Tag.update({
             where: localTag.id,
             data: {
-              online_id: tag.id,
+              online_id: tag.id
             }
           })
         } else {
@@ -157,15 +164,9 @@ export default {
           local_id: note.inode,
           guid: note.guid,
           title: note.title,
-          body: await readNoteBody(
-            note.parent_directory_path_from_root,
-            note.file_name
-          ),
+          body: await readNoteBody(note.parent_directory_path_from_root, note.file_name),
           category_id: note.category_id,
-          directory_path: note.parent_directory_path_from_root.replace(
-            '\\',
-            '/'
-          ),
+          directory_path: note.parent_directory_path_from_root.replace('\\', '/'),
           tags: note.tags.map(tag => {
             return { id: tag.online_id ?? '', name: tag.name }
           })
@@ -173,10 +174,7 @@ export default {
       }
       // 送信
       const uploadAt = new Date().getTime()
-      const response = await api.post('/api/v1/notes/uploads', {
-        ...this.getAuthParams,
-        notes: notes
-      })
+      const response = await this.requestUploadNotes(notes)
       for (var note of response.data) {
         if (note.guid) {
           Note.update({
@@ -232,10 +230,7 @@ export default {
           note.body
         )
         if (note.directory_path == null) note.directory_path = ''
-        if (
-          local_note.parent_directory_path_from_root.replace('\\', '/') !=
-          note.directory_path
-        ) {
+        if (local_note.parent_directory_path_from_root.replace('\\', '/') != note.directory_path) {
           // フォルダ移動
           moveDownloadNote(
             local_note.parent_directory_path_from_root,
@@ -257,9 +252,7 @@ export default {
           note.body
         ).then(noteFileName => {
           // ディレクトリ、ノートは監視で追加されるので、guidと、inodeをセットする
-          let note_inode = fs.statSync(
-            `${notesJoin(note.directory_path)}/${noteFileName}`
-          ).ino
+          let note_inode = fs.statSync(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
           Note.insertOrUpdate({
             data: {
               inode: note_inode,
@@ -287,7 +280,9 @@ export default {
         .then(response => {
           // 削除の更新を受け取った際、ノートの削除を行う。
           for (let deletedNote of response.data) {
-            let note = Note.query().where('guid', deletedNote.guid).first() // 存在する場合にだけ、削除
+            let note = Note.query()
+              .where('guid', deletedNote.guid)
+              .first() // 存在する場合にだけ、削除
             if (note) {
               Note.delete(note.inode)
             }
@@ -300,55 +295,53 @@ export default {
         return { guid: note.guid }
       })
       // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
-      api
-        .get(
-          `/api/v1/my_lists?${this.getAuthParamsStr}`
-        )
-        .then(response => {
-          // 一旦削除後に追加
-          MyListNoteIndex.deleteAll()
-          MyListNoteTag.deleteAll()
-          MyList.deleteAll()
-          MyListNote.deleteAll()
-          for (let my_list of response.data) {
-            MyList.insertOrUpdate({
+      api.get(`/api/v1/my_lists?${this.getAuthParamsStr}`).then(response => {
+        // 一旦削除後に追加
+        MyListNoteIndex.deleteAll()
+        MyListNoteTag.deleteAll()
+        MyList.deleteAll()
+        MyListNote.deleteAll()
+        for (let my_list of response.data) {
+          MyList.insertOrUpdate({
+            data: {
+              id: my_list.id,
+              title: my_list.title,
+              category_id: my_list.category_id,
+              description: my_list.description ?? ''
+            }
+          })
+          for (let note of my_list.notes) {
+            MyListNote.insertOrUpdate({
               data: {
-                id: my_list.id,
-                title: my_list.title,
-                category_id: my_list.category_id,
-                description: my_list.description ?? ''
+                id: note.id,
+                title: note.title,
+                body: note.body,
+                nickname: note.nickname,
+                category_id: note.category_id
               }
             })
-            for (let note of my_list.notes) {
-              MyListNote.insertOrUpdate({
-                data: {
-                  id: note.id,
-                  title: note.title,
-                  body: note.body,
-                  nickname: note.nickname,
-                  category_id: note.category_id
-                }
-              })
-              MyListNoteIndex.insertOrUpdate({
-                data: {
-                  my_list_id: my_list.id,
-                  my_list_note_id: note.id,
-                  index: note.index,
-                }
-              })
-              for (let tag of note.tags) {
-                let local_tag = Tag.query().where('online_id', tag.id).first()
-                if (local_tag == null) return
-                MyListNoteTag.insertOrUpdate({
-                  data: {
-                    tag_id: local_tag.id,
-                    my_list_note_id: note.id
-                  }
-                })
+            MyListNoteIndex.insertOrUpdate({
+              data: {
+                my_list_id: my_list.id,
+                my_list_note_id: note.id,
+                index: note.index
               }
+            })
+            for (let tag of note.tags) {
+              let local_tag = Tag.query()
+                .where('online_id', tag.id)
+                .first()
+              if (local_tag == null) return
+              MyListNoteTag.insertOrUpdate({
+                data: {
+                  tag_id: local_tag.id,
+                  my_list_note_id: note.id
+                }
+              })
             }
           }
-        })
+        }
+      })
     },
     updateTagsUpdatedAt(updated_at) {
       if (this.noteUploadsUpdatedAt <= updated_at) {
