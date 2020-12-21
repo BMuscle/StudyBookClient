@@ -6,7 +6,6 @@
 
 <script>
 import api from './api'
-import axios from 'axios'
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import Note from '../models/Note'
 import MyList from '../models/MyList'
@@ -14,7 +13,6 @@ import MyListNote from '../models/MyListNote'
 import MyListNoteTag from '../models/MyListNoteTag'
 import MyListNoteIndex from '../models/MyListNoteIndex'
 import Tag from '../models/Tag'
-import NoteTag from '../models/NoteTag'
 import Category from '../models/Category'
 import Directory from '../models/Directory'
 import UpdatedAt from '../models/UpdatedAt'
@@ -116,18 +114,18 @@ export default {
           }
         })
       }
-      // カテゴリーidがデフォルトの物全てに対して、idの設定を行う。
+      this.updateDefaultCategory(response.data.default_category)
+      this.updateCategoriesUpdatedAt(categoryAt)
+    },
+    updateDefaultCategory(default_category) {
       Note.update({
         where: note => {
           return note.category_id == this.get_default.online_id
         },
-        data: {
-          category_id: response.data.default_category.id
-        }
+        data: { category_id: default_category.id }
       })
       Category.delete(0)
-      this.set_default_id(response.data.default_category.id)
-      this.updateCategoriesUpdatedAt(categoryAt)
+      this.set_default_id(default_category.id)
     },
     async tagsSync() {
       const tagAt = new Date().getTime()
