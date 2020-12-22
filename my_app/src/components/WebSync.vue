@@ -135,27 +135,14 @@ export default {
           .where('name', tag.name)
           .first()
         if (localTag) {
-          // タグが存在
-          Tag.update({
-            where: localTag.id,
-            data: {
-              online_id: tag.id
-            }
-          })
+          Tag.update({ where: localTag.id, data: { online_id: tag.id } })
         } else {
-          // 存在しない
-          Tag.insert({
-            data: {
-              online_id: tag.id,
-              name: tag.name
-            }
-          })
+          Tag.insert({ data: { online_id: tag.id, name: tag.name } })
         }
       }
       this.updateTagsUpdatedAt(tagAt)
     },
-    async noteUploads() {
-      // 更新対象取得 整形
+    async shapedNotes() {
       let notes = []
       for (let note of this.updateTargetNotes) {
         notes.push({
@@ -170,17 +157,17 @@ export default {
           })
         })
       }
-      // 送信
+      return notes
+    },
+    async noteUploads() {
+      let notes = await this.shapedNotes()
       const uploadAt = new Date().getTime()
       const response = await this.requestUploadNotes(notes)
       for (var note of response.data) {
         if (note.guid) {
           Note.update({
             where: note.local_id,
-            data: {
-              guid: note.guid,
-              updated_at: uploadAt
-            }
+            data: { guid: note.guid, updated_at: uploadAt }
           })
         }
       }
@@ -198,15 +185,8 @@ export default {
           for (let note of response.data.notes) {
             this.noteUpdate(note, downloadAt)
           }
-          // ノートの削除
           for (let deleted_note of response.data.deleted_notes) {
-            let note = Note.query()
-              .where('guid', deleted_note.guid)
-              .first() // 存在する場合にだけ、削除
-            if (note) {
-              deleteNote(note.parent_directory_path_from_root, note.file_name) // 削除できなくても問題なし
-              Note.delete(note.inode)
-            }
+            this.downloadNoteDeletes(deleted_note)
           }
           // 全てが正常に終わったので時間更新 ダウンロードより後にupdateを設定する
           this.updateDownloadsUpdatedAt(downloadAt + 1)
@@ -218,7 +198,6 @@ export default {
         .where('guid', note.guid)
         .first()
       if (local_note) {
-        // 存在する
         overwriteDownloadNote(
           local_note.parent_directory_path_from_root,
           local_note.file_name,
@@ -229,7 +208,6 @@ export default {
         )
         if (note.directory_path == null) note.directory_path = ''
         if (local_note.parent_directory_path_from_root.replace('\\', '/') != note.directory_path) {
-          // フォルダ移動
           moveDownloadNote(
             local_note.parent_directory_path_from_root,
             note.file_name,
@@ -241,7 +219,6 @@ export default {
           data: { updated_at: downloadAt }
         })
       } else {
-        // 存在しない ノートファイル & ディレクトリ の追加
         createDownloadNote(
           note.directory_path,
           note.title,
@@ -249,7 +226,6 @@ export default {
           note.tags,
           note.body
         ).then(noteFileName => {
-          // ディレクトリ、ノートは監視で追加されるので、guidと、inodeをセットする
           let note_inode = fs.statSync(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
           Note.insertOrUpdate({
             data: {
@@ -261,8 +237,17 @@ export default {
         })
       }
     },
-    noteDeletes() {
-      let notExistsNotes = Note.query()
+    downloadNoteDeletes(deleted_note) {
+      let note = Note.query()
+        .where('guid', deleted_note.guid)
+        .first()
+      if (note) {
+        deleteNote(note.parent_directory_path_from_root, note.file_name)
+        Note.delete(note.inode)
+      }
+    },
+    notExistsNotes() {
+      return Note.query()
         .where(note => {
           return note.is_exists == false
         })
@@ -270,17 +255,19 @@ export default {
         .map(note => {
           return { guid: note.guid }
         })
+    },
+    noteDeletes() {
+      let notExistsNotes = this.notExistsNotes()
       api
         .delete('/api/v1/notes', {
           ...this.getAuthParams,
           notes: notExistsNotes
         })
         .then(response => {
-          // 削除の更新を受け取った際、ノートの削除を行う。
           for (let deletedNote of response.data) {
             let note = Note.query()
               .where('guid', deletedNote.guid)
-              .first() // 存在する場合にだけ、削除
+              .first()
             if (note) {
               Note.delete(note.inode)
             }
@@ -288,13 +275,7 @@ export default {
         })
     },
     myListSync() {
-      const downloadAt = new Date().getTime()
-      let deleteNotes = this.deletedLocalNotes.map(note => {
-        return { guid: note.guid }
-      })
-      // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
       api.get(`/api/v1/my_lists?${this.getAuthParamsStr}`).then(response => {
-        // 一旦削除後に追加
         MyListNoteIndex.deleteAll()
         MyListNoteTag.deleteAll()
         MyList.deleteAll()
