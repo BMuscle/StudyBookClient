@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button @click="sync()">同期</button>
+    <div class="sync" :class="{ load: isLoading }" @click="sync()">
+      <img src="../images/sync.png" width="20" height="20" class="image" />
+    </div>
   </div>
 </template>
 
@@ -28,6 +30,12 @@ import {
 import fs from 'fs'
 
 export default {
+  data: function() {
+    return {
+      isLoading: false,
+      intervalId: null
+    }
+  },
   computed: {
     ...mapState('user', ['userId', 'token']),
     ...mapGetters('category_module', ['get_default']),
@@ -73,6 +81,16 @@ export default {
       return Category.all()
     }
   },
+  created() {
+    this.isLoading = false
+    this.sync()
+    this.intervalId = setInterval(function() {
+      this.sync()
+    }, 1000 * 60 * 5)
+  },
+  beforeUnmount() {
+    clearInterval(this.intervalId)
+  },
   methods: {
     ...mapMutations('user', ['setUser', 'reset']),
     ...mapMutations('category_module', ['set_default_id']),
@@ -85,12 +103,15 @@ export default {
         .then(response => (this.note.guid = response.data[0].guid))
     },
     async sync() {
+      if (this.isLoading) return
+      this.isLoading = true
       await this.categoriesSync()
       await this.noteUploads()
       await this.tagsSync()
       this.noteDownloads()
       this.noteDeletes()
       this.myListSync()
+      this.isLoading = false
     },
     requestCategories(updatedAt) {
       return api.get(`/api/v1/categories?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
@@ -354,4 +375,21 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="sass" scoped>
+.sync
+  cursor: pointer
+  background-color: #fff
+  border-radius: 5px
+  width: 25px
+  height: 25px
+  display: flex
+  align-items: center
+  &:hover
+    background-color: #ccc
+  .image
+    display: block
+    margin: auto
+.load
+  background-color: #adff2f !important
+  pointer-events: none
+</style>
