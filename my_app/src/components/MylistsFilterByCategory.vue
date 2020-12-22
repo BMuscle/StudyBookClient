@@ -1,0 +1,42 @@
+<template>
+  <div>
+    <select ref="select" @change="setCategory($event.target.selectedIndex)">
+      <option v-for="category in categories" :key="category.online_id">
+        {{ category.name }}
+      </option>
+    </select>
+  </div>
+</template>
+
+<script>
+import { mapMutations, mapState } from 'vuex'
+import Category from '../models/Category'
+import MyList from '../models/MyList'
+
+export default {
+  mounted() {
+    this.$refs.select.selectedIndex =
+      this.filteringCategoryId == null
+        ? 0
+        : this.categories.findIndex(
+            category => category.online_id == this.filteringCategoryId
+          )
+  },
+  computed: {
+    ...mapState('my_lists', ['filteringCategoryId']),
+    categories() {
+      return [{ name: '指定なし' }].concat(Category.all())
+    }
+  },
+  methods: {
+    ...mapMutations('my_lists', ['setfilteringCategoryId']),
+    setCategory(index) {
+      const category_id = this.categories[index].online_id ?? null
+      this.setfilteringCategoryId(category_id)
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped></style>

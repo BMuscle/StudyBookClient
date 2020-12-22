@@ -2,6 +2,7 @@
   <div class="section">
     <div>
       <SearchMyLists />
+      <MylistsFilterByCategory />
     </div>
     <MyListSort />
     <div class="my-lists overflow-auto">
@@ -23,13 +24,15 @@ import MyList from './MyList'
 import MyLists from './MyLists'
 import SearchMyLists from './SearchMyLists'
 import MyListSort from './MyListSort'
+import MylistsFilterByCategory from './MylistsFilterByCategory'
 
 export default {
   components: {
     MyList,
     MyLists,
     SearchMyLists,
-    MyListSort
+    MyListSort,
+    MylistsFilterByCategory
   },
   data: function() {
     return {
@@ -66,7 +69,7 @@ export default {
     border-radius: 3px;
     height: 45%;
     max-height: 45%;
-    background-color: #E8DED2;
+    background-color: #e8ded2;
   }
 }
 </style>

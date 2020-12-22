@@ -5,6 +5,7 @@ export default {
     focusMyList: null,
     focusMyListNote: null,
     searchParams: '',
+    filteringCategoryId: null,
     sort: []
   },
   mutations: {
@@ -22,6 +23,9 @@ export default {
     },
     setSort(state, sort) {
       state.sort = sort
+    },
+    setfilteringCategoryId(state, categoryId) {
+      state.filteringCategoryId = categoryId
     }
   }
 }

@@ -69,7 +69,8 @@
   },
   "prettier": {
     "singleQuote": true,
-    "semi": false
+    "semi": false,
+    "printWidth": 100
   },
   "browserslist": [
     "> 1%",
