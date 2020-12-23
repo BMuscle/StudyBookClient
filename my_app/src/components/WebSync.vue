@@ -1,12 +1,13 @@
 <template>
   <div>
-    <button @click="sync()">同期</button>
+    <div class="sync" :class="{ load: isLoading }" @click="sync()">
+      <img src="../images/sync.png" width="20" height="20" class="image" />
+    </div>
   </div>
 </template>
 
 <script>
 import api from './api'
-import axios from 'axios'
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import Note from '../models/Note'
 import MyList from '../models/MyList'
@@ -14,7 +15,6 @@ import MyListNote from '../models/MyListNote'
 import MyListNoteTag from '../models/MyListNoteTag'
 import MyListNoteIndex from '../models/MyListNoteIndex'
 import Tag from '../models/Tag'
-import NoteTag from '../models/NoteTag'
 import Category from '../models/Category'
 import Directory from '../models/Directory'
 import UpdatedAt from '../models/UpdatedAt'
@@ -30,11 +30,20 @@ import {
 import fs from 'fs'
 
 export default {
+  data: function() {
+    return {
+      isLoading: false,
+      intervalId: null
+    }
+  },
   computed: {
     ...mapState('user', ['userId', 'token']),
     ...mapGetters('category_module', ['get_default']),
     getAuthParams() {
       return { user_id: this.userId, token: this.token }
+    },
+    getAuthParamsStr() {
+      return `user_id=${this.userId}&token=${this.token}`
     },
     categoriesUpdatedAt() {
       return UpdatedAt.find('categories').updated_at
@@ -52,9 +61,7 @@ export default {
       return Note.query()
         .where(note => {
           return (
-            (note.updated_at >= this.noteUploadsUpdatedAt ||
-              note.guid == null) &&
-            note.is_exists
+            (note.updated_at >= this.noteUploadsUpdatedAt || note.guid == null) && note.is_exists
           )
         })
         .with('parent_directory')
@@ -74,6 +81,16 @@ export default {
       return Category.all()
     }
   },
+  created() {
+    this.isLoading = false
+    this.sync()
+    this.intervalId = setInterval(function() {
+      this.sync()
+    }, 1000 * 60 * 5)
+  },
+  beforeUnmount() {
+    clearInterval(this.intervalId)
+  },
   methods: {
     ...mapMutations('user', ['setUser', 'reset']),
     ...mapMutations('category_module', ['set_default_id']),
@@ -86,19 +103,29 @@ export default {
         .then(response => (this.note.guid = response.data[0].guid))
     },
     async sync() {
+      if (this.isLoading) return
+      this.isLoading = true
       await this.categoriesSync()
       await this.noteUploads()
       await this.tagsSync()
       this.noteDownloads()
       this.noteDeletes()
       this.myListSync()
+      this.isLoading = false
+    },
+    requestCategories(updatedAt) {
+      return api.get(`/api/v1/categories?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
+    },
+    requestTags(updatedAt) {
+      return api.get(`/api/v1/tags?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
+    },
+    requestUploadNotes(notes) {
+      return api.post('/api/v1/notes/uploads', { ...this.getAuthParams, notes: notes })
     },
     async categoriesSync() {
       const categoryAt = new Date().getTime()
-      const response = await api.get(
-        `/api/v1/categories?user_id=${this.getAuthParams.user_id}&token=${
-          this.getAuthParams.token
-        }&updated_at=${new Date(this.categoriesUpdatedAt).toUTCString()}`
+      const response = await this.requestCategories(
+        new Date(this.categoriesUpdatedAt).toUTCString()
       )
       for (let category of response.data.categories) {
         Category.insert({
@@ -108,84 +135,60 @@ export default {
           }
         })
       }
-      // カテゴリーidがデフォルトの物全てに対して、idの設定を行う。
+      this.updateDefaultCategory(response.data.default_category)
+      this.updateCategoriesUpdatedAt(categoryAt)
+    },
+    updateDefaultCategory(default_category) {
       Note.update({
         where: note => {
           return note.category_id == this.get_default.online_id
         },
-        data: {
-          category_id: response.data.default_category.id
-        }
+        data: { category_id: default_category.id }
       })
       Category.delete(0)
-      this.set_default_id(response.data.default_category.id)
-      this.updateCategoriesUpdatedAt(categoryAt)
+      this.set_default_id(default_category.id)
     },
     async tagsSync() {
       const tagAt = new Date().getTime()
-      const response = await api.get(
-        `/api/v1/tags?user_id=${this.getAuthParams.user_id}&token=${
-          this.getAuthParams.token
-        }&updated_at=${new Date(this.tagsUpdatedAt).toUTCString()}`
-      )
+      const response = await this.requestTags(new Date(this.categoriesUpdatedAt).toUTCString())
       for (var tag of response.data) {
-        const localTag = Tag.query().where('name', tag.name).first()
+        const localTag = Tag.query()
+          .where('name', tag.name)
+          .first()
         if (localTag) {
-          // タグが存在
-          Tag.update({
-            where: localTag.id,
-            data: {
-              online_id: tag.id,
-            }
-          })
+          Tag.update({ where: localTag.id, data: { online_id: tag.id } })
         } else {
-          // 存在しない
-          Tag.insert({
-            data: {
-              online_id: tag.id,
-              name: tag.name
-            }
-          })
+          Tag.insert({ data: { online_id: tag.id, name: tag.name } })
         }
       }
       this.updateTagsUpdatedAt(tagAt)
     },
-    async noteUploads() {
-      // 更新対象取得 整形
+    async shapedNotes() {
       let notes = []
       for (let note of this.updateTargetNotes) {
         notes.push({
           local_id: note.inode,
           guid: note.guid,
           title: note.title,
-          body: await readNoteBody(
-            note.parent_directory_path_from_root,
-            note.file_name
-          ),
+          body: await readNoteBody(note.parent_directory_path_from_root, note.file_name),
           category_id: note.category_id,
-          directory_path: note.parent_directory_path_from_root.replace(
-            '\\',
-            '/'
-          ),
+          directory_path: note.parent_directory_path_from_root.replace('\\', '/'),
           tags: note.tags.map(tag => {
             return { id: tag.online_id ?? '', name: tag.name }
           })
         })
       }
-      // 送信
+      return notes
+    },
+    async noteUploads() {
+      let notes = await this.shapedNotes()
       const uploadAt = new Date().getTime()
-      const response = await api.post('/api/v1/notes/uploads', {
-        ...this.getAuthParams,
-        notes: notes
-      })
+      const response = await this.requestUploadNotes(notes)
       for (var note of response.data) {
         if (note.guid) {
           Note.update({
             where: note.local_id,
-            data: {
-              guid: note.guid,
-              updated_at: uploadAt
-            }
+            data: { guid: note.guid, updated_at: uploadAt }
           })
         }
       }
@@ -195,9 +198,7 @@ export default {
       const downloadAt = new Date().getTime()
       api
         .get(
-          `/api/v1/notes/downloads?user_id=${
-            this.getAuthParams.user_id
-          }&token=${this.getAuthParams.token}&updated_at=${new Date(
+          `/api/v1/notes/downloads?${this.getAuthParamsStr}&updated_at=${new Date(
             this.noteDownloadsUpdatedAt
           ).toUTCString()}`
         )
@@ -205,15 +206,8 @@ export default {
           for (let note of response.data.notes) {
             this.noteUpdate(note, downloadAt)
           }
-          // ノートの削除
           for (let deleted_note of response.data.deleted_notes) {
-            let note = Note.query()
-              .where('guid', deleted_note.guid)
-              .first() // 存在する場合にだけ、削除
-            if (note) {
-              deleteNote(note.parent_directory_path_from_root, note.file_name) // 削除できなくても問題なし
-              Note.delete(note.inode)
-            }
+            this.downloadNoteDeletes(deleted_note)
           }
           // 全てが正常に終わったので時間更新 ダウンロードより後にupdateを設定する
           this.updateDownloadsUpdatedAt(downloadAt + 1)
@@ -225,7 +219,6 @@ export default {
         .where('guid', note.guid)
         .first()
       if (local_note) {
-        // 存在する
         overwriteDownloadNote(
           local_note.parent_directory_path_from_root,
           local_note.file_name,
@@ -235,11 +228,7 @@ export default {
           note.body
         )
         if (note.directory_path == null) note.directory_path = ''
-        if (
-          local_note.parent_directory_path_from_root.replace('\\', '/') !=
-          note.directory_path
-        ) {
-          // フォルダ移動
+        if (local_note.parent_directory_path_from_root.replace('\\', '/') != note.directory_path) {
           moveDownloadNote(
             local_note.parent_directory_path_from_root,
             note.file_name,
@@ -251,7 +240,6 @@ export default {
           data: { updated_at: downloadAt }
         })
       } else {
-        // 存在しない ノートファイル & ディレクトリ の追加
         createDownloadNote(
           note.directory_path,
           note.title,
@@ -259,10 +247,7 @@ export default {
           note.tags,
           note.body
         ).then(noteFileName => {
-          // ディレクトリ、ノートは監視で追加されるので、guidと、inodeをセットする
-          let note_inode = fs.statSync(
-            `${notesJoin(note.directory_path)}/${noteFileName}`
-          ).ino
+          let note_inode = fs.statSync(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
           Note.insertOrUpdate({
             data: {
               inode: note_inode,
@@ -273,8 +258,17 @@ export default {
         })
       }
     },
-    noteDeletes() {
-      let notExistsNotes = Note.query()
+    downloadNoteDeletes(deleted_note) {
+      let note = Note.query()
+        .where('guid', deleted_note.guid)
+        .first()
+      if (note) {
+        deleteNote(note.parent_directory_path_from_root, note.file_name)
+        Note.delete(note.inode)
+      }
+    },
+    notExistsNotes() {
+      return Note.query()
         .where(note => {
           return note.is_exists == false
         })
@@ -282,15 +276,19 @@ export default {
         .map(note => {
           return { guid: note.guid }
         })
+    },
+    noteDeletes() {
+      let notExistsNotes = this.notExistsNotes()
       api
         .delete('/api/v1/notes', {
           ...this.getAuthParams,
           notes: notExistsNotes
         })
         .then(response => {
-          // 削除の更新を受け取った際、ノートの削除を行う。
           for (let deletedNote of response.data) {
-            let note = Note.query().where('guid', deletedNote.guid).first() // 存在する場合にだけ、削除
+            let note = Note.query()
+              .where('guid', deletedNote.guid)
+              .first()
             if (note) {
               Note.delete(note.inode)
             }
@@ -298,58 +296,52 @@ export default {
         })
     },
     myListSync() {
-      const downloadAt = new Date().getTime()
-      let deleteNotes = this.deletedLocalNotes.map(note => {
-        return { guid: note.guid }
-      })
-      // 現状、マイリストは更新時間によるパフォーマンス向上を行なっていない。
-      api
-        .get(
-          `/api/v1/my_lists?user_id=${this.getAuthParams.user_id}&token=${this.getAuthParams.token}`
-        )
-        .then(response => {
-          // 一旦削除後に追加
-          MyListNoteIndex.deleteAll()
-          MyListNoteTag.deleteAll()
-          MyList.deleteAll()
-          MyListNote.deleteAll()
-          for (let my_list of response.data) {
-            MyList.insertOrUpdate({
+      api.get(`/api/v1/my_lists?${this.getAuthParamsStr}`).then(response => {
+        MyListNoteIndex.deleteAll()
+        MyListNoteTag.deleteAll()
+        MyList.deleteAll()
+        MyListNote.deleteAll()
+        for (let my_list of response.data) {
+          MyList.insertOrUpdate({
+            data: {
+              id: my_list.id,
+              title: my_list.title,
+              category_id: my_list.category_id,
+              description: my_list.description ?? ''
+            }
+          })
+          for (let note of my_list.notes) {
+            MyListNote.insertOrUpdate({
               data: {
-                id: my_list.id,
-                title: my_list.title,
-                category_id: my_list.category_id,
-                description: my_list.description ?? ''
+                id: note.id,
+                title: note.title,
+                body: note.body,
+                nickname: note.nickname,
+                category_id: note.category_id
               }
             })
-            for (let note of my_list.notes) {
-              MyListNote.insertOrUpdate({
-                data: {
-                  id: note.id,
-                  title: note.title,
-                  body: note.body,
-                  nickname: note.nickname,
-                  category_id: note.category_id
-                }
-              })
-              MyListNoteIndex.insertOrUpdate({
-                data: {
-                  my_list_id: my_list.id,
-                  my_list_note_id: note.id,
-                  index: note.index,
-                }
-              })
-              for (let tag of note.tags) {
-                MyListNoteTag.insertOrUpdate({
-                  data: {
-                    tag_id: Tag.query().where('online_id', tag.id).first().id,
-                    my_list_note_id: note.id
-                  }
-                })
+            MyListNoteIndex.insertOrUpdate({
+              data: {
+                my_list_id: my_list.id,
+                my_list_note_id: note.id,
+                index: note.index
               }
+            })
+            for (let tag of note.tags) {
+              let local_tag = Tag.query()
+                .where('online_id', tag.id)
+                .first()
+              if (local_tag == null) return
+              MyListNoteTag.insertOrUpdate({
+                data: {
+                  tag_id: local_tag.id,
+                  my_list_note_id: note.id
+                }
+              })
             }
           }
-        })
+        }
+      })
     },
     updateTagsUpdatedAt(updated_at) {
       if (this.noteUploadsUpdatedAt <= updated_at) {
@@ -383,4 +375,21 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="sass" scoped>
+.sync
+  cursor: pointer
+  background-color: #fff
+  border-radius: 5px
+  width: 25px
+  height: 25px
+  display: flex
+  align-items: center
+  &:hover
+    background-color: #ccc
+  .image
+    display: block
+    margin: auto
+.load
+  background-color: #adff2f !important
+  pointer-events: none
+</style>
