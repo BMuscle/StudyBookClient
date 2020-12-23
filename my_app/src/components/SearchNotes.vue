@@ -85,10 +85,9 @@ export default {
 <style scoped lang="scss">
 .search {
   width: 100%;
-  padding: 5px 3px;
   .search-form {
     display: block;
-    padding: 3px 5px;
+    padding: 1px 5px;
     border-radius: 5px;
     width: 100%;
     border: none;

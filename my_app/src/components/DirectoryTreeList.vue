@@ -1,26 +1,26 @@
 <template>
-  <div class="demo">
-    <ul>
-      <div v-for="directory in directories" :key="directory.inode">
-        <li>
-          <div
-            v-if="directory.child_directories.length != 0"
-            @click="toggleDirectory(directory.inode)"
-          >
-            開閉ボタン
-          </div>
-          <div @click="clickDirectory(directory.path_from_root)">
-            {{ directory.directory_name }}
-          </div>
-          <DirectoryTreeList
-            v-if="
-              directory.child_directories.length != 0 && isOpen(directory.inode)
-            "
-            :directories="childDirectories(directory.inode)"
-          />
-        </li>
+  <div class="directory-tree-list">
+    <div v-for="directory in directories" :key="directory.inode">
+      <div class="directory-control">
+        <div
+          v-if="directory.child_directories.length != 0"
+          @click="toggleDirectory(directory.inode)"
+          class="open-button"
+        >
+          <img src="../images/folder_icon.png" width="13" height="13" class="directory-icon" :class="{ directory_close: !isOpen(directory.inode)}" />
+        </div>
+        <div v-else class="none-button" />
       </div>
-    </ul>
+      <div @click="clickDirectory(directory.path_from_root)" class="directory-name">
+        {{ directory.directory_name }}
+      </div>
+      <DirectoryTreeList
+        v-if="
+          directory.child_directories.length != 0 && isOpen(directory.inode)
+        "
+        :directories="childDirectories(directory.inode)"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -81,4 +81,22 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="sass">
+.directory-tree-list
+  margin-left: 8px
+  .directory-control
+    display: inline-block
+    .open-button
+      position: relative
+      top: -1px
+      cursor: pointer
+      .directory-icon
+      .directory_close
+        transform: rotate(-90deg)
+        transform-origin: 50% 50%;
+    .none-button
+      width: 13px
+  .directory-name
+    margin-left: 3px
+    display: inline-block
+</style>

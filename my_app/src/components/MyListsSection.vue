@@ -4,6 +4,7 @@
       <SearchMyLists />
       <MylistsFilterByCategory />
     </div>
+    <div class="space" />
     <div class="my-lists overflow-auto">
       <MyLists @my-list-click="onMyListClick" />
     </div>
@@ -54,9 +55,12 @@ export default {
 .section {
   min-height: 100%;
   height: 100%;
+  .space {
+    height: 5px;
+  }
   .my-lists {
-    max-height: 45%;
-    height: 45%;
+    max-height: calc(50% - 70px);
+    height: calc(50% - 70px);
     border-radius: 3px;
   }
   hr {
@@ -64,8 +68,8 @@ export default {
   }
   .my-list {
     border-radius: 3px;
-    height: 45%;
-    max-height: 45%;
+    height: calc(50% - 20px);
+    max-height: calc(50% - 20px);
     background-color: #e8ded2;
   }
 }
