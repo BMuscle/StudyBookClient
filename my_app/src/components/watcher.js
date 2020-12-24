@@ -52,10 +52,7 @@ class NotesWatcher {
       }
     })
     const directory = directories.directories[0]
-    const children = await NoteCRUD.readFolderRecursively(
-      directory.path_from_root,
-      directory.inode
-    )
+    const children = await NoteCRUD.readFolderRecursively(directory.path_from_root, directory.inode)
     insertChildren(children)
   }
   static async onDelete(target) {
@@ -64,10 +61,7 @@ class NotesWatcher {
       note.is_exists = false
       await note.$save()
     } else {
-      await Directory.getDirectory(
-        target.parentDirectoryPath,
-        target.name
-      )?.deleteWithChildren()
+      await Directory.getDirectory(target.parentDirectoryPath, target.name)?.deleteWithChildren()
     }
   }
 }

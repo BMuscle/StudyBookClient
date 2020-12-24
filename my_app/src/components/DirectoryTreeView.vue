@@ -2,24 +2,29 @@
 <template>
   <div class="main">
     <div class="directory-control">
-      <div v-if="directories.length != 0" @click="isOpen = !isOpen" class="open-button">
-        <img src="../images/folder_icon.png" width="13" height="13" class="directory-icon" :class="{ directory_close: !isOpen}" />
+      <div v-if="directories.length != 0" class="open-button" @click="isOpen = !isOpen">
+        <img
+          src="../images/folder_icon.png"
+          width="13"
+          height="13"
+          class="directory-icon"
+          :class="{ directory_close: !isOpen }"
+        />
       </div>
     </div>
     <div @click="initialize()" class="directory-name">
       ノート
     </div>
-    <DirectoryTreeList
-      v-if="directories.length != 0 && isOpen"
-      :directories="directories"
-    />
+    <DirectoryTreeList v-if="directories.length != 0 && isOpen" :directories="directories" />
   </div>
 </template>
+
 <script>
 import { mapMutations } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
-import Directory from '@/models/Directory'
-import Note from '@/models/Note'
+import Directory from '../models/Directory'
+import Note from '../models/Note'
+
 export default {
   components: {
     DirectoryTreeList

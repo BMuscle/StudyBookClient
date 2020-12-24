@@ -2,16 +2,16 @@
   <div class="filterd-notes">
     <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
     <div class="notes overflow-auto">
-      <div class="note" v-for="note in notes" :key="note.inode" @click="setFocusNote(note.inode)">
+      <div v-for="note in notes" :key="note.inode" class="note" @click="setFocusNote(note.inode)">
         <div class="title">
           {{ note.title }}
         </div>
         <div class="info">
-          <div class="category" v-if="note.category">
+          <div v-if="note.category" class="category">
             {{ note.category.name }}
           </div>
           <div class="tags">
-            <div class="tag" v-for="tag in note.tags" :key="tag.id">
+            <div v-for="tag in note.tags" :key="tag.id" class="tag">
               {{ tag.name }}
             </div>
           </div>
@@ -25,7 +25,6 @@
 import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
-import { getInode } from './fs_wrapper'
 
 export default {
   components: {

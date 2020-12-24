@@ -6,7 +6,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import Note from '@/models/Note'
+import Note from '../models/Note'
 import { readNoteBody } from './NoteCRUD'
 
 export default {

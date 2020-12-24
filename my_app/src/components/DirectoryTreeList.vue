@@ -4,10 +4,16 @@
       <div class="directory-control">
         <div
           v-if="directory.child_directories.length != 0"
-          @click="toggleDirectory(directory.inode)"
           class="open-button"
+          @click="toggleDirectory(directory.inode)"
         >
-          <img src="../images/folder_icon.png" width="13" height="13" class="directory-icon" :class="{ directory_close: !isOpen(directory.inode)}" />
+          <img
+            src="../images/folder_icon.png"
+            width="13"
+            height="13"
+            class="directory-icon"
+            :class="{ directory_close: !isOpen(directory.inode) }"
+          />
         </div>
         <div v-else class="none-button" />
       </div>
@@ -15,9 +21,7 @@
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList
-        v-if="
-          directory.child_directories.length != 0 && isOpen(directory.inode)
-        "
+        v-if="directory.child_directories.length != 0 && isOpen(directory.inode)"
         :directories="childDirectories(directory.inode)"
       />
     </div>
@@ -26,7 +30,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
-import Directory from '@/models/Directory'
+import Directory from '../models/Directory'
 
 export default {
   name: 'DirectoryTreeList',

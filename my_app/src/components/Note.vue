@@ -51,13 +51,12 @@ export default {
       focusNote: state => state.focusNote
     }),
     note() {
-      let note = Note.query()
+      const note = Note.query()
         .whereId(this.focusNote)
         .with('category')
         .with('tags')
         .with('parent_directory')
         .first()
-      if (note == null) return
       return note
     }
   },
