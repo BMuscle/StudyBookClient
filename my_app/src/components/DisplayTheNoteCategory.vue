@@ -1,6 +1,6 @@
 <template>
-  <select v-model="nowCategory.name" @change="emitChange($event.target.selectedIndex)">
-    <option v-for="category in categories" :key="category.online_id">
+  <select class="display-category" v-model="nowCategory.name" @change="emitChange($event.target.selectedIndex)">
+    <option v-for="category in categories" :key="category.online_id" class="option">
       {{ category.name }}
     </option>
   </select>
@@ -36,5 +36,17 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped lang="sass">
+.display-category
+  cursor: pointer
+  padding: 1px 5px
+  border-radius: 10px
+  color: #6a6a6a
+  background-color: #caffe6
+  margin-right: 3px
+  outline: none
+  .option
+    cursor: pointer
+    background-color: #fff
+
+</style>

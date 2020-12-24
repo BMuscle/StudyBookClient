@@ -1,6 +1,6 @@
 <template>
   <div class="tags">
-    <div v-if="tags.length > 0" class="note-tags">
+    <div class="note-tags">
       <div v-for="(tag, index) in tags" :key="tag.id" class="tag">
         <Tag
           :name="tag.name"
@@ -8,23 +8,23 @@
           @pass-delete-tag="noticeDelete(index)"
         />
       </div>
-    </div>
-    <div v-show="!isEditing" class="tag-add-button" @click="initCreatingTag"></div>
-    <div v-show="isEditing" class="tag-add-input">
-      <input
-        ref="createInput"
-        v-model="new_tag"
-        type="text"
-        list="tags"
-        @keypress.enter="noticeCreate(), endCreatingTag()"
-        @blur="endCreatingTag"
-      />
-      <datalist id="tags">
-        <option v-for="tag in allTagData" :key="tag.id">
-          {{ tag.name }}
-        </option>
-      </datalist>
-    </div>
+      <div v-show="!isEditing" class="tag-add-button" @click="initCreatingTag"></div>
+      <div v-show="isEditing" class="tag-add-input">
+        <input
+          ref="createInput"
+          v-model="new_tag"
+          type="text"
+          list="tags"
+          @keypress.enter="noticeCreate(), endCreatingTag()"
+          @blur="endCreatingTag"
+        />
+        <datalist id="tags">
+          <option v-for="tag in allTagData" :key="tag.id">
+            {{ tag.name }}
+          </option>
+        </datalist>
+      </div>
+      </div>
   </div>
 </template>
 
@@ -78,24 +78,27 @@ export default {
 
 <style scoped lang="scss">
 .tags {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 0.9em;
+  white-space: nowrap;
   .note-tags {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     height: 26px;
-    top: 1px;
-    position: relative;
     .tag {
       display: inline-block;
-      margin-right: 5px;
+      white-space: nowrap;
+      margin-right: 2px;
     }
   }
   .tag-add-button {
     background-color: #ddd;
     display: inline-block;
-    vertical-align: middle;
-    width: 23px;
-    height: 23px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    padding: 1px;
     &:hover {
       cursor: pointer;
       background-color: #99ffcc;
