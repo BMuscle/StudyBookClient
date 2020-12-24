@@ -45,14 +45,14 @@ export default {
         : noteQuery
     },
     async filter() {
-      let notes = []
+      const notes = []
       for (let rawNote of this.rawNotes) {
         // 本文読み込み & 正規化
         notes.push({
           inode: rawNote.inode,
-          title_category_tags: `${rawNote.title} ${rawNote.category ? rawNote.category.name : ''} ${rawNote.tags
-            .map(tag => tag.name)
-            .join(' ')}`,
+          title_category_tags: `${rawNote.title} ${
+            rawNote.category ? rawNote.category.name : ''
+          } ${rawNote.tags.map(tag => tag.name).join(' ')}`,
           body: readNoteBody(rawNote.parent_directory_path_from_root, rawNote.file_name)
         })
       }
