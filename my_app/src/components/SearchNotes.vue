@@ -40,6 +40,9 @@ export default {
       this.filter()
     }
   },
+  created() {
+    this.filter()
+  },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
     async filter() {
