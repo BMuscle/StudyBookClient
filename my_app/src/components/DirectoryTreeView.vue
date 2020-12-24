@@ -1,20 +1,18 @@
 /* eslint-disable vue/order-in-components */
 <template>
-  <div class="demo">
-    <ul>
-      <li>
-        <div v-if="directories.length != 0" @click="isOpen = !isOpen">
-          開閉ボタン
-        </div>
-        <div @click="initialize()">
-          Notes
-        </div>
-        <DirectoryTreeList
-          v-if="directories.length != 0 && isOpen"
-          :directories="directories"
-        />
-      </li>
-    </ul>
+  <div class="main">
+    <div class="directory-control">
+      <div v-if="directories.length != 0" @click="isOpen = !isOpen" class="open-button">
+        <img src="../images/folder_icon.png" width="13" height="13" class="directory-icon" :class="{ directory_close: !isOpen}" />
+      </div>
+    </div>
+    <div @click="initialize()" class="directory-name">
+      ノート
+    </div>
+    <DirectoryTreeList
+      v-if="directories.length != 0 && isOpen"
+      :directories="directories"
+    />
   </div>
 </template>
 <script>
@@ -54,4 +52,21 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="sass">
+.main
+  margin-left: 3px
+  white-space: nowrap
+  font-size: 0.8em
+  .directory-control
+    display: inline-block
+    .open-button
+      position: relative
+      top: -1px
+      cursor: pointer
+      .directory-icon
+      .directory_close
+        transform: rotate(-90deg)
+        transform-origin: 50% 50%;
+  .directory-name
+    display: inline-block
+</style>

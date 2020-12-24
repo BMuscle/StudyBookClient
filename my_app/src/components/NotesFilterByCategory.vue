@@ -1,6 +1,6 @@
 <template>
   <div>
-    <select ref="select" @change="setCategory($event.target.selectedIndex)">
+    <select class="select form-control" ref="select" @change="setCategory($event.target.selectedIndex)">
       <option v-for="category in categories" :key="category.online_id">
         {{ category.name }}
       </option>
@@ -35,5 +35,10 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped lang="sass">
+.select
+  font-size: 0.73em
+  line-height: 1.2
+  padding: 2px 10px
+  height: 24px
+</style>

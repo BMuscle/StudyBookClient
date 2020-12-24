@@ -2,7 +2,7 @@
   <div id="app">
     <Header />
     <router-view />
-    <AllData />
+    <!-- <AllData /> -->
   </div>
 </template>
 

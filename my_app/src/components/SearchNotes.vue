@@ -50,7 +50,7 @@ export default {
         // 本文読み込み & 正規化
         notes.push({
           inode: rawNote.inode,
-          title_category_tags: `${rawNote.title} ${rawNote.category.name} ${rawNote.tags
+          title_category_tags: `${rawNote.title} ${rawNote.category ? rawNote.category.name : ''} ${rawNote.tags
             .map(tag => tag.name)
             .join(' ')}`,
           body: readNoteBody(rawNote.parent_directory_path_from_root, rawNote.file_name)
@@ -85,10 +85,9 @@ export default {
 <style scoped lang="scss">
 .search {
   width: 100%;
-  padding: 5px 3px;
   .search-form {
     display: block;
-    padding: 3px 5px;
+    padding: 1px 5px;
     border-radius: 5px;
     width: 100%;
     border: none;
