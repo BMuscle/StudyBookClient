@@ -4,20 +4,24 @@
       <div class="directory-control">
         <div
           v-if="directory.child_directories.length != 0"
-          @click="toggleDirectory(directory.inode)"
           class="open-button"
+          @click="toggleDirectory(directory.inode)"
         >
-          <img src="../images/folder_icon.png" width="13" height="13" class="directory-icon" :class="{ directory_close: !isOpen(directory.inode)}" />
+          <img
+            src="../images/folder_icon.png"
+            width="13"
+            height="13"
+            class="directory-icon"
+            :class="{ directory_close: !isOpen(directory.inode) }"
+          />
         </div>
         <div v-else class="none-button" />
       </div>
-      <div @click="clickDirectory(directory.path_from_root)" class="directory-name">
+      <div class="directory-name" @click="setFocusDirectory(directory.inode)">
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList
-        v-if="
-          directory.child_directories.length != 0 && isOpen(directory.inode)
-        "
+        v-if="directory.child_directories.length != 0 && isOpen(directory.inode)"
         :directories="childDirectories(directory.inode)"
       />
     </div>
@@ -26,7 +30,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
-import Directory from '@/models/Directory'
+import Directory from '../models/Directory'
 
 export default {
   name: 'DirectoryTreeList',
@@ -42,20 +46,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('notes', ['setDescendantNotes']),
-    clickDirectory: function(path_from_root) {
-      let inodes = []
-      let directories = Directory.query()
-        .with('notes')
-        .where('path_from_root', path => path.indexOf(path_from_root) == 0)
-        .get()
-      for (let directory of directories) {
-        for (let note of directory.notes) {
-          inodes.push(note.inode)
-        }
-      }
-      this.setDescendantNotes(inodes)
-    },
+    ...mapMutations('notes', ['setFocusDirectory']),
     childDirectories(inode) {
       return Directory.query()
         .where('parent_inode', inode)

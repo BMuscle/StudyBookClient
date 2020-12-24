@@ -1,6 +1,6 @@
 <template>
   <div class="note">
-    <div v-if="note != null">
+    <div v-if="note?.is_exists">
       <div class="header">
         <div class="file-path">
           {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
@@ -51,13 +51,12 @@ export default {
       focusNote: state => state.focusNote
     }),
     note() {
-      let note = Note.query()
+      const note = Note.query()
         .whereId(this.focusNote)
         .with('category')
         .with('tags')
         .with('parent_directory')
         .first()
-      if (note == null) return
       return note
     }
   },
@@ -66,16 +65,13 @@ export default {
       this.setNote(newNote)
     }
   },
-  created() {
-    if (this.note != null) {
-      this.setNote(this.note)
-    }
-  },
   methods: {
     setNote(note) {
-      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
-        this.noteBody = response
-      })
+      if (this.note?.is_exists) {
+        readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
+          this.noteBody = response
+        })
+      }
     },
     updateCategory(category) {
       const header = this.note.header

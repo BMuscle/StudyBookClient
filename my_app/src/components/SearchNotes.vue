@@ -6,7 +6,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import Note from '@/models/Note'
+import Note from '../models/Note'
 import { readNoteBody } from './NoteCRUD'
 
 export default {
@@ -21,7 +21,11 @@ export default {
       descendantNotes: state => state.descendantNotes
     }),
     rawNotes() {
-      return this.noteQueryFilteredInCategory()
+      const noteQuery =
+        this.filteringCategoryId != null
+          ? Note.query().where('category_id', this.filteringCategoryId)
+          : Note.query()
+      return noteQuery
         .whereIdIn(this.descendantNotes)
         .with('tags')
         .with('category')
@@ -36,23 +40,20 @@ export default {
       this.filter()
     }
   },
+  created() {
+    this.filter()
+  },
   methods: {
     ...mapMutations('notes', ['setFilteredNotes']),
-    noteQueryFilteredInCategory() {
-      let noteQuery = Note.query()
-      return this.filteringCategoryId != null
-        ? noteQuery.where('category_id', this.filteringCategoryId)
-        : noteQuery
-    },
     async filter() {
-      let notes = []
+      const notes = []
       for (let rawNote of this.rawNotes) {
         // 本文読み込み & 正規化
         notes.push({
           inode: rawNote.inode,
-          title_category_tags: `${rawNote.title} ${rawNote.category ? rawNote.category.name : ''} ${rawNote.tags
-            .map(tag => tag.name)
-            .join(' ')}`,
+          title_category_tags: `${rawNote.title} ${
+            rawNote.category ? rawNote.category.name : ''
+          } ${rawNote.tags.map(tag => tag.name).join(' ')}`,
           body: readNoteBody(rawNote.parent_directory_path_from_root, rawNote.file_name)
         })
       }

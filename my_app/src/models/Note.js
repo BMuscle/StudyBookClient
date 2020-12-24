@@ -28,7 +28,7 @@ export default class Note extends Model {
   }
   static getNote(parentDirectoryPath, fileName) {
     const parentInode = NoteCRUD.getInode(parentDirectoryPath)
-    return this.query()
+    return this.queryExists()
       .where('file_name', fileName)
       .where('parent_inode', parentInode)
       .first()
