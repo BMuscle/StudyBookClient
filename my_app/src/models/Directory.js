@@ -34,6 +34,17 @@ export default class Directory extends Model {
       return path.join(parentDirectory.path_from_root, this.directory_name)
     }
   }
+  get descendantNotes() {
+    let notes = []
+    const directories = Directory.query()
+      .with('notes')
+      .where('path_from_root', path => path.indexOf(this.path_from_root) == 0)
+      .get()
+    for (const directory of directories) {
+      notes = notes.concat(directory.notes.filter(note => note.is_exists))
+    }
+    return notes
+  }
   async deleteWithChildren() {
     const directory = Directory.query()
       .with('child_directories')

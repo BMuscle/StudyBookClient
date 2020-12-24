@@ -17,7 +17,7 @@
         </div>
         <div v-else class="none-button" />
       </div>
-      <div @click="clickDirectory(directory.path_from_root)" class="directory-name">
+      <div class="directory-name" @click="setFocusDirectory(directory.inode)">
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList
@@ -46,20 +46,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('notes', ['setDescendantNotes']),
-    clickDirectory: function(path_from_root) {
-      let inodes = []
-      let directories = Directory.query()
-        .with('notes')
-        .where('path_from_root', path => path.indexOf(path_from_root) == 0)
-        .get()
-      for (let directory of directories) {
-        for (let note of directory.notes) {
-          inodes.push(note.inode)
-        }
-      }
-      this.setDescendantNotes(inodes)
-    },
+    ...mapMutations('notes', ['setFocusDirectory']),
     childDirectories(inode) {
       return Directory.query()
         .where('parent_inode', inode)
