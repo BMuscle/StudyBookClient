@@ -3,7 +3,7 @@
     <div v-if="note != null">
       <div class="header">
         <div class="file-path">
-          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
+          Notes\{{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
           {{ note.title }}
         </div>
         <div class="tags">
@@ -19,6 +19,7 @@
 import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
+import Directory from '@/models/Directory'
 import Tags from './Tags.vue'
 import { readNoteBody } from './NoteCRUD'
 
@@ -36,9 +37,16 @@ export default {
     ...mapState('notes', {
       focusNote: state => state.focusNote
     }),
+    directories() {
+      return Directory.query()
+        .where('parent_inode', null)
+        .with('child_directories')
+        .get()
+    },
     note() {
       let note = Note.query()
         .whereId(this.focusNote)
+        .with('directory')
         .with('category')
         .with('tags')
         .with('parent_directory')
