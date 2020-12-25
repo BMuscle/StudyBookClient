@@ -4,12 +4,18 @@
       <input
         ref="textInput"
         v-model="printingName"
+        list="tags"
         @focus="focus"
         @keypress.enter="confirmTagEditing"
         @blur="cancelTagEditing"
       />
+      <datalist id="tags">
+        <option v-for="tag in allTagData" :key="tag.id">
+          {{ tag.name }}
+        </option>
+      </datalist>
     </div>
-    <div @click="enableFocus" v-show="!onFocus" class="tag-view">
+    <div v-show="!onFocus" class="tag-view" @click="enableFocus">
       <label>{{ name }}</label>
       <div class="delete" @click="noticeDelete">×</div>
     </div>
@@ -17,6 +23,8 @@
 </template>
 
 <script>
+import TagData from '../models/Tag'
+
 export default {
   props: {
     name: String
@@ -25,6 +33,11 @@ export default {
     return {
       onFocus: false,
       printingName: this.name
+    }
+  },
+  computed: {
+    allTagData() {
+      return TagData.thatHaveNotes()
     }
   },
   watch: {
@@ -47,12 +60,12 @@ export default {
       this.onFocus = false
     },
     async enableFocus(e) {
-      if(e.target.closest('.delete')) return;
+      if (e.target.closest('.delete')) return
       await (this.onFocus = true)
       this.$refs.textInput.focus()
     },
     noticeDelete: function() {
-      this.$emit('pass-delete-tag', this.name)
+      this.$emit('pass-delete-tag')
     }
   }
 }
@@ -64,7 +77,7 @@ export default {
   background-color: #ddd;
   border-radius: 10px;
   &:hover {
-    background-color: #cFcCcF;
+    background-color: #cfcccf;
     cursor: pointer !important;
   }
   .tag-edit {
@@ -81,7 +94,7 @@ export default {
     label {
       margin: 0;
       &:hover {
-        background-color: #cFcCcF;
+        background-color: #cfcccf;
         cursor: pointer !important;
       }
     }

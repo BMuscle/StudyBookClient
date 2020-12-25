@@ -1,11 +1,20 @@
 <template>
   <div class="left-bar">
     <div>
-      要素はここへ
-      <SearchNotes />
-      <DirectoryTreeView />
-      <filterdNotes />
+      <BookmarkDirectory />
     </div>
+    <div class="note-filter-by-category">
+      <NotesFilterByCategory />
+    </div>
+    <hr />
+    <div class="directory-tree-view">
+      <DirectoryTreeView />
+    </div>
+    <hr />
+    <div class="search-notes">
+      <SearchNotes />
+    </div>
+    <filterdNotes />
     <div
       id="left_bar_bar"
       class="move-bar"
@@ -19,13 +28,17 @@
 
 <script>
 import SearchNotes from '../components/SearchNotes'
+import NotesFilterByCategory from '../components/NotesFilterByCategory'
 import filterdNotes from '../components/filterdNotes.vue'
 import DirectoryTreeView from '../components/DirectoryTreeView'
+import BookmarkDirectory from '../components/BookmarkDirectory.vue'
 export default {
   components: {
     SearchNotes,
+    NotesFilterByCategory,
     filterdNotes,
-    DirectoryTreeView
+    DirectoryTreeView,
+    BookmarkDirectory
   },
   data: function() {
     return {
@@ -59,49 +72,61 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.left-bar {
-  height: 100%;
-  background-color: #a3d2ca;
-  width: 180px;
-  min-width: 180px;
-  float: left;
-}
-.move-bar {
-  position: absolute;
-  top: 32px;
-  left: 180px;
-  width: 1px;
-  height: calc(100% - 32px);
-  background-color: rgba(0, 0, 0, 0.5);
+<style scoped lang="sass">
+.left-bar
+  height: 100%
+  background-color: #a3d2ca
+  width: 180px
+  min-width: 180px
+  float: left
+  padding: 0 8px
 
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: -15px;
-    z-index: 1;
-    pointer-events: auto;
-    width: 31px;
-    content: '';
-    background-color: transparent;
-    cursor: ew-resize;
-  }
-}
-.move-bar-active {
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: -350px;
-    z-index: 1;
-    pointer-events: auto;
-    width: 701px;
-    content: '';
-    background-color: transparent;
-    cursor: ew-resize;
-  }
-}
+  .search-notes
+    margin-top: 3px
+  .note-filter-by-category
+    margin-top: 4px
+  .directory-tree-view
+    // height: 35%
+    height: calc(40% - 20px)
+    max-height: calc(40% - 20px)
+    border-radius: 5px
+    background-color: #fff
+    overflow: scroll
+  hr
+    margin: 5px 0
+
+.move-bar
+  position: absolute
+  top: 32px
+  left: 180px
+  width: 1px
+  height: calc(100% - 32px)
+  background-color: rgba(0, 0, 0, 0.5)
+
+  &::after
+    position: absolute
+    top: 0
+    right: 0
+    bottom: 0
+    left: -15px
+    z-index: 1
+    pointer-events: auto
+    width: 31px
+    content: ''
+    background-color: transparent
+    cursor: ew-resize
+
+.move-bar-active
+  &::after
+    position: absolute
+    top: 0
+    right: 0
+    bottom: 0
+    left: -350px
+    z-index: 1
+    pointer-events: auto
+    width: 701px
+    content: ''
+    background-color: transparent
+    cursor: ew-resize
 </style>

@@ -1,11 +1,16 @@
 export default {
   namespaced: true,
   state: {
+    focusDirectory: null,
     descendantNotes: [],
     filteredNotes: [],
-    focusNote: ''
+    focusNote: '',
+    filteringCategoryId: null
   },
   mutations: {
+    setFocusDirectory(state, inode) {
+      state.focusDirectory = inode
+    },
     setDescendantNotes(state, inodes) {
       state.descendantNotes = inodes
     },
@@ -14,6 +19,9 @@ export default {
     },
     setFocusNote(state, inodes) {
       state.focusNote = inodes
+    },
+    setfilteringCategoryId(state, categoryId) {
+      state.filteringCategoryId = categoryId
     }
   }
 }

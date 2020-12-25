@@ -1,13 +1,27 @@
 <template>
   <div class="note">
-    <div v-if="note != null">
+    <div v-if="note?.is_exists">
       <div class="header">
-        <div class="file-path">
-          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
-          {{ note.title }}
+        <div class="row-1">
+          <div class="file-path">
+            {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
+            {{ note.title }}
+          </div>
+          <div class="category">
+            <DisplayTheNoteCategory
+              :note-category="note.category"
+              @category-change="updateCategory($event)"
+            />
+          </div>
         </div>
         <div class="tags">
-          <Tags :note="note" />
+          <Tags
+            :note="note"
+            :tags="note.tags"
+            @tag-create="createTag($event)"
+            @tag-change="updateTag($event)"
+            @tag-delete="deleteTag($event)"
+          />
         </div>
       </div>
       <DisplayMd class="body" :md-data="noteBody" />
@@ -20,12 +34,14 @@ import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
 import Directory from '@/models/Directory'
+import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
 import Tags from './Tags.vue'
-import { readNoteBody } from './NoteCRUD'
+import { readNoteBody, setHeader } from './NoteCRUD'
 
 export default {
   components: {
     DisplayMd,
+    DisplayTheNoteCategory,
     Tags
   },
   data: function() {
@@ -44,14 +60,13 @@ export default {
         .get()
     },
     note() {
-      let note = Note.query()
+      const note = Note.query()
         .whereId(this.focusNote)
         .with('directory')
         .with('category')
         .with('tags')
         .with('parent_directory')
         .first()
-      if (note == null) return
       return note
     }
   },
@@ -62,11 +77,34 @@ export default {
   },
   methods: {
     setNote(note) {
-      readNoteBody(note.parent_directory_path_from_root, note.file_name).then(
-        response => {
+      if (this.note?.is_exists) {
+        readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
           this.noteBody = response
-        }
-      )
+        })
+      }
+    },
+    updateCategory(category) {
+      const header = this.note.header
+      header.category = category
+      this.overwriteNoteHeader(header)
+    },
+    createTag(tagName) {
+      const header = this.note.header
+      header.tags = header.tags.concat(tagName)
+      this.overwriteNoteHeader(header)
+    },
+    updateTag({ index, tagName }) {
+      const header = this.note.header
+      header.tags[index] = tagName
+      this.overwriteNoteHeader(header)
+    },
+    deleteTag(index) {
+      const header = this.note.header
+      header.tags.splice(index, 1)
+      this.overwriteNoteHeader(header)
+    },
+    overwriteNoteHeader(header) {
+      setHeader(header.toString, this.note.parent_directory_path_from_root, this.note.file_name)
     }
   }
 }
@@ -76,18 +114,28 @@ export default {
 .note {
   .header {
     background-color: #5eaaa8;
-    height: 32px;
+    max-height: 56.5px;
+    width: 100%;
+    overflow: hidden;
     font-size: 0.8em;
     padding: 3px 10px;
-    white-space: nowrap;
-    .file-path {
-      vertical-align: middle;
-      display: inline-block;
-      color: #e5e5e5;
-      margin-right: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .row-1 {
+      white-space: nowrap;
+      .file-path {
+        display: inline-block;
+        color: #e5e5e5;
+        margin-right: 10px;
+      }
+      .category {
+        display: inline-block;
+      }
     }
     .tags {
       display: inline-block;
+      height: 100%;
     }
   }
   .body {

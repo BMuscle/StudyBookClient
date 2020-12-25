@@ -1,27 +1,29 @@
-/* eslint-disable vue/order-in-components */
 <template>
-  <div class="demo">
-    <ul>
-      <li>
-        <div v-if="directories.length != 0" @click="isOpen = !isOpen">
-          開閉ボタン
-        </div>
-        <div @click="initialize()">
-          Notes
-        </div>
-        <DirectoryTreeList
-          v-if="directories.length != 0 && isOpen"
-          :directories="directories"
+  <div class="main">
+    <div class="directory-control">
+      <div v-if="directories.length != 0" class="open-button" @click="isOpen = !isOpen">
+        <img
+          src="../images/folder_icon.png"
+          width="13"
+          height="13"
+          class="directory-icon"
+          :class="{ directory_close: !isOpen }"
         />
-      </li>
-    </ul>
+      </div>
+    </div>
+    <div class="directory-name" @click="setFocusDirectory(null)">
+      ノート
+    </div>
+    <DirectoryTreeList v-if="directories.length != 0 && isOpen" :directories="directories" />
   </div>
 </template>
+
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
-import Directory from '@/models/Directory'
-import Note from '@/models/Note'
+import Directory from '../models/Directory'
+import Note from '../models/Note'
+
 export default {
   components: {
     DirectoryTreeList
@@ -32,6 +34,11 @@ export default {
     }
   },
   computed: {
+    ...mapState('notes', ['focusDirectory']),
+    descendantNotes() {
+      const notes = Directory.find(this.focusDirectory)?.descendantNotes ?? Note.queryExists().get()
+      return notes.map(note => note.inode)
+    },
     directories() {
       return Directory.query()
         .where('parent_inode', null)
@@ -39,19 +46,35 @@ export default {
         .get()
     }
   },
-  methods: {
-    ...mapMutations('notes', ['setDescendantNotes']),
-    initialize() {
-      let inodes = Note.queryExists()
-        .get()
-        .map(note => note.inode)
-      this.setDescendantNotes(inodes)
+  watch: {
+    descendantNotes() {
+      this.setDescendantNotes(this.descendantNotes)
     }
   },
-  mounted: function() {
-    this.initialize()
+  created() {
+    this.setDescendantNotes(this.descendantNotes)
+  },
+  methods: {
+    ...mapMutations('notes', ['setFocusDirectory', 'setDescendantNotes'])
   }
 }
 </script>
 
-<style></style>
+<style scoped lang="sass">
+.main
+  margin-left: 3px
+  white-space: nowrap
+  font-size: 0.8em
+  .directory-control
+    display: inline-block
+    .open-button
+      position: relative
+      top: -1px
+      cursor: pointer
+      .directory-icon
+      .directory_close
+        transform: rotate(-90deg)
+        transform-origin: 50% 50%;
+  .directory-name
+    display: inline-block
+</style>

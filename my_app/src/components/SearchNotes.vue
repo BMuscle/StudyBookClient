@@ -6,10 +6,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import Note from '@/models/Note'
-import Tag from '@/models/Tag'
-import Category from '@/models/Category'
-import NoteTag from '@/models/NoteTag'
+import Note from '../models/Note'
 import { readNoteBody } from './NoteCRUD'
 
 export default {
@@ -20,36 +17,48 @@ export default {
   },
   computed: {
     ...mapState('notes', {
-      filteredNotes: state => state.filteredNotes,
+      filteringCategoryId: state => state.filteringCategoryId,
       descendantNotes: state => state.descendantNotes
-    })
-  },
-  methods: {
-    ...mapMutations('notes', ['setFilteredNotes']),
-    async filter(query, descendantNotes) {
-      // idからノート全取得
-      let rawNotes = Note.query()
-        .whereIdIn(descendantNotes)
+    }),
+    rawNotes() {
+      const noteQuery =
+        this.filteringCategoryId != null
+          ? Note.query().where('category_id', this.filteringCategoryId)
+          : Note.query()
+      return noteQuery
+        .whereIdIn(this.descendantNotes)
         .with('tags')
         .with('category')
         .get()
-      let notes = []
-
-      for (let rawNote of rawNotes) {
+    }
+  },
+  watch: {
+    query() {
+      this.filter()
+    },
+    rawNotes() {
+      this.filter()
+    }
+  },
+  created() {
+    this.filter()
+  },
+  methods: {
+    ...mapMutations('notes', ['setFilteredNotes']),
+    async filter() {
+      const notes = []
+      for (let rawNote of this.rawNotes) {
         // 本文読み込み & 正規化
         notes.push({
           inode: rawNote.inode,
           title_category_tags: `${rawNote.title} ${
-            rawNote.category.name
+            rawNote.category ? rawNote.category.name : ''
           } ${rawNote.tags.map(tag => tag.name).join(' ')}`,
-          body: readNoteBody(
-            rawNote.parent_directory_path_from_root,
-            rawNote.file_name
-          )
+          body: readNoteBody(rawNote.parent_directory_path_from_root, rawNote.file_name)
         })
       }
       let resultIds = []
-      let splitQuery = query.split(' ')
+      let splitQuery = this.query.split(' ')
       // queryを分割する
       for (let note of notes) {
         if (
@@ -70,14 +79,6 @@ export default {
       }
       return true
     }
-  },
-  watch: {
-    descendantNotes: function(descendantNotes) {
-      this.filter(this.query, descendantNotes)
-    },
-    query: function(query) {
-      this.filter(query, this.descendantNotes)
-    }
   }
 }
 </script>
@@ -85,10 +86,9 @@ export default {
 <style scoped lang="scss">
 .search {
   width: 100%;
-  padding: 5px 3px;
   .search-form {
     display: block;
-    padding: 3px 5px;
+    padding: 1px 5px;
     border-radius: 5px;
     width: 100%;
     border: none;

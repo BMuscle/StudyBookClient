@@ -14,7 +14,7 @@ import Category from '../models/Category'
 
 export default {
   computed: {
-    ...mapState('my_lists', ['filteringCategoryId']),
+    ...mapState('notes', ['filteringCategoryId']),
     categories() {
       return [{ name: '指定なし' }].concat(Category.all())
     }
@@ -26,7 +26,7 @@ export default {
         : this.categories.findIndex(category => category.online_id == this.filteringCategoryId)
   },
   methods: {
-    ...mapMutations('my_lists', ['setfilteringCategoryId']),
+    ...mapMutations('notes', ['setfilteringCategoryId']),
     setCategory(index) {
       const category_id = this.categories[index].online_id ?? null
       this.setfilteringCategoryId(category_id)

@@ -2,7 +2,7 @@
   <div id="app">
     <Header />
     <router-view />
-    <AllData />
+    <!-- <AllData /> -->
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import Header from './views/Header'
 import AllData from './components/AllData'
 import UpdatedAt from './models/UpdatedAt'
 import Category from './models/Category'
+import { mapState } from 'vuex'
 
 // 全体で共通のコンポーネント
 export default {
@@ -20,6 +21,9 @@ export default {
   components: {
     Header,
     AllData
+  },
+  computed: {
+    ...mapState('category_module', ['default_id'])
   },
   created() {
     if (
@@ -57,11 +61,11 @@ export default {
     ) {
       UpdatedAt.insert({ data: { label: 'note_uploads', updated_at: 0 } })
     }
-    if (!Category.find(this.defaultCategoryId)) {
+    if (!Category.find(this.default_id)) {
       // デフォルトカテゴリー生成（仮）
       Category.insert({
         data: {
-          online_id: 0,
+          online_id: this.default_id,
           name: '未分類'
         }
       })
