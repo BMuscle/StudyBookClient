@@ -66,6 +66,7 @@ export default {
 
 <style scoped lang="scss">
 .my-lists {
+  font-size: 0.8em;
   background-color: #fff;
   height: 100%;
   min-height: 100%;

@@ -3,8 +3,8 @@
     <div>
       <SearchMyLists />
       <MylistsFilterByCategory />
+      <MyListSort />
     </div>
-    <MyListSort />
     <div class="space" />
     <div class="my-lists overflow-auto">
       <MyLists @my-list-click="onMyListClick" />
@@ -71,8 +71,8 @@ export default {
   }
   .my-list {
     border-radius: 3px;
-    height: calc(50% - 20px);
-    max-height: calc(50% - 20px);
+    height: calc(50% - 40px);
+    max-height: calc(50% - 40px);
     background-color: #e8ded2;
   }
 }
