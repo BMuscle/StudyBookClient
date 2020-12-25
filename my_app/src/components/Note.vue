@@ -3,7 +3,7 @@
     <div v-if="note != null">
       <div class="header">
         <div class="file-path">
-          Notes\{{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
+          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
           {{ note.title }}
         </div>
         <div class="tags">
