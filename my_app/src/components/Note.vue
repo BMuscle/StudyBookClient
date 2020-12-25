@@ -2,15 +2,17 @@
   <div class="note">
     <div v-if="note?.is_exists">
       <div class="header">
-        <div class="file-path">
-          {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
-          {{ note.title }}
-        </div>
-        <div class="category">
-          <DisplayTheNoteCategory
-            :note-category="note.category"
-            @category-change="updateCategory($event)"
-          />
+        <div class="row-1">
+          <div class="file-path">
+            {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
+            {{ note.title }}
+          </div>
+          <div class="category">
+            <DisplayTheNoteCategory
+              :note-category="note.category"
+              @category-change="updateCategory($event)"
+            />
+          </div>
         </div>
         <div class="tags">
           <Tags
@@ -104,21 +106,28 @@ export default {
 .note {
   .header {
     background-color: #5eaaa8;
-    height: 32px;
+    max-height: 56.5px;
+    width: 100%;
+    overflow: hidden;
     font-size: 0.8em;
     padding: 3px 10px;
-    white-space: nowrap;
-    .file-path {
-      vertical-align: middle;
-      display: inline-block;
-      color: #e5e5e5;
-      margin-right: 10px;
-    }
-    .category {
-      display: inline-block;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .row-1 {
+      white-space: nowrap;
+      .file-path {
+        display: inline-block;
+        color: #e5e5e5;
+        margin-right: 10px;
+      }
+      .category {
+        display: inline-block;
+      }
     }
     .tags {
       display: inline-block;
+      height: 100%;
     }
   }
   .body {

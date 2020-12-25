@@ -85,7 +85,7 @@ export default {
       margin-top: 1px
       overflow: hidden
       white-space: nowrap
-      font-size: 0.7em
+      font-size: 0.75em
       .category
         display: inline-block
         padding: 1px 5px
@@ -95,4 +95,13 @@ export default {
         margin-right: 3px
       .tags
         display: inline-block
+        white-space: nowrap
+        text-overflow: ellipsis;
+        .tag
+          padding: 1px 5px
+          margin-right: 3px
+          display: inline-block
+          background-color: #ddd
+          border-radius: 10px
+
 </style>
