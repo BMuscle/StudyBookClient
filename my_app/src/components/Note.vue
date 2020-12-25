@@ -33,6 +33,7 @@
 import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
 import Note from '@/models/Note'
+import Directory from '@/models/Directory'
 import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
 import Tags from './Tags.vue'
 import { readNoteBody, setHeader } from './NoteCRUD'
@@ -52,9 +53,16 @@ export default {
     ...mapState('notes', {
       focusNote: state => state.focusNote
     }),
+    directories() {
+      return Directory.query()
+        .where('parent_inode', null)
+        .with('child_directories')
+        .get()
+    },
     note() {
       const note = Note.query()
         .whereId(this.focusNote)
+        .with('directory')
         .with('category')
         .with('tags')
         .with('parent_directory')

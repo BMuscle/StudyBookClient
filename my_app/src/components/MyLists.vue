@@ -1,11 +1,6 @@
 <template>
   <div class="my-lists">
-    <div
-      v-for="myList in myLists"
-      :key="myList.id"
-      class="my-list"
-      @click="setMyList(myList.id)"
-    >
+    <div v-for="myList in myLists" :key="myList.id" class="my-list" @click="setMyList(myList.id)">
       <div class="title" v-html="highLight(myList.title)" />
       <div class="category">
         <div class="category-name">
@@ -25,28 +20,34 @@ export default {
   computed: {
     ...mapState('my_lists', {
       searchParams: state => state.searchParams,
+      sort: state => state.sort,
       filteringCategoryId: state => state.filteringCategoryId
     }),
+    data: function() {
+      return {
+        sort: String
+      }
+    },
+    myLists() {
+      return this.myListQueryFilteredInCategory()
+        .with('notes')
+        .with('category')
+        .where(myList => {
+          return (
+            myList.title.includes(this.searchParams) || this.includeDescription(myList)
+          )
+        })
+        .orderBy('title', this.sort)
+        .get()
+    }
+  },
+  methods: {
     myListQueryFilteredInCategory() {
       const myListQuery = MyList.query()
       return this.filteringCategoryId != null
         ? myListQuery.where('category_id', this.filteringCategoryId)
         : myListQuery
     },
-    myLists() {
-      return this.myListQueryFilteredInCategory
-        .with('notes')
-        .with('category')
-        .where(myList => {
-          return (
-            myList.title.includes(this.searchParams) ||
-            this.includeDescription(myList)
-          )
-        })
-        .get()
-    }
-  },
-  methods: {
     setMyList(myListId) {
       this.$emit('my-list-click', myListId)
     },
@@ -65,6 +66,7 @@ export default {
 
 <style scoped lang="scss">
 .my-lists {
+  font-size: 0.8em;
   background-color: #fff;
   height: 100%;
   min-height: 100%;

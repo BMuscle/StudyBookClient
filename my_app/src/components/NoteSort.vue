@@ -13,7 +13,7 @@
 export default {
   data() {
     return {
-      Sort: 'asc,inode'
+      Sort: 'inode,asc'
     }
   },
   methods: {

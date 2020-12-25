@@ -3,6 +3,7 @@
     <div>
       <SearchMyLists />
       <MylistsFilterByCategory />
+      <MyListSort />
     </div>
     <div class="space" />
     <div class="my-lists overflow-auto">
@@ -23,6 +24,7 @@
 import MyList from './MyList'
 import MyLists from './MyLists'
 import SearchMyLists from './SearchMyLists'
+import MyListSort from './MyListSort'
 import MylistsFilterByCategory from './MylistsFilterByCategory'
 
 export default {
@@ -30,6 +32,7 @@ export default {
     MyList,
     MyLists,
     SearchMyLists,
+    MyListSort,
     MylistsFilterByCategory
   },
   data: function() {
@@ -68,8 +71,8 @@ export default {
   }
   .my-list {
     border-radius: 3px;
-    height: calc(50% - 20px);
-    max-height: calc(50% - 20px);
+    height: calc(50% - 40px);
+    max-height: calc(50% - 40px);
     background-color: #e8ded2;
   }
 }

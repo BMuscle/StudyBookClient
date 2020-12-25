@@ -70,11 +70,11 @@ export default {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      font-size: 0.9em;
+      font-size: 0.8em;
     }
     .body {
       margin-top: 1px;
-      font-size: 0.8em;
+      font-size: 0.75em;
       color: #6a6a6a;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -85,7 +85,7 @@ export default {
       margin-top: 1px;
       overflow: hidden;
       white-space: nowrap;
-      font-size: 0.7em;
+      font-size: 0.65em;
       .category {
         display: inline-block;
         padding: 1px 5px;
