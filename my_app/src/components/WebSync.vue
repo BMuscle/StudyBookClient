@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapState('user', ['userId', 'token']),
-    ...mapGetters('category_module', ['get_default']),
+    ...mapState('category_module', ['default_id']),
     getAuthParams() {
       return { user_id: this.userId, token: this.token }
     },
@@ -143,11 +143,10 @@ export default {
     updateDefaultCategory(default_category) {
       Note.update({
         where: note => {
-          return note.category_id == this.get_default.online_id
+          return note.category_id == this.default_id || note.category_id == null
         },
         data: { category_id: default_category.id }
       })
-      Category.delete(0)
       this.set_default_id(default_category.id)
     },
     async tagsSync() {
