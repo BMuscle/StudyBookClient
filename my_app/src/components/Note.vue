@@ -4,8 +4,7 @@
       <div class="header">
         <div class="row-1">
           <div class="file-path">
-            Notes > {{ testdir.split(/[\\/]/).join(' > ') }} >
-            <!-- Notes > {{ note.parent_directory_path_from_root.split(/[\\/]/).join(' > ') }} > -->
+            Notes > {{ note.parent_directory_path_from_root.split(/[\\/]/).join(' > ') }} >
             {{ note.title }}
           </div>
           <div class="category">
@@ -47,8 +46,7 @@ export default {
   },
   data: function() {
     return {
-      noteBody: '',
-      testdir: 'aaa/aaa\\aaaa'
+      noteBody: ''
     }
   },
   computed: {
