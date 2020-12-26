@@ -86,12 +86,11 @@ export default {
   .note-filter-by-category
     margin-top: 4px
   .directory-tree-view
-    // height: 35%
     height: calc(40% - 20px)
     max-height: calc(40% - 20px)
     border-radius: 5px
     background-color: #fff
-    overflow: scroll
+    overflow: auto
   hr
     margin: 5px 0
 

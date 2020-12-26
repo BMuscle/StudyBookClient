@@ -105,16 +105,21 @@ export default {
     async sync() {
       if (this.isLoading) return
       this.isLoading = true
-      await this.categoriesSync()
-      await this.noteUploads()
-      await this.tagsSync()
-      this.noteDownloads()
-      this.noteDeletes()
-      this.myListSync()
-      this.isLoading = false
+      try {
+        await this.categoriesSync()
+        await this.noteUploads()
+        await this.tagsSync()
+        this.noteDownloads()
+        this.noteDeletes()
+        this.myListSync()
+        this.isLoading = false
+      } catch (e){
+        console.log('sync error', e)
+        this.isLoading = false
+      }
     },
     requestCategories(updatedAt) {
-      return api.get(`/api/v1/categories?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
+      return api.get(`/api/v1/categories?${this.getAuthParamsStr}`)
     },
     requestTags(updatedAt) {
       return api.get(`/api/v1/tags?${this.getAuthParamsStr}&updated_at=${updatedAt}`)
@@ -123,10 +128,8 @@ export default {
       return api.post('/api/v1/notes/uploads', { ...this.getAuthParams, notes: notes })
     },
     async categoriesSync() {
-      const categoryAt = new Date().getTime()
-      const response = await this.requestCategories(
-        new Date(this.categoriesUpdatedAt).toUTCString()
-      )
+      const response = await this.requestCategories()
+      Category.deleteAll()
       for (let category of response.data.categories) {
         Category.insert({
           data: {
@@ -136,7 +139,6 @@ export default {
         })
       }
       this.updateDefaultCategory(response.data.default_category)
-      this.updateCategoriesUpdatedAt(categoryAt)
     },
     updateDefaultCategory(default_category) {
       Note.update({
