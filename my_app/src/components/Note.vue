@@ -4,7 +4,7 @@
       <div class="header">
         <div class="row-1">
           <div class="file-path">
-            {{ note.parent_directory_path_from_root.split('/').join(' > ') }} >
+            Notes > {{ note.parent_directory_path_from_root.split(/[\\/]/).join(' > ') }} >
             {{ note.title }}
           </div>
           <div class="category">
