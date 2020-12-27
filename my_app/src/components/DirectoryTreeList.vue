@@ -21,7 +21,8 @@
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList
-        v-if="directory.child_directories.length != 0 && isOpen(directory.inode)"
+        v-if="directory.child_directories.length != 0"
+        v-show="isOpen(directory.inode)"
         :directories="childDirectories(directory.inode)"
       />
     </div>
@@ -58,7 +59,7 @@ export default {
         this.openDirectories.push(inode)
       } else {
         var index = this.openDirectories.indexOf(inode)
-        this.openDirectories.splice(index)
+        this.openDirectories.splice(index, 1)
       }
     },
     isOpen(inode) {
