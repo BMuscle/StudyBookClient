@@ -8,7 +8,7 @@
 
 <script>
 import api from './api'
-import { mapState, mapMutations, mapGetters } from 'vuex'
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 import Note from '../models/Note'
 import MyList from '../models/MyList'
 import MyListNote from '../models/MyListNote'
@@ -94,6 +94,7 @@ export default {
   methods: {
     ...mapMutations('user', ['setUser', 'reset']),
     ...mapMutations('category_module', ['set_default_id']),
+    ...mapActions('flash', ['setDanger']),
     createNote() {
       api
         .post('/api/v1/notes/uploads', {
@@ -114,7 +115,16 @@ export default {
         this.myListSync()
         this.isLoading = false
       } catch (e){
-        console.log('sync error', e)
+        if (e.message == 'Network Error') {
+          this.setDanger(['通信エラーが発生しました'])
+        } else if (e.message == "Request failed with status code 400") {
+          this.setDanger(['リクエストに失敗しました。アカウントが利用できない可能性があります'])
+        } else if (e.message == "Request failed with status code 404") {
+          this.setDanger(['リクエストに失敗しました。バージョンが古い可能性があります'])
+        } else {
+          console.log('Sync error', e)
+          this.setDanger(['同期に失敗しました'])
+        }
         this.isLoading = false
       }
     },

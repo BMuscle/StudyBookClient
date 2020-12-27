@@ -7,6 +7,7 @@ import { category_module } from '../models/Category'
 import user from './user'
 import database from '../database'
 import bookmark from './bookmark'
+import flash from './flash'
 
 export default createStore({
   plugins: [
@@ -38,6 +39,7 @@ export default createStore({
     bookmark,
     my_lists,
     category_module,
-    user
+    user,
+    flash
   }
 })

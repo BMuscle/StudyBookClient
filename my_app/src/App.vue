@@ -2,6 +2,7 @@
   <div id="app">
     <Header />
     <router-view />
+    <FlashMessage />
     <!-- <AllData /> -->
   </div>
 </template>
@@ -10,6 +11,7 @@
 import store from './store'
 import * as watcher from './components/watcher'
 import Header from './views/Header'
+import FlashMessage from './components/FlashMessage'
 import AllData from './components/AllData'
 import UpdatedAt from './models/UpdatedAt'
 import Category from './models/Category'
@@ -20,6 +22,7 @@ export default {
   store,
   components: {
     Header,
+    FlashMessage,
     AllData
   },
   computed: {
@@ -81,4 +84,19 @@ export default {
   width: 100%;
   height: 100vh;
 }
+</style>
+
+<style lang="sass">
+@keyframes fadeIn
+  from
+    opacity: 0
+  to
+    opacity: 1
+
+@keyframes fadeOut
+  from
+    opacity: 1
+  to
+    opacity: 0
+
 </style>
