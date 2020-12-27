@@ -1,5 +1,5 @@
 <template>
-  <div v-html="mdHtml" class="body"/>
+  <div class="body" v-html="mdHtml" />
 </template>
 
 <script>
@@ -22,9 +22,9 @@ export default {
         langPrefix: 'hljs language-',
         // highlightjsを使用したハイライト処理を追加
         highlight: function(code, lang) {
-          return hljs.highlightAuto(code, [lang]).value;
+          return hljs.highlightAuto(code, [lang]).value
         }
-      });
+      })
       return marked(this.mdData)
     }
   }
