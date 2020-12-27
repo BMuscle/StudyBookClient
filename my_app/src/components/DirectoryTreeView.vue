@@ -14,7 +14,7 @@
     <div class="directory-name" @click="setFocusDirectory(null)">
       ノート
     </div>
-    <DirectoryTreeList v-if="directories.length != 0 && isOpen" :directories="directories" />
+    <DirectoryTreeList v-if="directories.length != 0" v-show="isOpen" :directories="directories" />
   </div>
 </template>
 
