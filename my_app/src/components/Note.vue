@@ -4,8 +4,7 @@
       <div class="header">
         <div class="row-1">
           <div class="file-path">
-            Notes > {{ note.parent_directory_path_from_root.split(/[\\/]/).join(' > ') }} >
-            {{ note.title }}
+            {{ notePathStr }}
           </div>
           <div class="category">
             <DisplayTheNoteCategory
@@ -37,6 +36,7 @@ import Directory from '@/models/Directory'
 import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
 import Tags from './Tags.vue'
 import { readNoteBody, setHeader } from './NoteCRUD'
+import path from 'path'
 
 export default {
   components: {
@@ -68,6 +68,11 @@ export default {
         .with('parent_directory')
         .first()
       return note
+    },
+    notePathStr() {
+      return path
+        .join('Notes', this.note.parent_directory_path_from_root, this.note.title)
+        .replace(/[\\/]/g, ' > ')
     }
   },
   watch: {
