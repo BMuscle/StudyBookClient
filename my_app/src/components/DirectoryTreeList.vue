@@ -17,7 +17,7 @@
         </div>
         <div v-else class="none-button" />
       </div>
-      <div class="directory-name" @click="setFocusDirectory(directory.inode)">
+      <div class="directory-name" @click="setFocusDirectory(directory.inode)" :class="focusDirectory == directory.inode ? 'directory-active' : '' ">
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList
@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import DirectoryTreeList from './DirectoryTreeList.vue'
 import Directory from '../models/Directory'
 
@@ -45,6 +45,9 @@ export default {
     return {
       openDirectories: []
     }
+  },
+  computed: {
+    ...mapState('notes', ['focusDirectory'])
   },
   methods: {
     ...mapMutations('notes', ['setFocusDirectory']),
@@ -91,4 +94,17 @@ export default {
   .directory-name
     margin-left: 3px
     display: inline-block
+    cursor: pointer
+    &:hover
+      font-weight: 600
+  .directory-active
+    cursor: pointer
+    background-color: #6a6a6a
+    border-radius: 10px
+    color: #fff
+    font-weight: 600
+    padding: 0 4px
+    &:hover
+      color: #fff
+      font-weight: 600
 </style>
