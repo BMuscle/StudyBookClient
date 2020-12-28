@@ -11,7 +11,7 @@
         />
       </div>
     </div>
-    <div class="directory-name" @click="setFocusDirectory(null)">
+    <div class="directory-name" @click="setFocusDirectory(null)" :class="focusDirectory == null ? 'directory-active' : ''">
       ノート
     </div>
     <DirectoryTreeList v-if="directories.length != 0" v-show="isOpen" :directories="directories" />
@@ -77,4 +77,17 @@ export default {
         transform-origin: 50% 50%;
   .directory-name
     display: inline-block
+    cursor: pointer
+    &:hover
+      font-weight: 600
+  .directory-active
+    cursor: pointer
+    background-color: #6a6a6a
+    border-radius: 10px
+    color: #fff
+    font-weight: 600
+    padding: 0 4px
+    &:hover
+      color: #fff
+      font-weight: 600
 </style>
