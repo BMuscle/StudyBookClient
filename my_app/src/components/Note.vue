@@ -1,6 +1,6 @@
 <template>
-  <div class="note" v-if="note?.is_exists">
-    <div class="header" ref="note_header">
+  <div v-if="note?.is_exists" class="note">
+    <div ref="note_header" class="header">
       <div class="row-1">
         <div class="file-path">
           {{ notePathStr }}
@@ -22,8 +22,8 @@
         />
       </div>
     </div>
-    <div class="note-content" ref="note_content">
-      <div class="title">{{note.title}}</div>
+    <div ref="note_content" class="note-content">
+      <div class="title">{{ note.title }}</div>
       <DisplayMd class="body" :md-data="noteBody" />
     </div>
   </div>
@@ -82,19 +82,22 @@ export default {
       this.setNote(newNote)
     }
   },
+  created() {
+    this.setNote(this.note)
+  },
   mounted() {
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize();
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     handleResize: debounce(function() {
-      if(this.note?.is_exists) {
-        let el = this.$refs.note_content;
-        let headerEl = this.$refs.note_header;
-        el.style.height = `calc(100vh - ${headerEl.clientHeight + 32}px)`;
+      if (this.note?.is_exists) {
+        let el = this.$refs.note_content
+        let headerEl = this.$refs.note_header
+        el.style.height = `calc(100vh - ${headerEl.clientHeight + 32}px)`
       }
     }, 10),
     setNote(note) {
