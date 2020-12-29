@@ -17,10 +17,7 @@ export default {
   computed: {
     mdHtml: function() {
       marked.setOptions({
-        // code要素にdefaultで付くlangage-を削除
-        // langPrefix: '',
         langPrefix: 'hljs language-',
-        // highlightjsを使用したハイライト処理を追加
         highlight: function(code, lang) {
           return hljs.highlightAuto(code, [lang]).value
         }
@@ -31,13 +28,25 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 @import '~highlight.js/scss/railscasts';
 .body {
+  font-size: 0.8em;
+  min-width: 400px;
+
   .hljs {
     border-radius: 10px;
     padding: 15px 30px;
+  }
+
+  h1 {
+    font-size: 2.3em
+  }
+  h2 {
+    font-size: 1.8em
+  }
+  h3 {
+    font-size: 1.5em
   }
 
   h1,
