@@ -82,6 +82,9 @@ export default {
       this.setNote(newNote)
     }
   },
+  created() {
+    this.setNote(this.note)
+  },
   mounted() {
     window.addEventListener('resize', this.handleResize)
     this.handleResize()
