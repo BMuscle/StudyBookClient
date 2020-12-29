@@ -35,10 +35,14 @@ export default class Directory extends Model {
     }
   }
   get descendantNotes() {
-    let notes = []
+    let notes = Directory.query()
+      .with('notes')
+      .find(this.inode).notes
+
+    const startPath = this.path_from_root + path.sep
     const directories = Directory.query()
       .with('notes')
-      .where('path_from_root', path => path.indexOf(this.path_from_root) == 0)
+      .where('path_from_root', path => path.startsWith(startPath))
       .get()
     for (const directory of directories) {
       notes = notes.concat(directory.notes.filter(note => note.is_exists))
