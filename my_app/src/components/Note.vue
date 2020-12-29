@@ -1,28 +1,29 @@
 <template>
-  <div class="note">
-    <div v-if="note?.is_exists">
-      <div class="header">
-        <div class="row-1">
-          <div class="file-path">
-            {{ notePathStr }}
-          </div>
-          <div class="category">
-            <DisplayTheNoteCategory
-              :note-category="note.category"
-              @category-change="updateCategory($event)"
-            />
-          </div>
+  <div class="note" v-if="note?.is_exists">
+    <div class="header">
+      <div class="row-1">
+        <div class="file-path">
+          {{ notePathStr }}
         </div>
-        <div class="tags">
-          <Tags
-            :note="note"
-            :tags="note.tags"
-            @tag-create="createTag($event)"
-            @tag-change="updateTag($event)"
-            @tag-delete="deleteTag($event)"
+        <div class="category">
+          <DisplayTheNoteCategory
+            :note-category="note.category"
+            @category-change="updateCategory($event)"
           />
         </div>
       </div>
+      <div class="tags">
+        <Tags
+          :note="note"
+          :tags="note.tags"
+          @tag-create="createTag($event)"
+          @tag-change="updateTag($event)"
+          @tag-delete="deleteTag($event)"
+        />
+      </div>
+    </div>
+    <div class="note-content" ref="note_content">
+      <div class="title">{{note.title}}</div>
       <DisplayMd class="body" :md-data="noteBody" />
     </div>
   </div>
@@ -37,6 +38,7 @@ import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
 import Tags from './Tags.vue'
 import { readNoteBody, setHeader } from './NoteCRUD'
 import path from 'path'
+import { throttle, debounce } from 'lodash'
 
 export default {
   components: {
@@ -71,7 +73,7 @@ export default {
     },
     notePathStr() {
       return path
-        .join('Notes', this.note.parent_directory_path_from_root, this.note.title)
+        .join('Notes', this.note.parent_directory_path_from_root, this.note.file_name)
         .replace(/[\\/]/g, ' > ')
     }
   },
@@ -80,7 +82,22 @@ export default {
       this.setNote(newNote)
     }
   },
+  mounted() {
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
+  },
   methods: {
+    handleResize: debounce(function() {
+      let el = this.$refs.note_content;
+      if(el.scrollWidth > el.clientWidth) {
+        el.style.maxHeight = 'calc(100vh - 88px)';
+      } else {
+        el.style.maxHeight = 'calc(100vh - 64px)';
+      }
+    }, 10),
     setNote(note) {
       if (this.note?.is_exists) {
         readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
@@ -120,7 +137,7 @@ export default {
   .header {
     background-color: #5eaaa8;
     max-height: 56.5px;
-    width: 100%;
+    // width: 100%;
     overflow: hidden;
     font-size: 0.8em;
     padding: 3px 10px;
@@ -143,8 +160,17 @@ export default {
       height: 100%;
     }
   }
-  .body {
-    padding: 10px 30px 20px 30px;
+  .note-content {
+    overflow: auto;
+    max-height: calc(100vh - 88px);
+    white-space: nowrap;
+    .title {
+      font-size: 2em;
+      font-weight: 600em;
+    }
+    .body {
+      padding: 10px 30px 20px 30px;
+    }
   }
 }
 </style>

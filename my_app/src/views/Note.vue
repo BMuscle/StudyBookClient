@@ -1,9 +1,7 @@
 <template>
   <div class="main">
     <NoteLeftBar />
-    <div class="note">
-      <Note class="overflow-auto" />
-    </div>
+    <Note />
   </div>
 </template>
 
@@ -20,9 +18,8 @@ export default {
 
 <style scoped lang="scss">
 .main {
-  height: calc(100% - 32px);
-}
-.note {
-  height: 100%;
+  height: calc(100vh - 32px);
+  max-width: 100%;
+  overflow: hidden;
 }
 </style>
