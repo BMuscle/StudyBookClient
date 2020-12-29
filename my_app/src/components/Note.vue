@@ -1,6 +1,6 @@
 <template>
   <div class="note" v-if="note?.is_exists">
-    <div class="header">
+    <div class="header" ref="note_header">
       <div class="row-1">
         <div class="file-path">
           {{ notePathStr }}
@@ -91,11 +91,10 @@ export default {
   },
   methods: {
     handleResize: debounce(function() {
-      let el = this.$refs.note_content;
-      if(el.scrollWidth > el.clientWidth) {
-        el.style.maxHeight = 'calc(100vh - 88px)';
-      } else {
-        el.style.maxHeight = 'calc(100vh - 64px)';
+      if(this.note?.is_exists) {
+        let el = this.$refs.note_content;
+        let headerEl = this.$refs.note_header;
+        el.style.height = `calc(100vh - ${headerEl.clientHeight + 32}px)`;
       }
     }, 10),
     setNote(note) {
@@ -162,7 +161,7 @@ export default {
   }
   .note-content {
     overflow: auto;
-    max-height: calc(100vh - 88px);
+    height: calc(100vh - 88px);
     white-space: nowrap;
     .title {
       font-size: 2em;
