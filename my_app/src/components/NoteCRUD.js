@@ -3,6 +3,10 @@ import * as fs_wrapper from './fs_wrapper'
 import path from 'path'
 import mkdirp from 'mkdirp'
 
+export function initNoteDirectory() {
+  mkdirp(notesJoin(''))
+}
+
 export function notesJoin(parentDirectoryPath) {
   return path.join('notes', parentDirectoryPath)
 }

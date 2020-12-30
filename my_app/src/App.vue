@@ -16,6 +16,8 @@ import AllData from './components/AllData'
 import UpdatedAt from './models/UpdatedAt'
 import Category from './models/Category'
 import { mapState } from 'vuex'
+import { initNoteDirectory } from './components/NoteCRUD'
+import Note from './models/Note'
 
 // 全体で共通のコンポーネント
 export default {
@@ -29,6 +31,7 @@ export default {
     ...mapState('category_module', ['default_id'])
   },
   created() {
+    initNoteDirectory()
     if (
       !UpdatedAt.query()
         .where('label', 'my_lists')
