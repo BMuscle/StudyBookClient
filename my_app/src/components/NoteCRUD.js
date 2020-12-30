@@ -2,6 +2,19 @@ import * as fs_wrapper from './fs_wrapper'
 import path from 'path'
 import mkdirp from 'mkdirp'
 
+function isDangerousPath(aPath) {
+  return aPath.indexOf(':') !== -1 || aPath.indexOf('..') !== -1
+}
+function ThrowAnErrorIfAnyPathIsDangerous(...paths) {
+  for (const aPath of paths) {
+    if (isDangerousPath(aPath)) {
+      throw new Error(
+        'ノートを保存しているフォルダの外を操作する可能性があります' + '(' + aPath + ')'
+      )
+    }
+  }
+}
+
 export function initNoteDirectory() {
   mkdirp(notesJoin(''))
 }
@@ -17,18 +30,22 @@ export function getInode(path) {
     return null
   }
   const notesJoinedPath = notesJoin(path)
+  ThrowAnErrorIfAnyPathIsDangerous(aPath)
   return fs_wrapper.getInode(notesJoinedPath)
 }
 export function getMtimeMs(parentDirectoryPath, fileName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return fs_wrapper.getMtimeMs(notesJoinedParentPath, fileName)
 }
 export async function createNote(parentDirectoryPath, fileName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
 }
 export async function readNote(parentDirectoryPath, fileName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readFile(notesJoinedParentPath, fileName)
 }
@@ -73,10 +90,12 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
   }
 }
 export async function overwriteNote(parentDirectoryPath, fileName, content) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.overwriteFile(notesJoinedParentPath, fileName, content)
 }
 export async function moveNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName, destinationDirectoryPath)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
@@ -91,6 +110,7 @@ export async function moveNote(parentDirectoryPath, fileName, destinationDirecto
   )
 }
 export async function renameNote(parentDirectoryPath, fileName, newFileName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName, newFileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const newFileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
@@ -99,10 +119,12 @@ export async function renameNote(parentDirectoryPath, fileName, newFileName) {
   await fs_wrapper.renameFile(notesJoinedParentPath, fileName, newFileNameWithoutDuplicate)
 }
 export async function deleteNote(parentDirectoryPath, fileName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.deleteFile(notesJoinedParentPath, fileName)
 }
 export async function createDirectory(parentDirectoryPath, directoryName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
@@ -111,13 +133,16 @@ export async function createDirectory(parentDirectoryPath, directoryName) {
   await fs_wrapper.createDirectory(notesJoinedParentPath, directoryNameWithoutDuplicate)
 }
 export async function readDirectory(parentDirectoryPath, directoryName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   return await fs_wrapper.readDirectory(notesJoinedParentPath, directoryName)
 }
 export async function readFolderRecursively(directoryPath, inode = null) {
+  ThrowAnErrorIfAnyPathIsDangerous(directoryPath)
   return await fs_wrapper.readdirRecursively(notesJoin(directoryPath), inode)
 }
 export async function moveDirectory(parentDirectoryPath, directoryName, destinationDirectoryPath) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName, destinationDirectoryPath)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
   const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
@@ -132,6 +157,7 @@ export async function moveDirectory(parentDirectoryPath, directoryName, destinat
   )
 }
 export async function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName, newDirectoryName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const newDirectoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
@@ -144,6 +170,7 @@ export async function renameDirectory(parentDirectoryPath, directoryName, newDir
   )
 }
 export async function deleteDirectory(parentDirectoryPath, directoryName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   await fs_wrapper.deleteDirectory(notesJoinedParentPath, directoryName)
 }
@@ -161,6 +188,7 @@ export function createDownloadNote(parentDirectoryPath, title, category, tags, b
 
 // 新規ノートダウンロード作成関数
 async function writeDownloadNote(parentDirectoryPath, title, category, tags, body) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, title)
   parentDirectoryPath = parentDirectoryPath ? parentDirectoryPath : ''
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   mkdirp.sync(notesJoinedParentPath)
@@ -201,12 +229,14 @@ export function convertNoteToString(title, category, tags, body) {
 }
 
 export function moveDownloadNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath)
   destinationDirectoryPath = destinationDirectoryPath ? destinationDirectoryPath : ''
   mkdirp.sync(notesJoin(parentDirectoryPath))
   moveNote(parentDirectoryPath, fileName, destinationDirectoryPath)
 }
 
 export async function readNoteBody(parentDirectoryPath, fileName) {
+  ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   let content = await fs_wrapper.readFile(notesJoinedParentPath, fileName)
   return extractContentToBody(content)
