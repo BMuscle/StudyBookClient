@@ -215,6 +215,9 @@ export class NotesWatchHandler {
     fs_wrapper.WatchHandler.start('notes', NotesWatchHandler)
     NotesWatchHandler.callbackObject = callbackObject
   }
+  static kill() {
+    fs_wrapper.WatchHandler.kill()
+  }
   static onChangeNote(target) {
     target.parentDirectoryPath = notesRemove(target.parentDirectoryPath)
     NotesWatchHandler.callbackObject.onChangeNote(target)

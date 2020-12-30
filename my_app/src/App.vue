@@ -75,6 +75,9 @@ export default {
     }
 
     watcher.onAppReady()
+  },
+  beforeUnmount() {
+    watcher.onAppReload()
   }
 }
 </script>
@@ -83,7 +86,7 @@ export default {
 #app {
   width: 100%;
   height: 100vh;
-  font-family: "Hiragino Sans", sans-serif;
+  font-family: 'Hiragino Sans', sans-serif;
 }
 </style>
 
@@ -99,5 +102,4 @@ export default {
     opacity: 1
   to
     opacity: 0
-
 </style>

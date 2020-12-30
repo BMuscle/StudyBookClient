@@ -170,6 +170,9 @@ export class WatchHandler {
     WatchHandler.handle.stdout.on('data', WatchHandler.onStdOut)
     WatchHandler.callbackObject = callbackObject
   }
+  static kill() {
+    WatchHandler.handle.kill()
+  }
   static lockRun(func, target) {
     WatchHandler.lock.acquire('WatchHandler', async () => {
       await func(target)

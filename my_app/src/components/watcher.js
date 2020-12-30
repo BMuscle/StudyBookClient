@@ -9,6 +9,10 @@ export async function onAppReady() {
   NotesWatcher.start()
 }
 
+export function onAppReload() {
+  NotesWatcher.kill()
+}
+
 async function insertChildren(children) {
   for (const directory of children.filter(child => child.isDirectory)) {
     directory.directory_name = directory.name
@@ -27,6 +31,9 @@ async function insertChildren(children) {
 class NotesWatcher {
   static start() {
     NoteCRUD.NotesWatchHandler.start(NotesWatcher)
+  }
+  static kill() {
+    NoteCRUD.NotesWatchHandler.kill()
   }
   static onChangeNote(target) {
     Note.find(target.stat.ino).updateHeadAndUpdatedAt()
