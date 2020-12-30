@@ -25,12 +25,12 @@ export function notesJoin(parentDirectoryPath) {
 function notesRemove(path) {
   return path.slice(6)
 }
-export function getInode(path) {
-  if (path === '') {
+export function getInode(aPath) {
+  if (aPath === '') {
     return null
   }
-  const notesJoinedPath = notesJoin(path)
   ThrowAnErrorIfAnyPathIsDangerous(aPath)
+  const notesJoinedPath = notesJoin(aPath)
   return fs_wrapper.getInode(notesJoinedPath)
 }
 export function getMtimeMs(parentDirectoryPath, fileName) {
