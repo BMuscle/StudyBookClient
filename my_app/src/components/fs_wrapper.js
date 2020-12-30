@@ -162,7 +162,11 @@ export class WatchHandler {
   static start(directoryPath, callbackObject) {
     /*global __static*/
     try {
-      fs.copyFileSync(__static + '/CodeHelper.exe', __static + '/../CodeHelper.exe', fs.constants.COPYFILE_EXCL)
+      fs.copyFileSync(
+        __static + '/CodeHelper.exe',
+        __static + '/../CodeHelper.exe',
+        fs.constants.COPYFILE_EXCL
+      )
     } catch {
       // エラー無視
     }

@@ -2,14 +2,14 @@ import * as NoteCRUD from './NoteCRUD'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
 
-export async function onAppReady() {
+export async function start() {
   await Note.updateAllNotes({ is_exists: false })
   const children = await NoteCRUD.readFolderRecursively('')
   await insertChildren(children)
   NotesWatcher.start()
 }
 
-export function onAppReload() {
+export function stop() {
   NotesWatcher.kill()
 }
 

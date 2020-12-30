@@ -32,6 +32,7 @@ export default {
   },
   created() {
     initNoteDirectory()
+
     if (
       !UpdatedAt.query()
         .where('label', 'my_lists')
@@ -76,11 +77,10 @@ export default {
         }
       })
     }
-
-    watcher.onAppReady()
+    watcher.start()
   },
   beforeUnmount() {
-    watcher.onAppReload()
+    watcher.stop()
   }
 }
 </script>

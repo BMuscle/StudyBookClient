@@ -1,4 +1,3 @@
-import fs from 'fs'
 import * as fs_wrapper from './fs_wrapper'
 import path from 'path'
 import mkdirp from 'mkdirp'
