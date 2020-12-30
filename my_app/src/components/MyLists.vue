@@ -33,9 +33,7 @@ export default {
         .with('notes')
         .with('category')
         .where(myList => {
-          return (
-            myList.title.includes(this.searchParams) || this.includeDescription(myList)
-          )
+          return myList.title.includes(this.searchParams) || this.includeDescription(myList)
         })
         .orderBy('title', this.sort)
         .get()

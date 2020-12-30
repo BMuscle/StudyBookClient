@@ -40,13 +40,13 @@ export default {
   }
 
   h1 {
-    font-size: 2.3em
+    font-size: 2.3em;
   }
   h2 {
-    font-size: 1.8em
+    font-size: 1.8em;
   }
   h3 {
-    font-size: 1.5em
+    font-size: 1.5em;
   }
 
   h1,
