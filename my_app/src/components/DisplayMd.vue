@@ -5,6 +5,7 @@
 <script>
 import marked from 'marked'
 import hljs from 'highlight.js'
+import sanitizeHtml from 'sanitize-html'
 
 export default {
   props: {
@@ -22,7 +23,7 @@ export default {
           return hljs.highlightAuto(code, [lang]).value
         }
       })
-      return marked(this.mdData)
+      return sanitizeHtml(marked(this.mdData))
     }
   }
 }
