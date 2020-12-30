@@ -1,6 +1,7 @@
 import * as fs_wrapper from './fs_wrapper'
 import path from 'path'
 import mkdirp from 'mkdirp'
+import store from '../store'
 
 function isDangerousPath(aPath) {
   return aPath.indexOf(':') !== -1 || aPath.indexOf('..') !== -1
@@ -16,14 +17,14 @@ function ThrowAnErrorIfAnyPathIsDangerous(...paths) {
 }
 
 export function initNoteDirectory() {
-  mkdirp(notesJoin(''))
+  mkdirp(store.state.root.rootPath)
 }
 
-export function notesJoin(parentDirectoryPath) {
-  return path.join('notes', parentDirectoryPath)
+export function notesJoin(...paths) {
+  return path.join(store.state.root.rootPath, ...paths)
 }
-function notesRemove(path) {
-  return path.slice(6)
+function notesRemove(fullPath) {
+  return path.relative(store.state.root.rootPath, fullPath)
 }
 export function getInode(aPath) {
   if (aPath === '') {
