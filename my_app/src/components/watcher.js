@@ -13,13 +13,17 @@ export function stop() {
   NotesWatcher.kill()
 }
 
+function isNoteFile(fileName) {
+  return fileName.endsWith('.md')
+}
+
 async function insertChildren(children) {
   for (const directory of children.filter(child => child.isDirectory)) {
     directory.directory_name = directory.name
     await Directory.insert({ data: directory })
   }
   children
-    .filter(child => !child.isDirectory)
+    .filter(child => !child.isDirectory && isNoteFile(child.name))
     .forEach(async note => {
       note.is_exists = true
       note.file_name = note.name
@@ -39,6 +43,9 @@ class NotesWatcher {
     Note.find(target.stat.ino).updateHeadAndUpdatedAt()
   }
   static onCreateNote(target) {
+    if (!isNoteFile(target.name)) {
+      return
+    }
     Note.insertOrUpdate({
       data: {
         inode: target.stat.ino,
