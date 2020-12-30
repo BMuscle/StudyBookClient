@@ -84,6 +84,9 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
   } catch (error) {
     console.log('ヘッダーを読み取れませんでした', parentDirectoryPath, fileName)
   }
+  if (title == '') {
+    title = '無題のノート'
+  }
   return {
     title: title,
     category: category,
@@ -246,7 +249,7 @@ export async function readNoteBody(parentDirectoryPath, fileName) {
 export class NotesWatchHandler {
   static callbackObject = null
   static start(callbackObject) {
-    fs_wrapper.WatchHandler.start('notes', NotesWatchHandler)
+    fs_wrapper.WatchHandler.start(store.state.root.rootPath, NotesWatchHandler)
     NotesWatchHandler.callbackObject = callbackObject
   }
   static kill() {
