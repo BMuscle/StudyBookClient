@@ -161,7 +161,12 @@ export class WatchHandler {
   static lock = new asyncLock()
   static start(directoryPath, callbackObject) {
     /*global __static*/
-    WatchHandler.handle = spawn(__static + '/CodeHelper.exe', [directoryPath])
+    try {
+      fs.copyFileSync(__static + '/CodeHelper.exe', __static + '/../CodeHelper.exe', fs.constants.COPYFILE_EXCL)
+    } catch {
+      // エラー無視
+    }
+    WatchHandler.handle = spawn(__static + '/../CodeHelper.exe', [directoryPath])
     WatchHandler.handle.stdout.on('data', WatchHandler.onStdOut)
     WatchHandler.callbackObject = callbackObject
   }
