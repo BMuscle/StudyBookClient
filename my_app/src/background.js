@@ -24,7 +24,7 @@ async function createWindow() {
       nodeIntegration: true,
       webSecurity: false
     },
-    icon: path.join(__static, 'icon.png')
+    icon: path.join(__static, 'icon.ico')
   })
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
