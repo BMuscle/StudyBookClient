@@ -5,7 +5,13 @@
       <div v-for="note in notes" :key="note.inode" class="note" @click="setFocusNote(note.inode)">
         <div
           class="title"
-          @dblclick="OpenEditor(note.parent_directory_path_from_root, note.file_name)"
+          @dblclick="
+            OpenEditor(
+              note.parent_directory_path_from_root,
+              note.file_name,
+              getDir(window.location)
+            )
+          "
         >
           {{ note.title }}
         </div>
@@ -41,7 +47,10 @@ export default {
       sort: [],
       filePath: '',
       noteName: '',
-      fullPath: ''
+      fullPath: '',
+      dirCount: '',
+      local: '',
+      dir: ''
     }
   },
   computed: {
@@ -60,11 +69,20 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFocusNote']),
-    OpenEditor(filePath, noteName) {
-      this.fullPath = path.join(filePath, noteName)
-      console.log(this.fullPath)
+    getDir(place, n) {
+      return place.pathname.replace(new RegExp('(?:\\\/+[^\\\/]*){0,' + ((n || 0) + 1) + '}$'), '/')
+    },
+    OpenEditor(filePath, noteName, dir) {
+      this.fullPath = path.join(dir, filePath, noteName)
+      this.local = window.location
+      console.log(this.local)
+      console.log(this.dir)
+
       this.fullPath = notesJoin(this.fullPath)
       console.log(this.fullPath)
+
+      this.dir = console.log(this.dir)
+
       shell.openPath(this.fullPath)
     }
   }
