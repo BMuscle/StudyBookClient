@@ -1,7 +1,7 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: true
+      nodeIntegration: true,
     },
     module: {
       // `module.rules` は 1.x での `module.loaders` と同じです

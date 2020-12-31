@@ -15,7 +15,10 @@ import FlashMessage from './components/FlashMessage'
 import AllData from './components/AllData'
 import UpdatedAt from './models/UpdatedAt'
 import Category from './models/Category'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { initNoteDirectory } from './components/NoteCRUD'
+import Note from './models/Note'
+import { remote } from 'electron'
 
 // 全体で共通のコンポーネント
 export default {
@@ -26,9 +29,23 @@ export default {
     AllData
   },
   computed: {
-    ...mapState('category_module', ['default_id'])
+    ...mapState('category_module', ['default_id']),
+    ...mapState('root', ['rootPath'])
   },
   created() {
+    if (!this.rootPath) {
+      const rootPath = remote.dialog.showOpenDialogSync(null, {
+        properties: ['openDirectory'],
+        title: 'ノートを保存するフォルダを選択',
+        buttonLabel: '選択'
+      })?.[0]
+      if (!rootPath) {
+        remote.app.quit()
+      }
+      this.setRootPath(rootPath)
+    }
+    initNoteDirectory()
+
     if (
       !UpdatedAt.query()
         .where('label', 'my_lists')
@@ -73,8 +90,13 @@ export default {
         }
       })
     }
-
-    watcher.onAppReady()
+    watcher.start()
+  },
+  beforeUnmount() {
+    watcher.stop()
+  },
+  methods: {
+    ...mapMutations('root', ['setRootPath'])
   }
 }
 </script>
@@ -83,7 +105,7 @@ export default {
 #app {
   width: 100%;
   height: 100vh;
-  font-family: "Hiragino Sans", sans-serif;
+  font-family: 'Hiragino Sans', sans-serif;
 }
 </style>
 
@@ -99,5 +121,4 @@ export default {
     opacity: 1
   to
     opacity: 0
-
 </style>

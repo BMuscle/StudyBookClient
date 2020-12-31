@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import VuexORM from '@vuex-orm/core'
 import createPersistedState from 'vuex-persistedstate'
+import root from './root'
 import notes from './notes'
 import my_lists from './my_lists'
 import { category_module } from '../models/Category'
@@ -14,6 +15,7 @@ export default createStore({
     VuexORM.install(database),
     createPersistedState({
       paths: [
+        'root',
         'notes',
         'bookmark',
         'my_lists',
@@ -35,6 +37,7 @@ export default createStore({
   mutations: {},
   actions: {},
   modules: {
+    root,
     notes,
     bookmark,
     my_lists,
