@@ -23,7 +23,8 @@ export default {
           return hljs.highlightAuto(code, [lang]).value
         }
       })
-      return sanitizeHtml(marked(this.mdData))
+      const dirty = marked(this.mdData)
+      return sanitizeHtml(dirty, { disallowedTagsMode: 'escape' })
     }
   }
 }

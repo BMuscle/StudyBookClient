@@ -15,7 +15,6 @@
 <script>
 import MyList from '../models/MyList'
 import { mapState } from 'vuex'
-import sanitizeHtml from 'sanitize-html'
 
 export default {
   computed: {
@@ -57,8 +56,12 @@ export default {
       return true
     },
     highLight(text) {
-      const cleanHtml = sanitizeHtml(text, { allowedTags: [], allowedAttributes: {} })
-      return cleanHtml.replace(this.searchParams, `<b>${this.searchParams}</b>`)
+      const cleanText = this.sanitize(text)
+      const sanitizedParams = this.sanitize(this.searchParams)
+      return cleanText.replace(sanitizedParams, `<b>${sanitizedParams}</b>`)
+    },
+    sanitize(dirtyText) {
+      return dirtyText.replace(/</g, '&lt').replace(/>/g, '&gt')
     }
   }
 }
