@@ -11,6 +11,21 @@ let win
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // 誰かが2つ目のインスタンスを実行したとき、このウィンドウにフォーカスする
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+    }
+  })
+}
+
 async function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
@@ -22,7 +37,8 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      devTools: isDevelopment,
     },
     icon: path.join(__static, 'icon.ico')
   })
@@ -43,6 +59,8 @@ async function createWindow() {
   }
   win.webContents.on('will-navigate', handleUrlOpen)
   win.webContents.on('new-window', handleUrlOpen)
+  win.webContents.reload = () => {}
+  win.webContents.reloadIgnoringCache = () => {}
 }
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
