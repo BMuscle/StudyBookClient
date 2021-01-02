@@ -1,5 +1,5 @@
 'use strict'
-import { app, protocol, BrowserWindow, shell } from 'electron'
+import { app, protocol, BrowserWindow, shell, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -92,6 +92,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+  initWindowMenu()
   createWindow()
 })
 // Exit cleanly on request from parent process in development mode.
@@ -107,4 +108,30 @@ if (isDevelopment) {
       app.quit()
     })
   }
+}
+
+function initWindowMenu() {
+  const template = [
+    {
+      label: 'ファイル',
+      submenu: [
+        {
+          label: '終了',
+          click() { app.quit() }
+        }
+      ],
+    },
+    {
+      label: 'ヘルプ',
+      submenu: [
+        {
+          label: 'マニュアル',
+          click() { shell.openExternal('http://bgmuscle.ddns.net/information/manual') }
+        }
+      ]
+    }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 }
