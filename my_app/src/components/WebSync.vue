@@ -240,7 +240,7 @@ export default {
           note.body
         )
         if (note.directory_path == null) note.directory_path = ''
-        if (local_note.parent_directory?.path_from_root.replace('\\', '/') || '' != note.directory_path) {
+        if ((local_note.parent_directory?.path_from_root.replace('\\', '/') || '') != note.directory_path) {
           moveDownloadNote(
             local_note.parent_directory?.path_from_root || '',
             note.file_name,
