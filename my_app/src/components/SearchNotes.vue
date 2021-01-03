@@ -29,6 +29,7 @@ export default {
         .whereIdIn(this.descendantNotes)
         .with('tags')
         .with('category')
+        .with('parent_directory')
         .get()
     }
   },
@@ -54,7 +55,7 @@ export default {
           title_category_tags: `${rawNote.title} ${
             rawNote.category ? rawNote.category.name : ''
           } ${rawNote.tags.map(tag => tag.name).join(' ')}`,
-          body: readNoteBody(rawNote.parent_directory_path_from_root, rawNote.file_name)
+          body: readNoteBody(rawNote.parent_directory?.path_from_root || '', rawNote.file_name)
         })
       }
       let resultIds = []
