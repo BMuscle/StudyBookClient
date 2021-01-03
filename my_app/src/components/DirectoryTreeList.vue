@@ -25,8 +25,7 @@
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList
-        v-if="directory.child_directories.length != 0"
-        v-show="isOpen(directory.inode)"
+        v-if="directory.child_directories.length != 0 && isOpen(directory.inode)"
         :directories="childDirectories(directory.inode)"
       />
     </div>
