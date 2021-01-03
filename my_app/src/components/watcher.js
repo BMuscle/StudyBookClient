@@ -18,12 +18,10 @@ function isNoteFile(fileName) {
 }
 
 async function insertChildren(children) {
-  Directory.insert({
-    data: children.filter(child => child.isDirectory).map(child => {
-      return { inode: child.inode, directory_name: child.name, parent_inode: child.parent_inode }
-    })
-  })
-
+  for (const directory of children.filter(child => child.isDirectory)) {
+    directory.directory_name = directory.name
+    await Directory.insert({ data: directory })
+  }
   children
     .filter(child => !child.isDirectory && isNoteFile(child.name))
     .forEach(async note => {
