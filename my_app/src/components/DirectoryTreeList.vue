@@ -17,7 +17,11 @@
         </div>
         <div v-else class="none-button" />
       </div>
-      <div class="directory-name" @click="setFocusDirectory(directory.inode)" :class="focusDirectory == directory.inode ? 'directory-active' : '' ">
+      <div
+        class="directory-name"
+        :class="focusDirectory == directory.inode ? 'directory-active' : ''"
+        @click="setFocusDirectory(directory.inode)"
+      >
         {{ directory.directory_name }}
       </div>
       <DirectoryTreeList

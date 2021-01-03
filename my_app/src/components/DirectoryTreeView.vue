@@ -11,7 +11,11 @@
         />
       </div>
     </div>
-    <div class="directory-name" @click="setFocusDirectory(null)" :class="focusDirectory == null ? 'directory-active' : ''">
+    <div
+      class="directory-name"
+      :class="focusDirectory == null ? 'directory-active' : ''"
+      @click="setFocusDirectory(null)"
+    >
       ノート
     </div>
     <DirectoryTreeList v-if="directories.length != 0" v-show="isOpen" :directories="directories" />
