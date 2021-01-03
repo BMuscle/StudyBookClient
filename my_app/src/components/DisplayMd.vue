@@ -24,7 +24,13 @@ export default {
         }
       })
       const dirty = marked(this.mdData)
-      return sanitizeHtml(dirty, { disallowedTagsMode: 'escape' })
+      const clean = sanitizeHtml(dirty, {
+        allowedClasses: {
+          span: '',
+          code: ''
+        }
+      })
+      return clean
     }
   }
 }
