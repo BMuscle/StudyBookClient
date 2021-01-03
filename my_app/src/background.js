@@ -59,8 +59,10 @@ async function createWindow() {
   }
   win.webContents.on('will-navigate', handleUrlOpen)
   win.webContents.on('new-window', handleUrlOpen)
-  win.webContents.reload = () => {}
-  win.webContents.reloadIgnoringCache = () => {}
+  if (!isDevelopment) {
+    win.webContents.reload = () => {}
+    win.webContents.reloadIgnoringCache = () => {}
+  }
 }
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
