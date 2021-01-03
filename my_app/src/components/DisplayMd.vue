@@ -5,6 +5,7 @@
 <script>
 import marked from 'marked'
 import hljs from 'highlight.js'
+import sanitizeHtml from 'sanitize-html'
 
 export default {
   props: {
@@ -22,7 +23,14 @@ export default {
           return hljs.highlightAuto(code, [lang]).value
         }
       })
-      return marked(this.mdData)
+      const dirty = marked(this.mdData)
+      const clean = sanitizeHtml(dirty, {
+        allowedClasses: {
+          span: '',
+          code: ''
+        }
+      })
+      return clean
     }
   }
 }
@@ -40,13 +48,13 @@ export default {
   }
 
   h1 {
-    font-size: 2.3em
+    font-size: 2.3em;
   }
   h2 {
-    font-size: 1.8em
+    font-size: 1.8em;
   }
   h3 {
-    font-size: 1.5em
+    font-size: 1.5em;
   }
 
   h1,

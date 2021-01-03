@@ -1,5 +1,5 @@
 'use strict'
-import { app, protocol, BrowserWindow, shell } from 'electron'
+import { app, protocol, BrowserWindow, shell, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -11,6 +11,21 @@ let win
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // 誰かが2つ目のインスタンスを実行したとき、このウィンドウにフォーカスする
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+    }
+  })
+}
+
 async function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
@@ -22,7 +37,8 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      devTools: isDevelopment,
     },
     icon: path.join(__static, 'icon.ico')
   })
@@ -43,6 +59,10 @@ async function createWindow() {
   }
   win.webContents.on('will-navigate', handleUrlOpen)
   win.webContents.on('new-window', handleUrlOpen)
+  if (!isDevelopment) {
+    win.webContents.reload = () => {}
+    win.webContents.reloadIgnoringCache = () => {}
+  }
 }
 
 // Quit when all windows are closed.
@@ -75,6 +95,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+  initWindowMenu()
   createWindow()
 })
 // Exit cleanly on request from parent process in development mode.
@@ -90,4 +111,30 @@ if (isDevelopment) {
       app.quit()
     })
   }
+}
+
+function initWindowMenu() {
+  const template = [
+    {
+      label: 'ファイル',
+      submenu: [
+        {
+          label: '終了',
+          click() { app.quit() }
+        }
+      ],
+    },
+    {
+      label: 'ヘルプ',
+      submenu: [
+        {
+          label: 'マニュアル',
+          click() { shell.openExternal('http://bgmuscle.ddns.net/information/manual') }
+        }
+      ]
+    }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 }

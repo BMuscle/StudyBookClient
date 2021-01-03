@@ -33,9 +33,7 @@ export default {
         .with('notes')
         .with('category')
         .where(myList => {
-          return (
-            myList.title.includes(this.searchParams) || this.includeDescription(myList)
-          )
+          return myList.title.includes(this.searchParams) || this.includeDescription(myList)
         })
         .orderBy('title', this.sort)
         .get()
@@ -58,7 +56,12 @@ export default {
       return true
     },
     highLight(text) {
-      return text.replace(this.searchParams, `<b>${this.searchParams}</b>`)
+      const cleanText = this.sanitize(text)
+      const sanitizedParams = this.sanitize(this.searchParams)
+      return cleanText.replace(sanitizedParams, `<b>${sanitizedParams}</b>`)
+    },
+    sanitize(dirtyText) {
+      return dirtyText.replace(/</g, '&lt').replace(/>/g, '&gt')
     }
   }
 }
