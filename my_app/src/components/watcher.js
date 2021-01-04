@@ -32,14 +32,14 @@ async function insertChildren(children) {
     data: directory_data
   }))
   promises.push(Note.insertOrUpdate({
-                data: note_data
-              })
-              .then(result => {
-                for(let note of result.notes) {
-                  note.updateHeadAndUpdatedAt()
-                }
-            }))
-  await Promise.all(promises)
+    data: note_data
+  }))
+  const [result_directories, result_notes] = await Promise.all(promises)
+  if(Object.keys(result_notes).length) {
+    for(let note of result_notes.notes) {
+      note.updateHeadAndUpdatedAt()
+    }
+  }
 }
 
 class NotesWatcher {
