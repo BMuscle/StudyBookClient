@@ -144,6 +144,7 @@ export default {
       this.updateDefaultCategory(response.data.default_category)
     },
     updateDefaultCategory(default_category) {
+      if(default_category.id == this.default_id) return
       Note.update({
         where: note => {
           return note.category_id == this.default_id || note.category_id == null
