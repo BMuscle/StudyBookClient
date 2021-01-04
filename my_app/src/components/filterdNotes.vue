@@ -38,12 +38,7 @@ export default {
   data: function() {
     return {
       sort: [],
-      filePath: '',
-      noteName: '',
-      fullPath: '',
-      dirCount: '',
-      local: '',
-      dir: ''
+      fullPath: ''
     }
   },
   computed: {
