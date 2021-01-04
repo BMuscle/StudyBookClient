@@ -83,7 +83,7 @@ export default {
   },
   created() {
     this.isLoading = false
-    this.sync()
+    setTimeout(this.sync, 20000);
     this.intervalId = setInterval(function() {
       this.sync()
     }, 1000 * 60 * 5)
