@@ -140,14 +140,9 @@ export default {
     async categoriesSync() {
       const response = await this.requestCategories()
       Category.deleteAll()
-      for (let category of response.data.categories) {
-        Category.insert({
-          data: {
-            online_id: category.id,
-            name: category.name
-          }
-        })
-      }
+      Category.insert({
+        data: response.data.categories.map(category => { return { online_id: category.id, name: category.name } })
+      })
       this.updateDefaultCategory(response.data.default_category)
     },
     updateDefaultCategory(default_category) {
@@ -162,6 +157,8 @@ export default {
     async tagsSync() {
       const tagAt = new Date().getTime()
       const response = await this.requestTags(new Date(this.categoriesUpdatedAt).toUTCString())
+      let insertTag = []
+
       for (var tag of response.data) {
         const localTag = Tag.query()
           .where('name', tag.name)
@@ -169,9 +166,10 @@ export default {
         if (localTag) {
           Tag.update({ where: localTag.id, data: { online_id: tag.id } })
         } else {
-          Tag.insert({ data: { online_id: tag.id, name: tag.name } })
+          insertTag.push({ online_id: tag.id, name: tag.name })
         }
       }
+      Tag.insert({ data: insertTag })
       this.updateTagsUpdatedAt(tagAt)
     },
     async shapedNotes() {
@@ -193,6 +191,7 @@ export default {
     },
     async noteUploads() {
       let notes = await this.shapedNotes()
+      if(notes.length == 0) return
       const uploadAt = new Date().getTime()
       const response = await this.requestUploadNotes(notes)
       for (var note of response.data) {
@@ -273,6 +272,7 @@ export default {
     downloadNoteDeletes(deleted_note) {
       let note = Note.query()
         .where('guid', deleted_note.guid)
+        .where('is_exists', true)
         .with('parent_directory')
         .first()
       if (note) {
