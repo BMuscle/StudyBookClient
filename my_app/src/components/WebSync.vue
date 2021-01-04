@@ -84,9 +84,7 @@ export default {
   created() {
     this.isLoading = false
     setTimeout(this.sync, 20000);
-    this.intervalId = setInterval(function() {
-      this.sync()
-    }, 1000 * 60 * 5)
+    this.intervalId = setInterval(this.sync, 1000 * 60 * 5)
   },
   beforeUnmount() {
     clearInterval(this.intervalId)
