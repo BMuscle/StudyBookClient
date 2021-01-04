@@ -314,44 +314,58 @@ export default {
         MyListNoteTag.deleteAll()
         MyList.deleteAll()
         MyListNote.deleteAll()
+
+        const my_lists = response.data.map(my_list => {
+                          return {
+                            id: my_list.id,
+                            title: my_list.title,
+                            category_id: my_list.category_id,
+                            description: my_list.description ?? ''
+                          }
+                        })
+        MyList.insert({
+          data: my_lists
+        })
+
         for (let my_list of response.data) {
-          MyList.insertOrUpdate({
-            data: {
-              id: my_list.id,
-              title: my_list.title,
-              category_id: my_list.category_id,
-              description: my_list.description ?? ''
+          const my_list_notes = my_list.notes.map(note => {
+                                  return {
+                                    id: note.id,
+                                    title: note.title,
+                                    body: note.body,
+                                    nickname: note.nickname,
+                                    category_id: note.category_id
+                                  }
+                                })
+          MyListNote.insert({
+            data: my_list_notes
+          })
+
+          const my_list_note_index = my_list.notes.map(note => {
+            return {
+              my_list_id: my_list.id,
+              my_list_note_id: note.id,
+              index: note.index
             }
           })
+
+          MyListNoteIndex.insert({
+            data: my_list_note_index
+          })
+
           for (let note of my_list.notes) {
-            MyListNote.insertOrUpdate({
-              data: {
-                id: note.id,
-                title: note.title,
-                body: note.body,
-                nickname: note.nickname,
-                category_id: note.category_id
-              }
+            const tags = note.tags.map(tag => {
+                           let local_tag = Tag.query()
+                                              .where('online_id', tag.id)
+                                              .first()
+                           return {
+                             tag_id: local_tag.id,
+                             my_list_note_id: note.id
+                           }
+                         })
+            MyListNoteTag.insert({
+              data: tags
             })
-            MyListNoteIndex.insertOrUpdate({
-              data: {
-                my_list_id: my_list.id,
-                my_list_note_id: note.id,
-                index: note.index
-              }
-            })
-            for (let tag of note.tags) {
-              let local_tag = Tag.query()
-                .where('online_id', tag.id)
-                .first()
-              if (local_tag == null) return
-              MyListNoteTag.insertOrUpdate({
-                data: {
-                  tag_id: local_tag.id,
-                  my_list_note_id: note.id
-                }
-              })
-            }
           }
         }
       })
