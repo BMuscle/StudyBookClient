@@ -83,7 +83,7 @@ export default {
   },
   created() {
     this.isLoading = false
-    this.sync()
+    setTimeout(this.sync, 20000);
     this.intervalId = setInterval(function() {
       this.sync()
     }, 1000 * 60 * 5)
@@ -181,9 +181,9 @@ export default {
           local_id: note.inode,
           guid: note.guid,
           title: note.title,
-          body: await readNoteBody(note.parent_directory_path_from_root, note.file_name),
+          body: await readNoteBody(note.parent_directory?.path_from_root || '', note.file_name),
           category_id: note.category_id,
-          directory_path: note.parent_directory_path_from_root.replace('\\', '/'),
+          directory_path: note.parent_directory?.path_from_root.replace('\\', '/') || '',
           tags: note.tags.map(tag => {
             return { id: tag.online_id ?? '', name: tag.name }
           })
@@ -228,10 +228,11 @@ export default {
     noteUpdate(note, downloadAt) {
       let local_note = Note.query()
         .where('guid', note.guid)
+        .with('parent_directory')
         .first()
       if (local_note) {
         overwriteDownloadNote(
-          local_note.parent_directory_path_from_root,
+          local_note.parent_directory?.path_from_root || '',
           local_note.file_name,
           note.title,
           Category.find(note.category_id).name,
@@ -239,9 +240,9 @@ export default {
           note.body
         )
         if (note.directory_path == null) note.directory_path = ''
-        if (local_note.parent_directory_path_from_root.replace('\\', '/') != note.directory_path) {
+        if ((local_note.parent_directory?.path_from_root.replace('\\', '/') || '') != note.directory_path) {
           moveDownloadNote(
-            local_note.parent_directory_path_from_root,
+            local_note.parent_directory?.path_from_root || '',
             note.file_name,
             note.directory_path
           )
@@ -272,9 +273,10 @@ export default {
     downloadNoteDeletes(deleted_note) {
       let note = Note.query()
         .where('guid', deleted_note.guid)
+        .with('parent_directory')
         .first()
       if (note) {
-        deleteNote(note.parent_directory_path_from_root, note.file_name)
+        deleteNote(note.parent_directory?.path_from_root || '', note.file_name)
         Note.delete(note.inode)
       }
     },

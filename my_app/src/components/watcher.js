@@ -18,18 +18,28 @@ function isNoteFile(fileName) {
 }
 
 async function insertChildren(children) {
-  for (const directory of children.filter(child => child.isDirectory)) {
-    directory.directory_name = directory.name
-    await Directory.insert({ data: directory })
+  let directory_data = []
+  let note_data = []
+  let promises = []
+  for(let child of children) {
+    if(child.isDirectory) {
+      directory_data.push({ inode: child.inode, directory_name: child.name, parent_inode: child.parent_inode })
+    } else if(isNoteFile(child.name)) {
+      note_data.push({ inode: child.inode, parent_inode: child.parent_inode, file_name: child.name, is_exists: true })
+    }
   }
-  children
-    .filter(child => !child.isDirectory && isNoteFile(child.name))
-    .forEach(async note => {
-      note.is_exists = true
-      note.file_name = note.name
-      const notes = await Note.insertOrUpdate({ data: note })
-      notes.notes[0].updateHeadAndUpdatedAt()
-    })
+  promises.push(Directory.insert({
+    data: directory_data
+  }))
+  promises.push(Note.insertOrUpdate({
+    data: note_data
+  }))
+  const [result_directories, result_notes] = await Promise.all(promises)
+  if(Object.keys(result_notes).length) {
+    for(let note of result_notes.notes) {
+      note.updateHeadAndUpdatedAt()
+    }
+  }
 }
 
 class NotesWatcher {

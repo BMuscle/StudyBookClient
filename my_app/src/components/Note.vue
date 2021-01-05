@@ -55,12 +55,6 @@ export default {
     ...mapState('notes', {
       focusNote: state => state.focusNote
     }),
-    directories() {
-      return Directory.query()
-        .where('parent_inode', null)
-        .with('child_directories')
-        .get()
-    },
     note() {
       const note = Note.query()
         .whereId(this.focusNote)
@@ -73,7 +67,7 @@ export default {
     },
     notePathStr() {
       return path
-        .join('Notes', this.note.parent_directory_path_from_root, this.note.file_name)
+        .join('Notes', this.note.parent_directory?.path_from_root || '', this.note.file_name)
         .replace(/[\\/]/g, ' > ')
     }
   },
@@ -102,7 +96,7 @@ export default {
     }, 10),
     setNote(note) {
       if (this.note?.is_exists) {
-        readNoteBody(note.parent_directory_path_from_root, note.file_name).then(response => {
+        readNoteBody(note.parent_directory?.path_from_root || '', note.file_name).then(response => {
           this.noteBody = response
         })
       }
@@ -128,7 +122,7 @@ export default {
       this.overwriteNoteHeader(header)
     },
     overwriteNoteHeader(header) {
-      setHeader(header.toString, this.note.parent_directory_path_from_root, this.note.file_name)
+      setHeader(header.toString, this.note.parent_directory?.path_from_root || '', this.note.file_name)
     }
   }
 }
