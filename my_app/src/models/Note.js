@@ -2,6 +2,7 @@ import { Model } from '@vuex-orm/core'
 import path from 'path'
 import * as NoteCRUD from '../components/NoteCRUD'
 import { readNoteHeader } from '../components/NoteCRUD'
+import NoteHeader from '../components/NoteHeader'
 import Directory from './Directory'
 import Category from './Category'
 import Tag from './Tag'
@@ -60,14 +61,11 @@ export default class Note extends Model {
     return pathFromRoot
   }
   get header() {
-    return {
-      title: this.title,
-      category: this.category.name,
-      tags: this.tags.map(tag => tag.name),
-      get toString() {
-        return `title: ${this.title}\ncategory: ${this.category}\ntags: ${this.tags.join(', ')}`
-      }
-    }
+    return new NoteHeader(
+      this.title,
+      this.category.name,
+      this.tags.map(tag => tag.name)
+    )
   }
   async updateHeadAndUpdatedAt(
     updatedAt = NoteCRUD.getMtimeMs(this.parent_directory_path_from_root, this.file_name)

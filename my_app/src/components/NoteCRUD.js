@@ -2,6 +2,7 @@ import * as fs_wrapper from './fs_wrapper'
 import path from 'path'
 import mkdirp from 'mkdirp'
 import store from '../store'
+import NoteHeader from './NoteHeader'
 
 function isDangerousPath(aPath) {
   return aPath.indexOf(':') !== -1 || aPath.indexOf('..') !== -1
@@ -43,7 +44,7 @@ export async function createNote(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
-  const content = 'title: \ncategory: \ntags: \n\n'
+  const content = new NoteHeader() + '\n\n'
   await fs_wrapper.writeFile(notesJoinedParentPath, fileNameWithoutDuplicate, content)
   return {
     inode: fs_wrapper.getInode(path.join(notesJoinedParentPath, fileNameWithoutDuplicate)),
@@ -58,10 +59,8 @@ export async function readNote(parentDirectoryPath, fileName) {
 }
 export async function readNoteHeader(parentDirectoryPath, fileName) {
   const note = await readNote(parentDirectoryPath, fileName)
-  var rows = note.split(/\r\n|\n/)
-  var title = ''
-  var category = ''
-  var tags = []
+  const rows = note.split(/\r\n|\n/)
+  const header = new NoteHeader()
 
   try {
     for (const row of rows) {
@@ -74,13 +73,13 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
 
       switch (dataCategory) {
         case 'title':
-          title = data
+          header.title = data
           break
         case 'category':
-          category = data
+          header.category = data
           break
         case 'tags':
-          tags = data
+          header.tags = data
             .split(/,/)
             .map(tag => tag.trim())
             .filter(tag => tag != '')
@@ -90,14 +89,10 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
   } catch (error) {
     console.log('ヘッダーを読み取れませんでした', parentDirectoryPath, fileName)
   }
-  if (title == '') {
-    title = '無題のノート'
+  if (header.title == '') {
+    header.title = '無題のノート'
   }
-  return {
-    title: title,
-    category: category,
-    tags: tags
-  }
+  return header
 }
 export async function overwriteNote(parentDirectoryPath, fileName, content) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
