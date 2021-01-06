@@ -43,7 +43,8 @@ export async function createNote(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
-  await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
+  const content = 'title: \ncategory: \ntags: \n\n'
+  await fs_wrapper.writeFile(notesJoinedParentPath, fileNameWithoutDuplicate, content)
   return {
     inode: fs_wrapper.getInode(path.join(notesJoinedParentPath, fileNameWithoutDuplicate)),
     parentDirectoryPath: parentDirectoryPath,
@@ -101,7 +102,7 @@ export async function readNoteHeader(parentDirectoryPath, fileName) {
 export async function overwriteNote(parentDirectoryPath, fileName, content) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  await fs_wrapper.overwriteFile(notesJoinedParentPath, fileName, content)
+  await fs_wrapper.writeFile(notesJoinedParentPath, fileName, content)
 }
 export async function moveNote(parentDirectoryPath, fileName, destinationDirectoryPath) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName, destinationDirectoryPath)
@@ -206,8 +207,7 @@ async function writeDownloadNote(parentDirectoryPath, title, category, tags, bod
     notesJoinedParentPath,
     `${title}.md`
   )
-  await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
-  await fs_wrapper.overwriteFile(
+  await fs_wrapper.writeFile(
     notesJoinedParentPath,
     fileNameWithoutDuplicate,
     convertNoteToString(title, category, tags, body)
