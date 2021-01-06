@@ -44,6 +44,11 @@ export async function createNote(parentDirectoryPath, fileName) {
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
   await fs_wrapper.createFile(notesJoinedParentPath, fileNameWithoutDuplicate)
+  return {
+    inode: fs_wrapper.getInode(path.join(notesJoinedParentPath, fileNameWithoutDuplicate)),
+    parentDirectoryPath: parentDirectoryPath,
+    fileName: fileNameWithoutDuplicate
+  }
 }
 export async function readNote(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
