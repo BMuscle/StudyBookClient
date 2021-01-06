@@ -6,6 +6,11 @@ import Directory from './Directory'
 import Category from './Category'
 import Tag from './Tag'
 import NoteTag from './NoteTag'
+import store from '../store'
+
+function* defaultCategoryId() {
+  yield store.state.category_module.default
+}
 
 export default class Note extends Model {
   static entity = 'notes'
@@ -19,8 +24,8 @@ export default class Note extends Model {
       file_name: this.string(),
       is_exists: this.boolean(),
       guid: this.string().nullable(),
-      title: this.string(),
-      category_id: this.number(),
+      title: this.string(''),
+      category_id: this.number(defaultCategoryId()),
       category: this.belongsTo(Category, 'category_id', 'online_id'),
       tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id', 'inode', 'id'),
       updated_at: this.attr(0)
