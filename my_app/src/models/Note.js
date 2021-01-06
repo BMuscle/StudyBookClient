@@ -8,6 +8,7 @@ import Category from './Category'
 import Tag from './Tag'
 import NoteTag from './NoteTag'
 import store from '../store'
+import util from '../util/util'
 
 function* defaultCategoryId() {
   yield store.state.category_module.default
@@ -53,12 +54,15 @@ export default class Note extends Model {
       data: data
     })
   }
-  get parent_directory_path_from_root() {
-    const note = Note.query()
-      .with('parent_directory')
-      .find(this.inode)
-    const pathFromRoot = note.parent_directory ? note.parent_directory.path_from_root : ''
-    return pathFromRoot
+  get parent_directory_path() {
+    let note = this
+    if (note.parent_inode != null && note.parent_directory == null) {
+      util.trace('parent_directory プロパティが無い為、低速です')
+      note = Note.query()
+        .with('parent_directory')
+        .find(this.inode)
+    }
+    return note?.parent_directory?.path_from_root ?? ''
   }
   get header() {
     return new NoteHeader(
@@ -68,13 +72,13 @@ export default class Note extends Model {
     )
   }
   async updateHeadAndUpdatedAt(
-    updatedAt = NoteCRUD.getMtimeMs(this.parent_directory_path_from_root, this.file_name)
+    updatedAt = NoteCRUD.getMtimeMs(this.parent_directory_path, this.file_name)
   ) {
     if (updatedAt === this.updated_at) {
       return
     }
     const { title, category, tags } = await readNoteHeader(
-      this.parent_directory_path_from_root,
+      this.parent_directory_path,
       this.file_name
     )
     this.title = title
