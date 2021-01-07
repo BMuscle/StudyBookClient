@@ -21,22 +21,35 @@ async function insertChildren(children) {
   let directory_data = []
   let note_data = []
   let promises = []
-  for(let child of children) {
-    if(child.isDirectory) {
-      directory_data.push({ inode: child.inode, directory_name: child.name, parent_inode: child.parent_inode })
-    } else if(isNoteFile(child.name)) {
-      note_data.push({ inode: child.inode, parent_inode: child.parent_inode, file_name: child.name, is_exists: true })
+  for (let child of children) {
+    if (child.isDirectory) {
+      directory_data.push({
+        inode: child.inode,
+        directory_name: child.name,
+        parent_inode: child.parent_inode
+      })
+    } else if (isNoteFile(child.name)) {
+      note_data.push({
+        inode: child.inode,
+        parent_inode: child.parent_inode,
+        file_name: child.name,
+        is_exists: true
+      })
     }
   }
-  promises.push(Directory.insert({
-    data: directory_data
-  }))
-  promises.push(Note.insertOrUpdate({
-    data: note_data
-  }))
+  promises.push(
+    Directory.insert({
+      data: directory_data
+    })
+  )
+  promises.push(
+    Note.insertOrUpdate({
+      data: note_data
+    })
+  )
   const [result_directories, result_notes] = await Promise.all(promises)
-  if(Object.keys(result_notes).length) {
-    for(let note of result_notes.notes) {
+  if (Object.keys(result_notes).length) {
+    for (let note of result_notes.notes) {
       note.updateHeadAndUpdatedAt()
     }
   }
@@ -50,7 +63,10 @@ class NotesWatcher {
     NoteCRUD.NotesWatchHandler.kill()
   }
   static onChangeNote(target) {
-    Note.find(target.stat.ino).updateHeadAndUpdatedAt()
+    Note.query()
+      .with('parent_directory')
+      .find(target.stat.ino)
+      .updateHeadAndUpdatedAt()
   }
   static onCreateNote(target) {
     if (!isNoteFile(target.name)) {

@@ -2,10 +2,17 @@ import { Model } from '@vuex-orm/core'
 import path from 'path'
 import * as NoteCRUD from '../components/NoteCRUD'
 import { readNoteHeader } from '../components/NoteCRUD'
+import NoteHeader from '../components/NoteHeader'
 import Directory from './Directory'
 import Category from './Category'
 import Tag from './Tag'
 import NoteTag from './NoteTag'
+import store from '../store'
+import util from '../util/util'
+
+function* defaultCategoryId() {
+  yield store.state.category_module.default
+}
 
 export default class Note extends Model {
   static entity = 'notes'
@@ -19,8 +26,8 @@ export default class Note extends Model {
       file_name: this.string(),
       is_exists: this.boolean(),
       guid: this.string().nullable(),
-      title: this.string(),
-      category_id: this.number(),
+      title: this.string(''),
+      category_id: this.number(defaultCategoryId()),
       category: this.belongsTo(Category, 'category_id', 'online_id'),
       tags: this.belongsToMany(Tag, NoteTag, 'note_inode', 'tag_id', 'inode', 'id'),
       updated_at: this.attr(0)
@@ -47,31 +54,31 @@ export default class Note extends Model {
       data: data
     })
   }
-  get parent_directory_path_from_root() {
-    const note = Note.query()
-      .with('parent_directory')
-      .find(this.inode)
-    const pathFromRoot = note.parent_directory ? note.parent_directory.path_from_root : ''
-    return pathFromRoot
+  get parent_directory_path() {
+    let note = this
+    if (note.parent_inode != null && note.parent_directory == null) {
+      util.trace('parent_directory プロパティが無い為、低速です')
+      note = Note.query()
+        .with('parent_directory')
+        .find(this.inode)
+    }
+    return note?.parent_directory?.path_from_root ?? ''
   }
   get header() {
-    return {
-      title: this.title,
-      category: this.category.name,
-      tags: this.tags.map(tag => tag.name),
-      get toString() {
-        return `title: ${this.title}\ncategory: ${this.category}\ntags: ${this.tags.join(', ')}`
-      }
-    }
+    return new NoteHeader(
+      this.title,
+      this.category.name,
+      this.tags.map(tag => tag.name)
+    )
   }
   async updateHeadAndUpdatedAt(
-    updatedAt = NoteCRUD.getMtimeMs(this.parent_directory_path_from_root, this.file_name)
+    updatedAt = NoteCRUD.getMtimeMs(this.parent_directory_path, this.file_name)
   ) {
     if (updatedAt === this.updated_at) {
       return
     }
     const { title, category, tags } = await readNoteHeader(
-      this.parent_directory_path_from_root,
+      this.parent_directory_path,
       this.file_name
     )
     this.title = title

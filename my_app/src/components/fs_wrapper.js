@@ -43,20 +43,14 @@ export function getMtimeMs(parentDirectoryPath, fileName) {
   return fs.statSync(filePath).mtimeMs
 }
 
-export async function createFile(parentDirectoryPath, fileName) {
-  const createFilePath = path.join(parentDirectoryPath, fileName)
-  ThrowAnErrorIfThePathAlreadyExists(createFilePath)
-  fs.writeFileSync(createFilePath, '')
-}
 export async function readFile(parentDirectoryPath, fileName) {
   const readFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfThePathDoesNotExist(readFilePath)
   return fs.readFileSync(readFilePath, 'utf8')
 }
-export async function overwriteFile(parentDirectoryPath, fileName, content) {
-  const overwrittenFilePath = path.join(parentDirectoryPath, fileName)
-  ThrowAnErrorIfThePathDoesNotExist(overwrittenFilePath)
-  fs.writeFileSync(overwrittenFilePath, content)
+export async function writeFile(parentDirectoryPath, fileName, content) {
+  const writtenFilePath = path.join(parentDirectoryPath, fileName)
+  fs.writeFileSync(writtenFilePath, content)
 }
 export async function moveFile(
   parentDirectoryPath,

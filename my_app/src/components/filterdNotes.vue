@@ -3,7 +3,7 @@
     <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
     <div class="notes overflow-auto">
       <div v-for="note in notes" :key="note.inode" class="note" @click="setFocusNote(note.inode)">
-        <div @dblclick="OpenEditor(note.parent_directory_path_from_root, note.file_name)">
+        <div @dblclick="OpenEditor(note.parent_directory_path, note.file_name)">
           <div class="title">
             {{ note.title }}
           </div>
@@ -51,6 +51,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
+        .with('parent_directory')
         .orderBy(this.sort[0], this.sort[1])
         .get()
     }
