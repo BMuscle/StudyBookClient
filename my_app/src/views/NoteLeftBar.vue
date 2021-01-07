@@ -23,6 +23,7 @@
       @mouseup="widthChangeOff()"
       @mouseover="widthChangeOff()"
     ></div>
+    <CreateNewNote />
   </div>
 </template>
 
@@ -32,13 +33,15 @@ import NotesFilterByCategory from '../components/NotesFilterByCategory'
 import filterdNotes from '../components/filterdNotes.vue'
 import DirectoryTreeView from '../components/DirectoryTreeView'
 import BookmarkDirectory from '../components/BookmarkDirectory.vue'
+import CreateNewNote from '../components/CreateNewNote.vue'
 export default {
   components: {
     SearchNotes,
     NotesFilterByCategory,
     filterdNotes,
     DirectoryTreeView,
-    BookmarkDirectory
+    BookmarkDirectory,
+    CreateNewNote
   },
   data: function() {
     return {
