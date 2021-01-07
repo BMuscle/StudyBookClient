@@ -51,6 +51,7 @@ export default {
         .whereIdIn(this.filteredNotes)
         .with('category')
         .with('tags')
+        .with('parent_directory')
         .orderBy(this.sort[0], this.sort[1])
         .get()
     }

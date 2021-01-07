@@ -63,7 +63,10 @@ class NotesWatcher {
     NoteCRUD.NotesWatchHandler.kill()
   }
   static onChangeNote(target) {
-    Note.find(target.stat.ino).updateHeadAndUpdatedAt()
+    Note.query()
+      .with('parent_directory')
+      .find(target.stat.ino)
+      .updateHeadAndUpdatedAt()
   }
   static onCreateNote(target) {
     if (!isNoteFile(target.name)) {
