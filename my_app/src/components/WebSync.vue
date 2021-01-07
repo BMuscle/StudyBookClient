@@ -215,9 +215,7 @@ export default {
           for (let note of response.data.notes) {
             this.noteUpdate(note, downloadAt)
           }
-          for (let deleted_note of response.data.deleted_notes) {
-            this.downloadNoteDeletes(deleted_note)
-          }
+          this.downloadNoteDeletes(response.data.deleted_notes)
           // 全てが正常に終わったので時間更新 ダウンロードより後にupdateを設定する
           this.updateDownloadsUpdatedAt(downloadAt + 1)
           this.updateUploadsUpdatedAt(downloadAt + 1)
@@ -268,13 +266,18 @@ export default {
         })
       }
     },
-    downloadNoteDeletes(deleted_note) {
-      let note = Note.query()
-        .where('guid', deleted_note.guid)
+    downloadNoteDeletes(deleted_notes) {
+      if (deleted_notes.length == 0) return
+
+      let notes = Note.query()
+        .where('guid', deleted_notes.map(note => note.guid))
         .where('is_exists', true)
         .with('parent_directory')
-        .first()
-      if (note) {
+        .get()
+
+      if (notes.length == 0) return
+
+      for(let note of notes) {
         deleteNote(note.parent_directory?.path_from_root || '', note.file_name)
         Note.delete(note.inode)
       }
