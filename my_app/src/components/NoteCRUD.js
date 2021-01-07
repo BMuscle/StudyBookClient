@@ -35,15 +35,15 @@ export function getInode(aPath) {
   const notesJoinedPath = notesJoin(aPath)
   return fs_wrapper.getInode(notesJoinedPath)
 }
-export function getMtimeMs(parentDirectoryPath, fileName) {
+export async function getMtimeMs(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  return fs_wrapper.getMtimeMs(notesJoinedParentPath, fileName)
+  return await fs_wrapper.getMtimeMs(notesJoinedParentPath, fileName)
 }
 export async function createNote(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
+  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
   const content = new NoteHeader() + '\n\n'
   await fs_wrapper.writeFile(notesJoinedParentPath, fileNameWithoutDuplicate, content)
   return {
@@ -103,7 +103,7 @@ export async function moveNote(parentDirectoryPath, fileName, destinationDirecto
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName, destinationDirectoryPath)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
-  const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
+  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
     notesJoinedDestinationPath,
     fileName
   )
@@ -117,7 +117,7 @@ export async function moveNote(parentDirectoryPath, fileName, destinationDirecto
 export async function renameNote(parentDirectoryPath, fileName, newFileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName, newFileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const newFileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
+  const newFileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
     newFileName
   )
@@ -131,7 +131,7 @@ export async function deleteNote(parentDirectoryPath, fileName) {
 export async function createDirectory(parentDirectoryPath, directoryName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
+  const directoryNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
     directoryName
   )
@@ -150,7 +150,7 @@ export async function moveDirectory(parentDirectoryPath, directoryName, destinat
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName, destinationDirectoryPath)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   const notesJoinedDestinationPath = notesJoin(destinationDirectoryPath)
-  const directoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
+  const directoryNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
     notesJoinedDestinationPath,
     directoryName
   )
@@ -164,7 +164,7 @@ export async function moveDirectory(parentDirectoryPath, directoryName, destinat
 export async function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, directoryName, newDirectoryName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const newDirectoryNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
+  const newDirectoryNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
     newDirectoryName
   )
@@ -198,7 +198,7 @@ async function writeDownloadNote(parentDirectoryPath, title, category, tags, bod
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
   mkdirp.sync(notesJoinedParentPath)
 
-  const fileNameWithoutDuplicate = fs_wrapper.nameWithoutDuplicate(
+  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
     notesJoinedParentPath,
     `${title}.md`
   )

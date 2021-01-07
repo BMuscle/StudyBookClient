@@ -39,6 +39,7 @@ async function createWindow() {
       nodeIntegration: true,
       webSecurity: false,
       devTools: isDevelopment,
+      nodeIntegrationInWorker: true
     },
     icon: path.join(__static, 'icon.ico')
   })

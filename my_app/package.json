@@ -29,7 +29,8 @@
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
     "vuex-orm": "^0.15.0",
-    "vuex-persistedstate": "^4.0.0-beta.1"
+    "vuex-persistedstate": "^4.0.0-beta.1",
+    "worker-plugin": "^5.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

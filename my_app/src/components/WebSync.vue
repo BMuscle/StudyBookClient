@@ -84,9 +84,7 @@ export default {
   created() {
     this.isLoading = false
     setTimeout(this.sync, 20000);
-    this.intervalId = setInterval(function() {
-      this.sync()
-    }, 1000 * 60 * 5)
+    this.intervalId = setInterval(this.sync, 1000 * 60 * 5)
   },
   beforeUnmount() {
     clearInterval(this.intervalId)
@@ -110,9 +108,13 @@ export default {
         await this.categoriesSync()
         await this.noteUploads()
         await this.tagsSync()
-        this.noteDownloads()
-        this.noteDeletes()
-        this.myListSync()
+
+        let promises = []
+        promises.push(this.noteDownloads())
+        promises.push(this.noteDeletes())
+        promises.push(this.myListSync())
+        await Promise.all(promises)
+
         this.isLoading = false
       } catch (e){
         if (e.message == 'Network Error') {
@@ -140,17 +142,13 @@ export default {
     async categoriesSync() {
       const response = await this.requestCategories()
       Category.deleteAll()
-      for (let category of response.data.categories) {
-        Category.insert({
-          data: {
-            online_id: category.id,
-            name: category.name
-          }
-        })
-      }
+      Category.insert({
+        data: response.data.categories.map(category => { return { online_id: category.id, name: category.name } })
+      })
       this.updateDefaultCategory(response.data.default_category)
     },
     updateDefaultCategory(default_category) {
+      if(default_category.id == this.default_id) return
       Note.update({
         where: note => {
           return note.category_id == this.default_id || note.category_id == null
@@ -162,6 +160,8 @@ export default {
     async tagsSync() {
       const tagAt = new Date().getTime()
       const response = await this.requestTags(new Date(this.categoriesUpdatedAt).toUTCString())
+      let insertTag = []
+
       for (var tag of response.data) {
         const localTag = Tag.query()
           .where('name', tag.name)
@@ -169,9 +169,10 @@ export default {
         if (localTag) {
           Tag.update({ where: localTag.id, data: { online_id: tag.id } })
         } else {
-          Tag.insert({ data: { online_id: tag.id, name: tag.name } })
+          insertTag.push({ online_id: tag.id, name: tag.name })
         }
       }
+      Tag.insert({ data: insertTag })
       this.updateTagsUpdatedAt(tagAt)
     },
     async shapedNotes() {
@@ -193,6 +194,7 @@ export default {
     },
     async noteUploads() {
       let notes = await this.shapedNotes()
+      if(notes.length == 0) return
       const uploadAt = new Date().getTime()
       const response = await this.requestUploadNotes(notes)
       for (var note of response.data) {
@@ -205,7 +207,7 @@ export default {
       }
       this.updateUploadsUpdatedAt(uploadAt + 1)
     },
-    noteDownloads() {
+    async noteDownloads() {
       const downloadAt = new Date().getTime()
       api
         .get(
@@ -217,9 +219,7 @@ export default {
           for (let note of response.data.notes) {
             this.noteUpdate(note, downloadAt)
           }
-          for (let deleted_note of response.data.deleted_notes) {
-            this.downloadNoteDeletes(deleted_note)
-          }
+          this.downloadNoteDeletes(response.data.deleted_notes)
           // 全てが正常に終わったので時間更新 ダウンロードより後にupdateを設定する
           this.updateDownloadsUpdatedAt(downloadAt + 1)
           this.updateUploadsUpdatedAt(downloadAt + 1)
@@ -258,8 +258,8 @@ export default {
           Category.find(note.category_id).name,
           note.tags,
           note.body
-        ).then(noteFileName => {
-          let note_inode = fs.statSync(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
+        ).then(async noteFileName => {
+          let note_inode = await fs.promises.stat(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
           Note.insertOrUpdate({
             data: {
               inode: note_inode,
@@ -270,12 +270,18 @@ export default {
         })
       }
     },
-    downloadNoteDeletes(deleted_note) {
-      let note = Note.query()
-        .where('guid', deleted_note.guid)
+    downloadNoteDeletes(deleted_notes) {
+      if (deleted_notes.length == 0) return
+
+      let notes = Note.query()
+        .where('guid', deleted_notes.map(note => note.guid))
+        .where('is_exists', true)
         .with('parent_directory')
-        .first()
-      if (note) {
+        .get()
+
+      if (notes.length == 0) return
+
+      for(let note of notes) {
         deleteNote(note.parent_directory?.path_from_root || '', note.file_name)
         Note.delete(note.inode)
       }
@@ -290,7 +296,7 @@ export default {
           return { guid: note.guid }
         })
     },
-    noteDeletes() {
+    async noteDeletes() {
       let notExistsNotes = this.notExistsNotes()
       api
         .delete('/api/v1/notes', {
@@ -308,50 +314,64 @@ export default {
           }
         })
     },
-    myListSync() {
+    async myListSync() {
       api.get(`/api/v1/my_lists?${this.getAuthParamsStr}`).then(response => {
         MyListNoteIndex.deleteAll()
         MyListNoteTag.deleteAll()
         MyList.deleteAll()
         MyListNote.deleteAll()
+
+        const my_lists = response.data.map(my_list => {
+                          return {
+                            id: my_list.id,
+                            title: my_list.title,
+                            category_id: my_list.category_id,
+                            description: my_list.description ?? ''
+                          }
+                        })
+        MyList.insert({
+          data: my_lists
+        })
+
         for (let my_list of response.data) {
-          MyList.insertOrUpdate({
-            data: {
-              id: my_list.id,
-              title: my_list.title,
-              category_id: my_list.category_id,
-              description: my_list.description ?? ''
+          const my_list_notes = my_list.notes.map(note => {
+                                  return {
+                                    id: note.id,
+                                    title: note.title,
+                                    body: note.body,
+                                    nickname: note.nickname,
+                                    category_id: note.category_id
+                                  }
+                                })
+          MyListNote.insert({
+            data: my_list_notes
+          })
+
+          const my_list_note_index = my_list.notes.map(note => {
+            return {
+              my_list_id: my_list.id,
+              my_list_note_id: note.id,
+              index: note.index
             }
           })
+
+          MyListNoteIndex.insert({
+            data: my_list_note_index
+          })
+
           for (let note of my_list.notes) {
-            MyListNote.insertOrUpdate({
-              data: {
-                id: note.id,
-                title: note.title,
-                body: note.body,
-                nickname: note.nickname,
-                category_id: note.category_id
-              }
+            const tags = note.tags.map(tag => {
+                           let local_tag = Tag.query()
+                                              .where('online_id', tag.id)
+                                              .first()
+                           return {
+                             tag_id: local_tag.id,
+                             my_list_note_id: note.id
+                           }
+                         })
+            MyListNoteTag.insert({
+              data: tags
             })
-            MyListNoteIndex.insertOrUpdate({
-              data: {
-                my_list_id: my_list.id,
-                my_list_note_id: note.id,
-                index: note.index
-              }
-            })
-            for (let tag of note.tags) {
-              let local_tag = Tag.query()
-                .where('online_id', tag.id)
-                .first()
-              if (local_tag == null) return
-              MyListNoteTag.insertOrUpdate({
-                data: {
-                  tag_id: local_tag.id,
-                  my_list_note_id: note.id
-                }
-              })
-            }
           }
         }
       })
