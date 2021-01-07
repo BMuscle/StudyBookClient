@@ -108,9 +108,13 @@ export default {
         await this.categoriesSync()
         await this.noteUploads()
         await this.tagsSync()
-        this.noteDownloads()
-        this.noteDeletes()
-        this.myListSync()
+
+        let promises = []
+        promises.push(this.noteDownloads())
+        promises.push(this.noteDeletes())
+        promises.push(this.myListSync())
+        await Promise.all(promises)
+
         this.isLoading = false
       } catch (e){
         if (e.message == 'Network Error') {
@@ -203,7 +207,7 @@ export default {
       }
       this.updateUploadsUpdatedAt(uploadAt + 1)
     },
-    noteDownloads() {
+    async noteDownloads() {
       const downloadAt = new Date().getTime()
       api
         .get(
@@ -292,7 +296,7 @@ export default {
           return { guid: note.guid }
         })
     },
-    noteDeletes() {
+    async noteDeletes() {
       let notExistsNotes = this.notExistsNotes()
       api
         .delete('/api/v1/notes', {
@@ -310,7 +314,7 @@ export default {
           }
         })
     },
-    myListSync() {
+    async myListSync() {
       api.get(`/api/v1/my_lists?${this.getAuthParamsStr}`).then(response => {
         MyListNoteIndex.deleteAll()
         MyListNoteTag.deleteAll()
