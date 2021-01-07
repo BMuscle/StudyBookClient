@@ -256,8 +256,8 @@ export default {
           Category.find(note.category_id).name,
           note.tags,
           note.body
-        ).then(noteFileName => {
-          let note_inode = fs.statSync(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
+        ).then(async noteFileName => {
+          let note_inode = await fs.promises.stat(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
           Note.insertOrUpdate({
             data: {
               inode: note_inode,

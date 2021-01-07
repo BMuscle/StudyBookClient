@@ -57,7 +57,7 @@ export default class Note extends Model {
   get parent_directory_path() {
     let note = this
     if (note.parent_inode != null && note.parent_directory == null) {
-      util.trace('parent_directory プロパティが無い為、低速です')
+      // util.trace('parent_directory プロパティが無い為、低速です')
       note = Note.query()
         .with('parent_directory')
         .find(this.inode)
@@ -72,8 +72,11 @@ export default class Note extends Model {
     )
   }
   async updateHeadAndUpdatedAt(
-    updatedAt = NoteCRUD.getMtimeMs(this.parent_directory_path, this.file_name)
+    updatedAt = null
   ) {
+    if(updatedAt == null) {
+      updatedAt = await NoteCRUD.getMtimeMs(this.parent_directory_path, this.file_name)
+    }
     if (updatedAt === this.updated_at) {
       return
     }
