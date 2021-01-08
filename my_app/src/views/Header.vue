@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand navbar-dark">
-    <web-sync v-if="userId && token"></web-sync>
+    <web-sync v-if="agentGuid && token"></web-sync>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <router-link
@@ -20,7 +20,7 @@
           マイリスト
         </router-link>
       </li>
-      <li v-if="userId && token" class="nav-item">
+      <li v-if="agentGuid && token" class="nav-item">
         <a class="nav-link" @click="logOut()">ログアウト</a>
       </li>
       <li v-else class="nav-item">
@@ -45,7 +45,7 @@ export default {
     WebSync
   },
   computed: {
-    ...mapState('user', ['userId', 'token']),
+    ...mapState('user', ['agentGuid', 'token']),
   },
   methods: {
     ...mapMutations('user', ['reset']),

@@ -1,7 +1,7 @@
 export default {
   namespaced: true,
   state: {
-    userId: null,
+    agentGuid: null,
     token: null
   },
   getters: {
@@ -10,12 +10,12 @@ export default {
     }
   },
   mutations: {
-    setUser(state, { userId, token }) {
-      state.userId = userId
+    setUser(state, { agentGuid, token }) {
+      state.agentGuid = agentGuid
       state.token = token
     },
     reset(state) {
-      state.userId = null
+      state.agentGuid = null
       state.token = null
     }
   }

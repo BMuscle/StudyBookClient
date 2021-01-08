@@ -44,7 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['userId', 'token'])
+    ...mapState('user', ['agentGuid', 'token'])
   },
   methods: {
     ...mapMutations('user', ['setUser', 'reset']),
@@ -58,7 +58,7 @@ export default {
         .then(response => {
           this.reset()
           this.setUser({
-            userId: response.data.user_id,
+            agentGuid: response.data.agent_guid,
             token: response.data.token
           })
           this.$router.push('/')
