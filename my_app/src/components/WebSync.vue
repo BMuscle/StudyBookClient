@@ -175,22 +175,25 @@ export default {
       Tag.insert({ data: insertTag })
       this.updateTagsUpdatedAt(tagAt)
     },
-    async shapedNotes() {
-      let notes = []
-      for (let note of this.updateTargetNotes) {
-        notes.push({
-          local_id: note.inode,
-          guid: note.guid,
-          title: note.title,
-          body: await readNoteBody(note.parent_directory?.path_from_root || '', note.file_name),
-          category_id: note.category_id,
-          directory_path: note.parent_directory?.path_from_root.replace('\\', '/') || '',
-          tags: note.tags.map(tag => {
-            return { id: tag.online_id ?? '', name: tag.name }
-          })
+    async noteRead(note) {
+      return {
+        local_id: note.inode,
+        guid: note.guid,
+        title: note.title,
+        body: await readNoteBody(note.parent_directory?.path_from_root || '', note.file_name),
+        category_id: note.category_id,
+        directory_path: note.parent_directory?.path_from_root.replace('\\', '/') || '',
+        tags: note.tags.map(tag => {
+          return { id: tag.online_id ?? '', name: tag.name }
         })
       }
-      return notes
+    },
+    async shapedNotes() {
+      let promises = []
+      for (let note of this.updateTargetNotes) {
+        promises.push(this.noteRead(note))
+      }
+      return await Promise.all(promises)
     },
     async noteUploads() {
       let notes = await this.shapedNotes()
