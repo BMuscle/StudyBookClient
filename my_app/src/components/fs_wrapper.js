@@ -3,6 +3,7 @@ import path from 'path'
 import { spawn } from 'child_process'
 import sd from 'string_decoder'
 import asyncLock from 'async-lock'
+import fsAsync from './fsAsync'
 
 const ALREADY_PATH_IS_EXISTS_ERROR_MESSAGE =
   '同じ名前のファイル又はフォルダが既に存在する為、操作を完了できませんでした'
@@ -28,7 +29,7 @@ export async function nameWithoutDuplicate(parentDirectoryPath, fileName) {
   // const FileisExists = await fs.promises.exists(path.join(parentDirectoryPath, name + ext))
   let fileExists
   try {
-    await fs.promises.access(path.join(parentDirectoryPath, name + ext))
+    await fsAsync.access(path.join(parentDirectoryPath, name + ext))
     fileExists = true
   } catch {
     fileExists = false
@@ -39,7 +40,7 @@ export async function nameWithoutDuplicate(parentDirectoryPath, fileName) {
       serial = '(' + ++number + ')'
       var isExists
       try {
-        await fs.promises.access(path.join(parentDirectoryPath, name + serial + ext))
+        await fsAsync.access(path.join(parentDirectoryPath, name + serial + ext))
         isExists = true
       } catch {
         isExists = false
@@ -55,19 +56,19 @@ export function getInode(path) {
 export async function getMtimeMs(parentDirectoryPath, fileName) {
   const filePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfThePathDoesNotExist(filePath)
-  const result = await fs.promises.stat(filePath)
+  const result = await fsAsync.stat(filePath)
   return result.mtimeMs
 }
 
 export async function readFile(parentDirectoryPath, fileName) {
   const readFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfThePathDoesNotExist(readFilePath)
-  const file = await fs.promises.readFile(readFilePath, 'utf8')
+  const file = await fsAsync.readFile(readFilePath, 'utf8')
   return file
 }
 export async function writeFile(parentDirectoryPath, fileName, content) {
   const writtenFilePath = path.join(parentDirectoryPath, fileName)
-  await fs.promises.writeFile(writtenFilePath, content)
+  await fsAsync.writeFile(writtenFilePath, content)
 }
 export async function moveFile(
   parentDirectoryPath,
@@ -79,33 +80,33 @@ export async function moveFile(
   const newPath = path.join(destinationDirectoryPath, newFileName)
   ThrowAnErrorIfThePathDoesNotExist(oldPath)
   ThrowAnErrorIfThePathAlreadyExists(newPath)
-  await fs.promises.rename(oldPath, newPath)
+  await fsAsync.rename(oldPath, newPath)
 }
 export async function renameFile(parentDirectoryPath, fileName, newFileName) {
   const oldPath = path.join(parentDirectoryPath, fileName)
   const newPath = path.join(parentDirectoryPath, newFileName)
   ThrowAnErrorIfThePathDoesNotExist(oldPath)
   ThrowAnErrorIfThePathAlreadyExists(newPath)
-  await fs.promises.rename(oldPath, newPath)
+  await fsAsync.rename(oldPath, newPath)
 }
 export async function deleteFile(parentDirectoryPath, fileName) {
   const deleteFilePath = path.join(parentDirectoryPath, fileName)
   ThrowAnErrorIfThePathDoesNotExist(deleteFilePath)
-  await fs.promises.unlink(deleteFilePath)
+  await fsAsync.unlink(deleteFilePath)
 }
 export async function createDirectory(parentDirectoryPath, directoryName) {
   const createDirectoryPath = path.join(parentDirectoryPath, directoryName)
   ThrowAnErrorIfThePathAlreadyExists(createDirectoryPath)
-  await fs.promises.mkdir(createDirectoryPath)
+  await fsAsync.mkdir(createDirectoryPath)
 }
 export async function readDirectory(parentDirectoryPath, directoryName) {
   const readDirectoryPath = path.join(parentDirectoryPath, directoryName)
   ThrowAnErrorIfThePathDoesNotExist(readDirectoryPath)
-  const dir = await fs.readdir(readDirectoryPath)
+  const dir = await fsAsync.readdir(readDirectoryPath)
   return dir
 }
 export async function readdirRecursively(directoryPath, inode = null) {
-  const dir = await fs.promises.readdir(directoryPath, { withFileTypes: true })
+  const dir = await fsAsync.readdir(directoryPath, { withFileTypes: true })
   const children = dir.map(dirent => {
     const status = fs.statSync(path.join(directoryPath, dirent.name))
     return {
@@ -128,19 +129,19 @@ export async function moveDirectory(parentDirectoryPath, directoryName, destinat
   const newPath = path.join(destinationDirectoryPath, directoryName)
   ThrowAnErrorIfThePathDoesNotExist(oldPath)
   ThrowAnErrorIfThePathAlreadyExists(newPath)
-  await fs.promises.rename(oldPath, newPath)
+  await fsAsync.rename(oldPath, newPath)
 }
 export async function renameDirectory(parentDirectoryPath, directoryName, newDirectoryName) {
   const oldPath = path.join(parentDirectoryPath, directoryName)
   const newPath = path.join(parentDirectoryPath, newDirectoryName)
   ThrowAnErrorIfThePathDoesNotExist(oldPath)
   ThrowAnErrorIfThePathAlreadyExists(newPath)
-  await fs.promises.rename(oldPath, newPath)
+  await fsAsync.rename(oldPath, newPath)
 }
 export async function deleteDirectory(parentDirectoryPath, directoryName) {
   const deleteDirectoryPath = path.join(parentDirectoryPath, directoryName)
   ThrowAnErrorIfThePathDoesNotExist(deleteDirectoryPath)
-  await fs.promises.rmdir(deleteDirectoryPath, { recursive: true })
+  await fsAsync.rmdir(deleteDirectoryPath, { recursive: true })
 }
 export class WatchHandler {
   static stringDecoder = new sd.StringDecoder('utf8')
