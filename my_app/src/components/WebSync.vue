@@ -228,7 +228,7 @@ export default {
           this.updateUploadsUpdatedAt(downloadAt + 1)
         })
     },
-    noteUpdate(note, downloadAt) {
+    async noteUpdate(note, downloadAt) {
       let local_note = Note.query()
         .where('guid', note.guid)
         .with('parent_directory')
