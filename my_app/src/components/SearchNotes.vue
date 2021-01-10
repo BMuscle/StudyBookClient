@@ -48,6 +48,10 @@ export default {
     ...mapMutations('notes', ['setFilteredNotes']),
     async filter() {
       const notes = []
+      if(this.query == '') {
+        this.setFilteredNotes(this.rawNotes.map(note => note.inode))
+        return
+      }
       for (let rawNote of this.rawNotes) {
         // 本文読み込み & 正規化
         notes.push({
