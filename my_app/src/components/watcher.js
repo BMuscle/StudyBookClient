@@ -2,10 +2,11 @@ import * as NoteCRUD from './NoteCRUD'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
 
+
 export async function start() {
   await Note.updateAllNotes({ is_exists: false })
   const children = await NoteCRUD.readFolderRecursively('')
-  await insertChildren(children)
+  insertChildren(children)
   NotesWatcher.start()
 }
 
@@ -42,17 +43,22 @@ async function insertChildren(children) {
       data: directory_data
     })
   )
-  promises.push(
-    Note.insertOrUpdate({
-      data: note_data
-    })
-  )
-  const [result_directories, result_notes] = await Promise.all(promises)
-  if (Object.keys(result_notes).length) {
-    for (let note of result_notes.notes) {
-      note.updateHeadAndUpdatedAt()
-    }
+
+  for(let i = 0, time_i = 0; i < note_data.length; i += 100, time_i++) {
+    window.setTimeout(noteInsertChlidren, 800 * time_i, note_data.slice(i, i + 100))
   }
+}
+
+function noteInsertChlidren(note_data) {
+  Note.insertOrUpdate({
+    data: note_data
+  }).then(result_notes => {
+    if (Object.keys(result_notes).length) {
+      for (let note of result_notes.notes) {
+        note.updateHeadAndUpdatedAt()
+      }
+    }
+  })
 }
 
 class NotesWatcher {
