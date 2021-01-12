@@ -122,7 +122,11 @@ export default {
       this.overwriteNoteHeader(header)
     },
     overwriteNoteHeader(header) {
-      setHeader(header.toString, this.note.parent_directory?.path_from_root || '', this.note.file_name)
+      setHeader(
+        header.toString,
+        this.note.parent_directory?.path_from_root || '',
+        this.note.file_name
+      )
     }
   }
 }
