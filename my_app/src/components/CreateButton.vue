@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="Create()">新規作成ボタン</button>
+    <button @click="Create">新規作成ボタン</button>
   </div>
 </template>
 
@@ -8,9 +8,7 @@
 import { mapMutations, mapState } from 'vuex'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
-import { createNote } from './NoteCRUD.js'
-import { setFocusNote } from '../store/notes.js'
-import { OpenEditor } from './filterdNotes.vue'
+import { Create } from './NoteMethods'
 export default {
   components: {},
   data: function() {
@@ -38,10 +36,9 @@ export default {
   methods: {
     ...mapMutations('notes', ['setFocusNote']),
     async Create() {
-      this.selectedDir = Directory.find(this.focusDirectory)
-      const path = this.selectedDir?.path_from_root ?? ''
-      this.note = await createNote(path, '新しいノート.md')
-      this.setFocusNote(this.note.inode)
+      const selectedDir = Directory.find(this.focusDirectory)
+      const path = selectedDir?.path_from_root ?? ''
+      Create(path)
     }
   }
 }
