@@ -3,6 +3,7 @@ import path from 'path'
 import mkdirp from 'mkdirp'
 import store from '../store'
 import NoteHeader from './NoteHeader'
+import { Console } from 'console'
 
 function isDangerousPath(aPath) {
   return aPath.indexOf(':') !== -1 || aPath.indexOf('..') !== -1
@@ -43,8 +44,11 @@ export async function getMtimeMs(parentDirectoryPath, fileName) {
 export async function createNote(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
-  const content = new NoteHeader() + '\n\n'
+  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
+    notesJoinedParentPath,
+    fileName
+  )
+  const content = new NoteHeader().toString + '\n\n'
   await fs_wrapper.writeFile(notesJoinedParentPath, fileNameWithoutDuplicate, content)
   return {
     inode: fs_wrapper.getInode(path.join(notesJoinedParentPath, fileNameWithoutDuplicate)),

@@ -1,5 +1,6 @@
 <template>
   <div class="left-bar">
+    <CreateButton />
     <div>
       <BookmarkDirectory />
     </div>
@@ -23,7 +24,6 @@
       @mouseup="widthChangeOff()"
       @mouseover="widthChangeOff()"
     ></div>
-    <CreateNewNote />
   </div>
 </template>
 
@@ -33,7 +33,7 @@ import NotesFilterByCategory from '../components/NotesFilterByCategory'
 import filterdNotes from '../components/filterdNotes.vue'
 import DirectoryTreeView from '../components/DirectoryTreeView'
 import BookmarkDirectory from '../components/BookmarkDirectory.vue'
-import CreateNewNote from '../components/CreateNewNote.vue'
+import CreateButton from '../components/CreateButton.vue'
 export default {
   components: {
     SearchNotes,
@@ -41,7 +41,7 @@ export default {
     filterdNotes,
     DirectoryTreeView,
     BookmarkDirectory,
-    CreateNewNote
+    CreateButton
   },
   data: function() {
     return {
