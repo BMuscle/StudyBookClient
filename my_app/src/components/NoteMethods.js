@@ -9,7 +9,7 @@ export function OpenEditor(filePath, noteName) {
 }
 
 export async function Create(directoryPath) {
-  const note = await createNote(directoryPath, '新しいノート.md')
-  store.commit('notes/setFocusNote', note.inode)
-  OpenEditor(note.parentDirectoryPath, note.fileName)
+  const createdNote = await createNote(directoryPath, '新しいノート.md')
+  store.commit('notes/setFocusNote', createdNote.inode)
+  OpenEditor(createdNote.parentDirectoryPath, createdNote.fileName)
 }
