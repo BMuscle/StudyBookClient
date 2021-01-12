@@ -27,9 +27,7 @@
 import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
-import { shell } from 'electron'
-import path from 'path'
-import { notesJoin } from './NoteCRUD'
+import { OpenEditor } from './NoteMethods'
 
 export default {
   components: {
@@ -37,8 +35,7 @@ export default {
   },
   data: function() {
     return {
-      sort: [],
-      fullPath: ''
+      sort: []
     }
   },
   computed: {
@@ -58,9 +55,8 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFocusNote']),
-    OpenEditor(filePath, noteName) {
-      this.fullPath = notesJoin(filePath, noteName)
-      shell.openPath(this.fullPath)
+    async OpenEditor(filePath, noteName) {
+      OpenEditor(filePath, noteName)
     }
   }
 }
