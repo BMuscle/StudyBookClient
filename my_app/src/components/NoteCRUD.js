@@ -3,7 +3,6 @@ import path from 'path'
 import mkdirp from 'mkdirp'
 import store from '../store'
 import NoteHeader from './NoteHeader'
-import { Console } from 'console'
 
 function isDangerousPath(aPath) {
   return aPath.indexOf(':') !== -1 || aPath.indexOf('..') !== -1
