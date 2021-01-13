@@ -37,13 +37,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['userId', 'token']),
+    ...mapState('user', ['agentGuid', 'token']),
     ...mapState('category_module', ['default_id']),
     getAuthParams() {
-      return { user_id: this.userId, token: this.token }
+      return { agent_guid: this.agentGuid, token: this.token }
     },
     getAuthParamsStr() {
-      return `user_id=${this.userId}&token=${this.token}`
+      return `agent_guid=${this.agentGuid}&token=${this.token}`
     },
     categoriesUpdatedAt() {
       return UpdatedAt.find('categories').updated_at
@@ -90,7 +90,7 @@ export default {
     clearInterval(this.intervalId)
   },
   methods: {
-    ...mapMutations('user', ['setUser', 'reset']),
+    ...mapMutations('user', ['reset']),
     ...mapMutations('category_module', ['set_default_id']),
     ...mapActions('flash', ['setDanger']),
     createNote() {
