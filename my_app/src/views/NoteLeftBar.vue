@@ -3,16 +3,15 @@
     <div>
       <BookmarkDirectory />
     </div>
-    <div class="note-filter-by-category">
-      <NotesFilterByCategory />
-    </div>
-    <hr />
     <div class="directory-tree-view">
       <DirectoryTreeView />
     </div>
     <hr />
     <div class="search-notes">
       <SearchNotes />
+    </div>
+    <div class="note-filter-by-category">
+      <NotesFilterByCategory />
     </div>
     <filterdNotes />
     <div
