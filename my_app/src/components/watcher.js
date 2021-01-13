@@ -2,7 +2,6 @@ import * as NoteCRUD from './NoteCRUD'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
 
-
 export async function start() {
   await Note.updateAllNotes({ is_exists: false })
   const children = await NoteCRUD.readFolderRecursively('')
@@ -44,7 +43,7 @@ async function insertChildren(children) {
     })
   )
 
-  for(let i = 0, time_i = 0; i < note_data.length; i += 100, time_i++) {
+  for (let i = 0, time_i = 0; i < note_data.length; i += 100, time_i++) {
     window.setTimeout(noteInsertChlidren, 800 * time_i, note_data.slice(i, i + 100))
   }
 }

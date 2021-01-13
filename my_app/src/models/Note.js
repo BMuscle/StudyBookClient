@@ -71,10 +71,8 @@ export default class Note extends Model {
       this.tags.map(tag => tag.name)
     )
   }
-  async updateHeadAndUpdatedAt(
-    updatedAt = null
-  ) {
-    if(updatedAt == null) {
+  async updateHeadAndUpdatedAt(updatedAt = null) {
+    if (updatedAt == null) {
       updatedAt = await NoteCRUD.getMtimeMs(this.parent_directory_path, this.file_name)
     }
     if (updatedAt === this.updated_at) {
