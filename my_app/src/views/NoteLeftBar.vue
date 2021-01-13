@@ -85,6 +85,7 @@ export default {
   .note-filter-by-category
     margin-top: 4px
   .directory-tree-view
+    margin-top: 5px
     height: calc(40% - 20px)
     max-height: calc(40% - 20px)
     border-radius: 5px
