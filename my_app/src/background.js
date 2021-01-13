@@ -56,7 +56,7 @@ async function createWindow() {
   }) // URLをクリックしたときに既定のブラウザで開くようにする
   const handleUrlOpen = (event, url) => {
     event.preventDefault()
-    shell.openExternal(url)
+    event.sender.send('reply', url)
   }
   win.webContents.on('will-navigate', handleUrlOpen)
   win.webContents.on('new-window', handleUrlOpen)

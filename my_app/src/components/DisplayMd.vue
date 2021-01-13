@@ -6,6 +6,7 @@
 import marked from 'marked'
 import hljs from 'highlight.js'
 import sanitizeHtml from 'sanitize-html'
+import { shell, ipcRenderer } from 'electron'
 
 export default {
   props: {
@@ -32,6 +33,13 @@ export default {
       })
       return clean
     }
+  },
+  created() {
+    ipcRenderer.on('reply', (event, url) => {
+      if (confirm(url + '\n本当に開く？')) {
+        shell.openExternal(url)
+      }
+    })
   }
 }
 </script>
