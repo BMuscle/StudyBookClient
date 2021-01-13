@@ -89,8 +89,8 @@ export default {
     margin-top: 4px
   .directory-tree-view
     margin-top: 5px
-    height: calc(40% - 20px)
-    max-height: calc(40% - 20px)
+    height: calc(40% - 40px)
+    max-height: calc(40% - 40px)
     border-radius: 5px
     background-color: #fff
     overflow: auto
