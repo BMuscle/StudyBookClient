@@ -1,5 +1,6 @@
 <template>
   <div class="left-bar">
+    <CreateButton />
     <div>
       <BookmarkDirectory />
     </div>
@@ -31,13 +32,15 @@ import NotesFilterByCategory from '../components/NotesFilterByCategory'
 import filterdNotes from '../components/filterdNotes.vue'
 import DirectoryTreeView from '../components/DirectoryTreeView'
 import BookmarkDirectory from '../components/BookmarkDirectory.vue'
+import CreateButton from '../components/CreateButton.vue'
 export default {
   components: {
     SearchNotes,
     NotesFilterByCategory,
     filterdNotes,
     DirectoryTreeView,
-    BookmarkDirectory
+    BookmarkDirectory,
+    CreateButton
   },
   data: function() {
     return {

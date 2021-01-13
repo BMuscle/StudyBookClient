@@ -43,8 +43,11 @@ export async function getMtimeMs(parentDirectoryPath, fileName) {
 export async function createNote(parentDirectoryPath, fileName) {
   ThrowAnErrorIfAnyPathIsDangerous(parentDirectoryPath, fileName)
   const notesJoinedParentPath = notesJoin(parentDirectoryPath)
-  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(notesJoinedParentPath, fileName)
-  const content = new NoteHeader() + '\n\n'
+  const fileNameWithoutDuplicate = await fs_wrapper.nameWithoutDuplicate(
+    notesJoinedParentPath,
+    fileName
+  )
+  const content = new NoteHeader().toString + '\n\n'
   await fs_wrapper.writeFile(notesJoinedParentPath, fileNameWithoutDuplicate, content)
   return {
     inode: fs_wrapper.getInode(path.join(notesJoinedParentPath, fileNameWithoutDuplicate)),
