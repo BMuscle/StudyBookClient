@@ -50,17 +50,27 @@ export default class Directory extends Model {
     return notes
   }
   async deleteWithChildren() {
+    const { directories, notes } = this.deleteTarget
+    for (const directory of directories) {
+      directory.$delete()
+    }
+    for (const note of notes) {
+      note.$delete()
+    }
+  }
+  get deleteTarget() {
     const directory = Directory.query()
       .with('child_directories')
       .with('notes')
       .find(this.inode)
-    for (const directory of directory.child_directories) {
-      await directory.deleteWithChildren()
+    const target = { directories: [], notes: [] }
+    for (const childDirectory of directory.child_directories) {
+      const { directories, notes } = childDirectory.deleteTarget
+      target.directories = target.directories.concat(directories)
+      target.notes = target.notes.concat(notes)
     }
-    for (const note of directory.notes) {
-      note.is_exists = false
-      note.$save()
-    }
-    this.$delete()
+    target.directories = target.directories.concat(directory)
+    target.notes = target.notes.concat(directory.notes)
+    return target
   }
 }
