@@ -234,6 +234,9 @@ export default {
         .with('parent_directory')
         .first()
       if (local_note) {
+        if (!local_note.is_exists) {
+          return
+        }
         overwriteDownloadNote(
           local_note.parent_directory?.path_from_root || '',
           local_note.file_name,
@@ -294,7 +297,7 @@ export default {
         .where(note => {
           return note.is_exists == false
         })
-        .all()
+        .get()
         .map(note => {
           return { guid: note.guid }
         })
