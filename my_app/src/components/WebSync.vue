@@ -83,7 +83,7 @@ export default {
   },
   created() {
     this.isLoading = false
-    setTimeout(this.sync, 20000);
+    setTimeout(this.sync, 20000)
     this.intervalId = setInterval(this.sync, 1000 * 60 * 5)
   },
   beforeUnmount() {
@@ -116,12 +116,12 @@ export default {
         await Promise.all(promises)
 
         this.isLoading = false
-      } catch (e){
+      } catch (e) {
         if (e.message == 'Network Error') {
           this.setDanger(['通信エラーが発生しました'])
-        } else if (e.message == "Request failed with status code 400") {
+        } else if (e.message == 'Request failed with status code 400') {
           this.setDanger(['リクエストに失敗しました。アカウントが利用できない可能性があります'])
-        } else if (e.message == "Request failed with status code 404") {
+        } else if (e.message == 'Request failed with status code 404') {
           this.setDanger(['リクエストに失敗しました。バージョンが古い可能性があります'])
         } else {
           console.log('Sync error', e)
@@ -143,12 +143,14 @@ export default {
       const response = await this.requestCategories()
       Category.deleteAll()
       Category.insert({
-        data: response.data.categories.map(category => { return { online_id: category.id, name: category.name } })
+        data: response.data.categories.map(category => {
+          return { online_id: category.id, name: category.name }
+        })
       })
       this.updateDefaultCategory(response.data.default_category)
     },
     updateDefaultCategory(default_category) {
-      if(default_category.id == this.default_id) return
+      if (default_category.id == this.default_id) return
       Note.update({
         where: note => {
           return note.category_id == this.default_id || note.category_id == null
@@ -197,7 +199,7 @@ export default {
     },
     async noteUploads() {
       let notes = await this.shapedNotes()
-      if(notes.length == 0) return
+      if (notes.length == 0) return
       const uploadAt = new Date().getTime()
       const response = await this.requestUploadNotes(notes)
       for (var note of response.data) {
@@ -246,7 +248,10 @@ export default {
           note.body
         )
         if (note.directory_path == null) note.directory_path = ''
-        if ((local_note.parent_directory?.path_from_root.replace('\\', '/') || '') != note.directory_path) {
+        if (
+          (local_note.parent_directory?.path_from_root.replace('\\', '/') || '') !=
+          note.directory_path
+        ) {
           moveDownloadNote(
             local_note.parent_directory?.path_from_root || '',
             note.file_name,
@@ -265,7 +270,9 @@ export default {
           note.tags,
           note.body
         ).then(async noteFileName => {
-          let note_inode = await fs.promises.stat(`${notesJoin(note.directory_path)}/${noteFileName}`).ino
+          let note_inode = await fs.promises.stat(
+            `${notesJoin(note.directory_path)}/${noteFileName}`
+          ).ino
           Note.insertOrUpdate({
             data: {
               inode: note_inode,
@@ -280,14 +287,17 @@ export default {
       if (deleted_notes.length == 0) return
 
       let notes = Note.query()
-        .where('guid', deleted_notes.map(note => note.guid))
+        .where(
+          'guid',
+          deleted_notes.map(note => note.guid)
+        )
         .where('is_exists', true)
         .with('parent_directory')
         .get()
 
       if (notes.length == 0) return
 
-      for(let note of notes) {
+      for (let note of notes) {
         deleteNote(note.parent_directory?.path_from_root || '', note.file_name)
         Note.delete(note.inode)
       }
@@ -328,27 +338,27 @@ export default {
         MyListNote.deleteAll()
 
         const my_lists = response.data.map(my_list => {
-                          return {
-                            id: my_list.id,
-                            title: my_list.title,
-                            category_id: my_list.category_id,
-                            description: my_list.description ?? ''
-                          }
-                        })
+          return {
+            id: my_list.id,
+            title: my_list.title,
+            category_id: my_list.category_id,
+            description: my_list.description ?? ''
+          }
+        })
         MyList.insert({
           data: my_lists
         })
 
         for (let my_list of response.data) {
           const my_list_notes = my_list.notes.map(note => {
-                                  return {
-                                    id: note.id,
-                                    title: note.title,
-                                    body: note.body,
-                                    nickname: note.nickname,
-                                    category_id: note.category_id
-                                  }
-                                })
+            return {
+              id: note.id,
+              title: note.title,
+              body: note.body,
+              nickname: note.nickname,
+              category_id: note.category_id
+            }
+          })
           MyListNote.insert({
             data: my_list_notes
           })
@@ -367,14 +377,14 @@ export default {
 
           for (let note of my_list.notes) {
             const tags = note.tags.map(tag => {
-                           let local_tag = Tag.query()
-                                              .where('online_id', tag.id)
-                                              .first()
-                           return {
-                             tag_id: local_tag.id,
-                             my_list_note_id: note.id
-                           }
-                         })
+              let local_tag = Tag.query()
+                .where('online_id', tag.id)
+                .first()
+              return {
+                tag_id: local_tag.id,
+                my_list_note_id: note.id
+              }
+            })
             MyListNoteTag.insert({
               data: tags
             })
