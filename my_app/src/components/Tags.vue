@@ -24,7 +24,7 @@
           </option>
         </datalist>
       </div>
-      </div>
+    </div>
   </div>
 </template>
 
