@@ -33,6 +33,31 @@ export default class Note extends Model {
       updated_at: this.attr(0)
     }
   }
+  static async hydrateUpdatedHeader(record) {
+    const note = Note.find(record.inode)
+    const directoryPath = Directory.find(record.parent_inode)?.path_from_root ?? ''
+    record.updated_at ??= await NoteCRUD.getMtimeMs(directoryPath, record.file_name)
+    if (record.updated_at === note?.updated_at) {
+      return { record: record }
+    }
+    const { title, category, tags } = await readNoteHeader(directoryPath, record.file_name)
+    record.title = title
+    record.category_id = Category.getCategory(category).online_id
+    return { record: record, note: note, tags: tags }
+  }
+  static async updateTags(data) {
+    await Promise.all(
+      data.map(({ record, note }) => note?.deleteTags() ?? Note.find(record.inode)?.deleteTags())
+    )
+    const noteTags = []
+    for (const { record, tags } of data) {
+      for (const tag of tags) {
+        const tagId = await Tag.insertTag(tag)
+        noteTags.push({ note_inode: record.inode, tag_id: tagId })
+      }
+    }
+    NoteTag.insert({ data: noteTags })
+  }
   static getNote(parentDirectoryPath, fileName) {
     const parentInode = NoteCRUD.getInode(parentDirectoryPath)
     return this.queryExists()
@@ -47,12 +72,6 @@ export default class Note extends Model {
     return this.query()
       .where('is_exists', false)
       .get()
-  }
-  static async updateAllNotes(data) {
-    this.update({
-      where: () => true,
-      data: data
-    })
   }
   get parent_directory_path() {
     let note = this
@@ -70,23 +89,6 @@ export default class Note extends Model {
       this.category.name,
       this.tags.map(tag => tag.name)
     )
-  }
-  async updateHeadAndUpdatedAt(updatedAt = null) {
-    if (updatedAt == null) {
-      updatedAt = await NoteCRUD.getMtimeMs(this.parent_directory_path, this.file_name)
-    }
-    if (updatedAt === this.updated_at) {
-      return
-    }
-    const { title, category, tags } = await readNoteHeader(
-      this.parent_directory_path,
-      this.file_name
-    )
-    this.title = title
-    this.category_id = Category.getCategory(category).online_id
-    this.updated_at = updatedAt
-    this.$save()
-    await this.updateTags(tags)
   }
   async updateTags(tags) {
     await this.deleteTags()
@@ -106,8 +108,5 @@ export default class Note extends Model {
   }
   deleteTags() {
     NoteTag.delete(record => record.note_inode === this.inode)
-  }
-  static beforeDelete(record) {
-    record.deleteTags()
   }
 }

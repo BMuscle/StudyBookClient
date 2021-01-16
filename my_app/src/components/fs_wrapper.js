@@ -113,7 +113,8 @@ export async function readdirRecursively(directoryPath, inode = null) {
       isDirectory: dirent.isDirectory(),
       inode: status.ino,
       parent_inode: inode,
-      name: dirent.name
+      name: dirent.name,
+      updated_at: status.mtimeMs
     }
   })
   var add_children = []
