@@ -6,7 +6,7 @@ export default class MyListNoteTag extends Model {
 
   static fields() {
     return {
-      tag_id: this.attr(),
+      tag_id: this.number(),
       my_list_note_id: this.attr()
     }
   }

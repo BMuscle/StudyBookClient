@@ -171,7 +171,7 @@ export default {
         if (localTag) {
           Tag.update({ where: localTag.id, data: { online_id: tag.id } })
         } else {
-          insertTag.push({ online_id: tag.id, name: tag.name })
+          insertTag.push(Tag.hydrateId({ online_id: tag.id, name: tag.name }))
         }
       }
       Tag.insert({ data: insertTag })

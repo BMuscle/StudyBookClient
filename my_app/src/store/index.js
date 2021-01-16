@@ -5,6 +5,7 @@ import root from './root'
 import notes from './notes'
 import my_lists from './my_lists'
 import { category_module } from '../models/Category'
+import { tag_module } from '../models/Tag'
 import user from './user'
 import database from '../database'
 import bookmark from './bookmark'
@@ -20,6 +21,7 @@ export default createStore({
         'bookmark',
         'my_lists',
         'category_module',
+        'tag_module',
         'user',
         'entities.notes',
         'entities.my_lists',
@@ -42,6 +44,7 @@ export default createStore({
     bookmark,
     my_lists,
     category_module,
+    tag_module,
     user,
     flash
   }
