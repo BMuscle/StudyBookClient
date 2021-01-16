@@ -24,7 +24,7 @@
           </option>
         </datalist>
       </div>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     allTagData() {
-      return TagData.thatHaveNotes()
+      return TagData.all()
     }
   },
   methods: {

@@ -2,12 +2,17 @@ import * as NoteCRUD from './NoteCRUD'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
 
-
-export async function start() {
-  await Note.updateAllNotes({ is_exists: false })
+export async function start(emitComplete) {
+  const notes = Note.all()
+  const notesMap = {}
+  for (const note of notes) {
+    note.is_exists = false
+    notesMap[note.inode] = note
+  }
   const children = await NoteCRUD.readFolderRecursively('')
-  insertChildren(children)
+  await insertChildren(notesMap, children)
   NotesWatcher.start()
+  emitComplete()
 }
 
 export function stop() {
@@ -18,9 +23,8 @@ function isNoteFile(fileName) {
   return fileName.endsWith('.md')
 }
 
-async function insertChildren(children) {
+async function insertChildren(allNotes, children) {
   let directory_data = []
-  let note_data = []
   let promises = []
   for (let child of children) {
     if (child.isDirectory) {
@@ -30,12 +34,14 @@ async function insertChildren(children) {
         parent_inode: child.parent_inode
       })
     } else if (isNoteFile(child.name)) {
-      note_data.push({
+      allNotes[child.inode] = {
+        ...allNotes[child.inode],
         inode: child.inode,
         parent_inode: child.parent_inode,
         file_name: child.name,
-        is_exists: true
-      })
+        is_exists: true,
+        updated_at: child.updated_at
+      }
     }
   }
   promises.push(
@@ -43,22 +49,24 @@ async function insertChildren(children) {
       data: directory_data
     })
   )
-
-  for(let i = 0, time_i = 0; i < note_data.length; i += 100, time_i++) {
-    window.setTimeout(noteInsertChlidren, 800 * time_i, note_data.slice(i, i + 100))
-  }
+  await noteInsertChlidren(Object.keys(allNotes).map(key => allNotes[key]))
 }
 
-function noteInsertChlidren(note_data) {
-  Note.insertOrUpdate({
-    data: note_data
-  }).then(result_notes => {
-    if (Object.keys(result_notes).length) {
-      for (let note of result_notes.notes) {
-        note.updateHeadAndUpdatedAt()
-      }
-    }
+async function noteInsertChlidren(note_data) {
+  const promises = note_data.map(note => Note.hydrateUpdatedHeader(note))
+  const records = await Promise.all(promises)
+  await Note.deleteAll()
+  await Note.insert({
+    data: records.map(record => record.record)
   })
+  await Note.updateTags(records.filter(record => record?.tags != undefined))
+}
+async function noteInsert(aRecord) {
+  const { record, note, tags } = await Note.hydrateUpdatedHeader(aRecord)
+  Note.insertOrUpdate({ data: record })
+  if (record?.tags != undefined) {
+    note.updateTags(tags)
+  }
 }
 
 class NotesWatcher {
@@ -68,25 +76,21 @@ class NotesWatcher {
   static kill() {
     NoteCRUD.NotesWatchHandler.kill()
   }
-  static onChangeNote(target) {
-    Note.query()
-      .with('parent_directory')
-      .find(target.stat.ino)
-      .updateHeadAndUpdatedAt()
+  static async onChangeNote(target) {
+    const note = Note.find(target.stat.ino)
+    note.updated_at = target.stat.mtimeMs
+    noteInsert(note)
   }
-  static onCreateNote(target) {
+  static async onCreateNote(target) {
     if (!isNoteFile(target.name)) {
       return
     }
-    Note.insertOrUpdate({
-      data: {
-        inode: target.stat.ino,
-        parent_inode: NoteCRUD.getInode(target.parentDirectoryPath),
-        file_name: target.name,
-        is_exists: true
-      }
-    }).then(notes => {
-      notes.notes[0].updateHeadAndUpdatedAt(target.stat.mtimeMs)
+    noteInsert({
+      inode: target.stat.ino,
+      parent_inode: NoteCRUD.getInode(target.parentDirectoryPath),
+      file_name: target.name,
+      is_exists: true,
+      updated_at: target.stat.mtimeMs
     })
   }
   static async onCreateDirectory(target) {
@@ -99,7 +103,12 @@ class NotesWatcher {
     })
     const directory = directories.directories[0]
     const children = await NoteCRUD.readFolderRecursively(directory.path_from_root, directory.inode)
-    insertChildren(children)
+    const notes = Note.all()
+    const notesMap = {}
+    for (const note of notes) {
+      notesMap[note.inode] = note
+    }
+    insertChildren(notesMap, children)
   }
   static async onDelete(target) {
     const note = Note.getNote(target.parentDirectoryPath, target.name)

@@ -121,16 +121,20 @@ function initWindowMenu() {
       submenu: [
         {
           label: '終了',
-          click() { app.quit() }
+          click() {
+            app.quit()
+          }
         }
-      ],
+      ]
     },
     {
       label: 'ヘルプ',
       submenu: [
         {
           label: 'マニュアル',
-          click() { shell.openExternal('http://bgmuscle.ddns.net/information/manual') }
+          click() {
+            shell.openExternal('http://bgmuscle.ddns.net/information/manual')
+          }
         }
       ]
     }
