@@ -72,8 +72,10 @@ export default {
     }
   },
   watch: {
-    note(newNote) {
-      this.setNote(newNote)
+    note(newNote, oldNote) {
+      if (newNote?.inode != oldNote?.inode || newNote?.updated_at != oldNote?.updated_at) {
+        this.setNote(newNote)
+      }
     }
   },
   created() {
