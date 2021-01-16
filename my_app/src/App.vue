@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div v-if="!isLoading" id="app">
     <Header />
     <router-view />
     <FlashMessage />
@@ -27,6 +27,11 @@ export default {
     Header,
     FlashMessage,
     AllData
+  },
+  data() {
+    return {
+      isLoading: true
+    }
   },
   computed: {
     ...mapState('category_module', ['default_id']),
@@ -90,7 +95,10 @@ export default {
         }
       })
     }
-    watcher.start()
+    const thisObj = this
+    watcher.start(function() {
+      thisObj.isLoading = false
+    })
   },
   beforeUnmount() {
     watcher.stop()

@@ -2,7 +2,7 @@ import * as NoteCRUD from './NoteCRUD'
 import Note from '../models/Note'
 import Directory from '../models/Directory'
 
-export async function start() {
+export async function start(emitComplete) {
   const notes = Note.all()
   const notesMap = {}
   for (const note of notes) {
@@ -12,6 +12,7 @@ export async function start() {
   const children = await NoteCRUD.readFolderRecursively('')
   await insertChildren(notesMap, children)
   NotesWatcher.start()
+  emitComplete()
 }
 
 export function stop() {
