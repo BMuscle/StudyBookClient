@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     allTagData() {
-      return TagData.thatHaveNotes()
+      return TagData.all()
     }
   },
   methods: {
