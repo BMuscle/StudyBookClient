@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div class="create-button" @click="Create">新規ノート作成</div>
+    <div class="create-button" @click="create">新規ノート作成</div>
   </div>
 </template>
 
 <script>
-import { Create } from './NoteMethods'
+import { create } from './NoteMethods'
 export default {
   methods: {
-    async Create() {
-      Create()
+    async create() {
+      create()
     }
   }
 }
