@@ -3,7 +3,7 @@
     <NoteSort @filterd-notes="sort = $event.split(',', 2)" />
     <div class="notes overflow-auto">
       <div v-for="note in notes" :key="note.inode" class="note" @click="setFocusNote(note.inode)">
-        <div @dblclick="OpenEditor(note.parent_directory_path, note.file_name)">
+        <div @dblclick="openEditor(note.parent_directory_path, note.file_name)">
           <div class="title">
             {{ note.title }}
           </div>
@@ -27,7 +27,7 @@
 import { mapMutations, mapState } from 'vuex'
 import Note from '@/models/Note'
 import NoteSort from '../components/NoteSort.vue'
-import { OpenEditor } from './NoteMethods'
+import { openEditor } from './NoteMethods'
 
 export default {
   components: {
@@ -55,8 +55,8 @@ export default {
   },
   methods: {
     ...mapMutations('notes', ['setFocusNote']),
-    async OpenEditor(filePath, noteName) {
-      OpenEditor(filePath, noteName)
+    async openEditor(filePath, noteName) {
+      openEditor(filePath, noteName)
     }
   }
 }

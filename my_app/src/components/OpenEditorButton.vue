@@ -1,30 +1,32 @@
 <template>
-  <div>
-    <div class="create-button" @click="create">新規ノート作成</div>
-  </div>
+  <div class="button" @click="openEditor">エディタで開く</div>
 </template>
 
 <script>
-import { create } from './NoteMethods'
+import { openEditor } from './NoteMethods'
+
 export default {
+  props: {
+    directoryPath: String,
+    fileName: String
+  },
   methods: {
-    async create() {
-      create()
+    async openEditor() {
+      openEditor(this.directoryPath, this.fileName)
     }
   }
 }
 </script>
 
 <style lang="sass" scoped>
-.create-button
-  margin-top: 5px
+.button
   cursor: pointer
+  padding: 1px 3px
   width: 100%
   height: 20px
   background-color: #fff
   border-radius: 5px
   text-align: center
-  font-size: 0.9em
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
   background-color: #D7FFFD
   &:hover

@@ -21,6 +21,12 @@
           @tag-delete="deleteTag($event)"
         />
       </div>
+      <div class="open-editor-button">
+        <OpenEditorButton
+          :directory-path="note.parent_directory_path"
+          :file-name="note.file_name"
+        />
+      </div>
     </div>
     <div ref="note_content" class="note-content">
       <div class="title">{{ note.title }}</div>
@@ -32,6 +38,7 @@
 <script>
 import { mapState } from 'vuex'
 import DisplayMd from './DisplayMd.vue'
+import OpenEditorButton from './OpenEditorButton.vue'
 import Note from '@/models/Note'
 import Directory from '@/models/Directory'
 import DisplayTheNoteCategory from './DisplayTheNoteCategory.vue'
@@ -43,6 +50,7 @@ import { throttle, debounce } from 'lodash'
 export default {
   components: {
     DisplayMd,
+    OpenEditorButton,
     DisplayTheNoteCategory,
     Tags
   },
@@ -160,6 +168,10 @@ export default {
     .tags {
       display: inline-block;
       height: 100%;
+    }
+    .open-editor-button {
+      display: inline-block;
+      margin: 0 0 0 auto;
     }
   }
   .note-content {
