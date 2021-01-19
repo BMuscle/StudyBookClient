@@ -18,7 +18,7 @@ import Category from './models/Category'
 import { mapMutations, mapState } from 'vuex'
 import { initNoteDirectory } from './components/NoteCRUD'
 import Note from './models/Note'
-import { remote } from 'electron'
+import { remote, shell, ipcRenderer } from 'electron'
 
 // 全体で共通のコンポーネント
 export default {
@@ -98,6 +98,11 @@ export default {
     const thisObj = this
     watcher.start(function() {
       thisObj.isLoading = false
+    })
+    ipcRenderer.on('reply', (event, url) => {
+      if (confirm(url + '\nこのURLを本当に開きますか？')) {
+        shell.openExternal(url)
+      }
     })
   },
   beforeUnmount() {
