@@ -32,6 +32,9 @@ export default {
       })
       return clean
     }
+  },
+  created() {
+    this.findInPage('aaa')
   }
 }
 </script>
